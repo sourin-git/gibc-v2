@@ -162,9 +162,14 @@ class CausalLM(nn.Module):
                 nn.init.ones_(param)  # RMSNorm scales
 
     def forward(
-        self, input_ids: torch.Tensor, targets: torch.Tensor | None = None
+        self, input_ids: torch.Tensor, targets: torch.Tensor | None = None, validate_targets: bool = True
     ) -> tuple[torch.Tensor, torch.Tensor | None]:
-        """Return (logits [B, T, V], mean cross-entropy or None). `targets` must be pre-shifted (module docstring)."""
+        """Return (logits [B, T, V], mean cross-entropy or None). `targets` must be pre-shifted (module docstring).
+
+        `validate_targets=True` (default) checks every target id is in [0, vocab_size); on CUDA this
+        forces a GPU->CPU sync. The training loop passes False because its token files are
+        range-checked when written and again when opened (gibc.data).
+        """
         if input_ids.dim() != 2:
             raise ValueError(f"input_ids must be [batch, seq], got shape {tuple(input_ids.shape)}")
         seq_len = input_ids.shape[1]
@@ -178,7 +183,7 @@ class CausalLM(nn.Module):
             raise ValueError(f"targets shape {tuple(targets.shape)} != input_ids shape {tuple(input_ids.shape)}")
         # No ignore_index semantics (there is no PAD token): reject anything that is not a real token id,
         # including -100, which F.cross_entropy would otherwise silently skip.
-        if bool(((targets < 0) | (targets >= self.config.vocab_size)).any()):
+        if validate_targets and bool(((targets < 0) | (targets >= self.config.vocab_size)).any()):
             raise ValueError("targets contain ids outside [0, vocab_size)")
         loss = F.cross_entropy(logits.float().view(-1, logits.shape[-1]), targets.reshape(-1))
         return logits, loss

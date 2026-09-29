@@ -1,0 +1,27 @@
+{
+  "format": "gibc.tokens.v1",
+  "dtype": "uint16",
+  "vocab_size": 24000,
+  "eot_id": 0,
+  "eot_policy": "exactly one EOT appended after every document; documents concatenated; no BOS, no padding",
+  "tokenizer_sha256": "40f595fbedfff2de6b06c714a4537ef68b592141288c1a327d8b74962c4f7689",
+  "source_manifest_sha256": "f84d7157d5e962d951592acf328deb28ed47dc369ceeeb4cd7009fe422a20538",
+  "source_data_dir": "pilot",
+  "splits": {
+    "train": {
+      "documents": 20765,
+      "tokens": 21960965,
+      "eot_tokens": 20765,
+      "bytes": 43921930,
+      "sha256": "9c17c59dd5a608f01c58dee953f027acc8529c54e6a292e8e6e525f13269df78"
+    },
+    "val": {
+      "documents": 187,
+      "tokens": 176972,
+      "eot_tokens": 187,
+      "bytes": 353944,
+      "sha256": "b3cc2b5fa2e462f10077b21ca16f953c7c7fa5ad1aa382cdd02a005c46d49c8e"
+    }
+  },
+  "command": "python scripts/prepare_tokens.py --data-name pilot"
+}

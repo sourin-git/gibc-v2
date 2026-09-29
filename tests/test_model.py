@@ -169,6 +169,18 @@ def test_invalid_targets_rejected(tiny_model, bad):
         tiny_model(ids, targets)
 
 
+def test_target_validation_is_default_on_and_can_be_skipped(tiny_model):
+    ids = random_ids(TINY_CFG, 1, 8)
+    bad = ids.clone()
+    bad[0, 2] = TINY_CFG.vocab_size + 5
+    with pytest.raises(ValueError, match="outside"):
+        tiny_model(ids, bad)  # default: strict
+    # Skipping the check (training path; token files are range-checked at open) gives the same valid loss.
+    _, strict = tiny_model(ids, ids)
+    _, fast = tiny_model(ids, ids, validate_targets=False)
+    assert torch.equal(strict, fast)
+
+
 def test_target_shape_mismatch_rejected(tiny_model):
     ids = random_ids(TINY_CFG, 1, 8)
     with pytest.raises(ValueError, match="targets shape"):

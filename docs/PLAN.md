@@ -163,38 +163,70 @@ Contract:
   covers counts, tying, shapes, loss, gradients, causality, RoPE, length bounds, determinism,
   no bias, no RoPE parameters, CUDA, and generation.
 
-## Stage 3: Training system ⏳
+## Stage 3: Training system ✅
 
-### 3a. Tokenized dataset + sampler — `gibc/data.py`, `scripts/tokenize_data.py`
+### 3a. Tokenized storage + batcher — `gibc/data.py`, `scripts/prepare_tokens.py`
 
-- Tokenize excluded-and-kept documents in streaming batches, append the boundary token, and
-  write `uint16` token files plus `meta.json` (our-tokenizer token counts, document counts,
-  source manifest, tokenizer sha256) under `$GIBC_WORK_DIR/tokens/`.
-- Sampler: the corpus is viewed as non-overlapping chunks of `context_length + 1` tokens. A
-  seeded permutation of chunk indices defines the order, and step s reads a fixed slice of it.
-  One pass, no repeats, exact resume from `step` alone.
-- Built and tested on pilot data first. Production data (Stage 5) uses the same code.
-- **Tests:** synthetic corpus: `y` is `x` shifted by one; all ids < vocab_size; same seed
-  gives the same batches; a resumed sampler equals a continuous one.
+- Each document is encoded and followed by exactly one EOT (id 0). The documents are
+  concatenated into flat `uint16` files, `$GIBC_WORK_DIR/tokens/<name>/{train,val}.bin`, plus
+  `meta.json` (dtype, vocab, EOT policy, tokenizer sha256, source manifest sha256, per-split
+  documents/tokens/EOT count/bytes/sha256, command). The meta is copied to
+  `results/data/<name>_tokens_meta.json`. No padding.
+- Token ids are range-checked when written and again when each file is opened (memmap). This is
+  why the training forward pass runs `validate_targets=False`, which avoids a GPU sync per
+  microstep. The strict check stays the model's default for tests and debugging.
+- Batcher: random contiguous windows of `seq_len + 1` tokens (windows may cross EOT
+  boundaries), giving `x = w[:-1]` and `y = w[1:]`, the only shift anywhere. The dedicated numpy
+  PCG64 RNG has a checkpointable state. (This replaces the earlier plan of a one-pass
+  permutation.)
+- Validation: fixed, evenly spaced windows (`eval_batches × micro_batch_size`), identical on
+  every call.
 
-### 3b. Training loop + checkpointing — `gibc/train.py`, `gibc/checkpoint.py`, `scripts/train.py`, `configs/train/*.json`
+### 3b. Training loop + checkpointing — `gibc/train.py`, `gibc/checkpoint.py`, `scripts/train.py`
 
-- Mechanics (fixed): AdamW, weight decay applied to ≥ 2-D weights only, gradient clipping,
-  warmup followed by decay, bf16 autocast, TF32, gradient accumulation, JSONL logging including
-  CUDA allocated/reserved/peak memory, periodic val loss, and an atomic checkpoint (temp file +
-  `os.replace`) every ~30 min and at the end. `--resume` picks up the latest checkpoint.
+- AdamW with two groups: ≥ 2-D weights (the tied embedding appears exactly once) with decay,
+  and 1-D RMSNorm scales without. Coverage is checked. Fused on CUDA.
+- Precision: `fp32` / `bf16` autocast / `fp16` autocast + `torch.amp.GradScaler("cuda")`.
+- Accumulation: loss / `grad_accum_steps` per microstep. After the last microstep: unscale
+  (fp16) → clip → one GPU sync to read loss and grad norm → non-finite check → step → update
+  → `zero_grad(set_to_none=True)`. Tokens count the actual inputs.
+- LR: linear warmup (step 0 → lr/warmup), then cosine to `lr × min_lr_ratio` at `max_steps`.
+  It is a pure function of the global optimizer step, so it resumes exactly.
+- Logging: JSONL (`metrics.jsonl`) with step, microsteps, tokens, loss, lr, grad norm,
+  tokens/s, elapsed/train seconds and CUDA allocated/reserved/peak memory, plus val, checkpoint,
+  resume and non-finite events. Also a readable console line.
+- Checkpoints: model, optimizer, scaler, schedule position, counters, batcher RNG,
+  Python/NumPy/torch CPU/CUDA RNG, configs, data identity (tokenizer and token-file hashes), git
+  commit/dirty flag. Written as a `.tmp` beside the target, then `os.replace`. Loaded with
+  `weights_only=True`. The newest `keep_checkpoints` are kept.
+- Resume: `--resume <ckpt>`. The configs come from the checkpoint; data identity must match.
+  `--stop-at-step N` checkpoints and exits (used to test the resume).
+- A non-finite loss, or a non-finite grad norm outside fp16, writes a `non_finite` event and
+  raises. No checkpoint is written, so the last valid one is preserved.
+- Configs: `configs/train/smoke.json` (runnable). `benchmark.json` and `production.json` are
+  **`"placeholder": true`**, and `scripts/train.py` refuses to run them.
 - **CANDIDATE hyperparameters (not approved):** peak LR 1e-3; ~131k tokens per optimizer
   update; ~500 warmup steps; cosine decay to 10% of peak; AdamW β = (0.9, 0.95), weight decay
   0.1, clip 1.0. Final values are chosen in Stage 4.
-- **Tests (CPU, tiny config):** a short smoke run lowers loss; save → reload gives identical
-  logits; interrupted + resumed training matches uninterrupted training at the same step (fp32).
 
 ### 3c. Generation from a checkpoint — `scripts/generate.py`
 
-Load a checkpoint and sample through `gibc.generate.generate`. This closes the pipeline from raw
-data to generated text.
+Loads a checkpoint (after checking the tokenizer hash) and samples through
+`gibc.generate.generate`.
 
-## Stage 4: Tiny real-data training + RTX 3050 benchmark → hyperparameter selection ☐
+**Verified:** `tests/test_data.py` and `tests/test_train.py` cover:
+- storage, the single shift, batcher determinism and state restore;
+- optimizer coverage and the LR boundaries;
+- step/microstep/token accounting, and accumulation ≡ one large batch;
+- checkpoint contents; resume vs uninterrupted training (bit-identical on CPU);
+- config drift rejection, RNG restore, evaluation leaving parameters unchanged;
+- non-finite failure;
+- bf16/fp16 CUDA runs with resume.
+
+The GPU smoke run (fresh → exit at step 30 → fresh-process resume → step 60 → generation)
+passed. Its metrics are copied to `results/smoke/train_smoke_metrics.jsonl`.
+
+## Stage 4: Tiny real-data training + RTX 3050 benchmark → hyperparameter selection ⏳
 
 - Tiny real-data training on pilot tokens: check that loss decreases sensibly and that the
   candidate LR/warmup are stable. Adjust if not; no sweeps.
@@ -204,7 +236,7 @@ data to generated text.
 - Results in `results/benchmark.json`.
 - **Output:** final micro-batch, accumulation, LR, warmup and schedule, plus the token budget
   `D = measured_tok_per_s × planned_train_seconds × safety_factor`, all written into
-  `configs/train/main.json`.
+  `configs/train/production.json` (clearing its `placeholder` flag).
 
 ## Stage 5: Production data acquisition ☐
 
@@ -262,7 +294,8 @@ at the result.
 
 ## Stage 7: Main training run ☐
 
-A single run of `configs/train/main.json`. Monitor the logs; on interruption, resume.
+A single run of `configs/train/production.json` (once approved). Monitor the logs; on
+interruption, resume with `--resume <latest checkpoint>`.
 
 ## Stage 8: Final evaluation and README ☐
 

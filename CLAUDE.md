@@ -226,4 +226,13 @@ python scripts/acquire_data.py --config configs/data/pilot.json --name pilot   #
 python scripts/train_tokenizer.py --data-name pilot                  # tokenizer -> results/tokenizer/
 python scripts/verify_params.py configs/model/gibc_43m.json          # instantiated-model parameter count
 python scripts/smoke_model.py                                        # CUDA/tokenizer/generation smoke
+python scripts/prepare_tokens.py --data-name pilot                   # uint16 tokens -> $GIBC_WORK_DIR/tokens/pilot
+python scripts/train.py --config configs/train/smoke.json --overwrite --stop-at-step 30
+python scripts/train.py --resume $GIBC_WORK_DIR/runs/smoke/checkpoints/step_0000030.pt
+python scripts/generate.py --checkpoint <ckpt> --prompt "..."        # sample from a checkpoint
 ```
+
+Training configs with `"placeholder": true` (benchmark, production) are refused by
+`scripts/train.py` until Stage 4 fills them in and clears the flag. `targets` are pre-shifted
+exactly once, in `gibc.data`; the training forward pass uses `validate_targets=False` because
+token files are range-checked when written and opened.
