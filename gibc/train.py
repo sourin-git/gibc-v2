@@ -26,10 +26,20 @@ import torch
 
 from gibc.checkpoint import CHECKPOINT_FORMAT, capture_rng_state, load_checkpoint, restore_rng_state, save_checkpoint
 from gibc.config import ModelConfig
-from gibc.data import Batcher, fixed_validation_batches, load_token_meta, open_token_file
+from gibc.data import (
+    SHUFFLED_SAMPLER_VERSION,
+    Batcher,
+    ShuffledWindowSampler,
+    fixed_validation_batches,
+    load_token_meta,
+    open_token_file,
+    verify_token_files,
+)
+from gibc.gpu import gpu_sample
 from gibc.model import CausalLM, parameter_report
 
 PRECISIONS = {"fp32": None, "bf16": torch.bfloat16, "fp16": torch.float16}
+SAMPLERS = ("random_v1", SHUFFLED_SAMPLER_VERSION)
 # fp16: GradScaler halves its scale on every overflow skip; this many in a row means real divergence.
 MAX_CONSECUTIVE_SCALER_SKIPS = 20
 
@@ -65,10 +75,19 @@ class TrainConfig:
     fused_adamw: bool
     device: str
     status: dict[str, Any] = field(default_factory=dict)  # free-form approval markers; not used by training
+    sampler: str = "random_v1"  # "random_v1" (with replacement) | SHUFFLED_SAMPLER_VERSION (one pass, no replacement)
+    run_until_step: int | None = None  # stop (with checkpoint) here; the LR schedule still spans max_steps
+    milestone_fractions: list[float] = field(default_factory=list)  # protected checkpoints at these fractions
 
     def __post_init__(self) -> None:
         if self.precision not in PRECISIONS:
             raise ValueError(f"precision must be one of {sorted(PRECISIONS)}")
+        if self.sampler not in SAMPLERS:
+            raise ValueError(f"sampler must be one of {SAMPLERS}")
+        if self.run_until_step is not None and not 0 < self.run_until_step <= self.max_steps:
+            raise ValueError("run_until_step must be in (0, max_steps]")
+        if any(not 0 < f <= 1 for f in self.milestone_fractions):
+            raise ValueError("milestone_fractions must be in (0, 1]")
         for name in ("seq_len", "micro_batch_size", "grad_accum_steps", "max_steps", "log_every",
                      "eval_every", "eval_batches", "checkpoint_every_steps", "keep_checkpoints"):
             if getattr(self, name) <= 0:
@@ -233,6 +252,11 @@ def train(
     meta = load_token_meta(tokens_dir)
     if meta["vocab_size"] != model_cfg.vocab_size:
         raise ValueError(f"token files built for vocab {meta['vocab_size']}, model has {model_cfg.vocab_size}")
+    # Once per process (fresh start or resume), before anything trusts the corpus: recompute the
+    # actual file hashes (streaming) instead of trusting the hashes recorded in meta.json.
+    t_verify = time.perf_counter()
+    verify_token_files(tokens_dir, meta)
+    verify_seconds = time.perf_counter() - t_verify
     split_tokens = {s: open_token_file(tokens_dir / f"{s}.bin", model_cfg.vocab_size, meta["splits"][s]["tokens"])
                     for s in ("train", "val")}
     data_identity = {"tokens_dir": tokens_dir.name, "tokenizer_sha256": meta["tokenizer_sha256"],
@@ -242,9 +266,22 @@ def train(
     model = CausalLM(model_cfg).to(device)
     optimizer = build_optimizer(model, cfg, device)
     scaler = torch.amp.GradScaler(device.type, enabled=cfg.precision == "fp16")
-    batcher = Batcher(split_tokens["train"], cfg.seq_len, cfg.micro_batch_size, cfg.seed)
+    if cfg.sampler == SHUFFLED_SAMPLER_VERSION:
+        batcher = ShuffledWindowSampler(split_tokens["train"], cfg.seq_len, cfg.micro_batch_size, cfg.seed)
+    else:
+        batcher = Batcher(split_tokens["train"], cfg.seq_len, cfg.micro_batch_size, cfg.seed)
     val_batches = fixed_validation_batches(split_tokens["val"], cfg.seq_len, cfg.micro_batch_size, cfg.eval_batches)
     state = TrainState()
+    stop_targets = [s for s in (stop_at_step, cfg.run_until_step, cfg.max_steps) if s is not None]
+    stop_step = min(stop_targets)
+    milestones = {max(1, round(f * cfg.max_steps)) for f in cfg.milestone_fractions}
+
+    def sampler_info() -> dict[str, Any]:
+        if not isinstance(batcher, ShuffledWindowSampler):
+            return {"sampler": cfg.sampler}
+        return {"sampler": cfg.sampler, "window_count": batcher.window_count, "cursor": batcher.cursor,
+                "dropped_targets": batcher.dropped_targets, "order_sha256": batcher.order_fingerprint(),
+                "consumed_sha256": batcher.consumed_fingerprint()}
 
     run_dir.mkdir(parents=True, exist_ok=True)
     ckpt_dir = run_dir / "checkpoints"
@@ -267,16 +304,24 @@ def train(
         state = TrainState(**ckpt["state"])
         check_optimizer_coverage(model, optimizer)
         metrics.write({"event": "resume", "checkpoint": str(resume), "step": state.step, "tokens": state.tokens,
-                       "source": source})
+                       "microsteps": state.microsteps, "source": source, "data_verified_seconds": round(verify_seconds, 2),
+                       **sampler_info()})
         print_fn(f"resumed from {resume}: step {state.step}, tokens {state.tokens:,}")
     else:
         report = parameter_report(model)
         metrics.write({"event": "start", "params_unique_trainable": report["total unique trainable"],
                        "train_config": cfg.to_dict(), "model_config": model_cfg.to_dict(), "data": data_identity,
-                       "source": source, "torch": str(torch.__version__),
+                       "data_verified_seconds": round(verify_seconds, 2), "stop_step": stop_step,
+                       "source": source, "torch": str(torch.__version__), **sampler_info(),
                        "gpu": torch.cuda.get_device_name(device) if device.type == "cuda" else None})
         print_fn(f"fresh run: {report['total unique trainable']:,} unique trainable params, "
                  f"{cfg.tokens_per_step:,} tokens/optimizer step, {cfg.precision}")
+
+    if isinstance(batcher, ShuffledWindowSampler):
+        needed = (stop_step - state.step) * cfg.grad_accum_steps * cfg.micro_batch_size
+        if needed > batcher.remaining_windows:
+            raise ValueError(f"training to step {stop_step} needs {needed:,} more windows but only "
+                             f"{batcher.remaining_windows:,} of {batcher.window_count:,} remain (no wraparound)")
 
     wall_base = state.wall_seconds
     last_ckpt_time = time.perf_counter()
@@ -286,7 +331,9 @@ def train(
     def checkpoint(reason: str) -> Path:
         nonlocal last_ckpt_time
         state.wall_seconds = wall_base + (time.perf_counter() - process_start)
-        path = ckpt_dir / f"step_{state.step:07d}.pt"
+        # Only "step_*" files rotate; "milestone_*" and "final_*" are never deleted automatically.
+        prefix = "final" if state.step == cfg.max_steps else "milestone" if state.step in milestones else None
+        path = ckpt_dir / (f"{prefix}_step_{state.step:07d}.pt" if prefix else f"step_{state.step:07d}.pt")
         t0 = time.perf_counter()
         save_checkpoint({
             "format": CHECKPOINT_FORMAT,
@@ -303,13 +350,15 @@ def train(
             "data": data_identity,
             "source": source,
             "torch": str(torch.__version__),
+            "sampler_info": sampler_info(),
             "created_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         }, path)
         for old in sorted(ckpt_dir.glob("step_*.pt"))[:-cfg.keep_checkpoints]:
             old.unlink()
         last_ckpt_time = time.perf_counter()
         metrics.write({"event": "checkpoint", "reason": reason, "step": state.step, "tokens": state.tokens,
-                       "path": str(path), "bytes": path.stat().st_size, "seconds": round(time.perf_counter() - t0, 2)})
+                       "path": str(path), "bytes": path.stat().st_size, "seconds": round(time.perf_counter() - t0, 2),
+                       **sampler_info()})
         print_fn(f"checkpoint ({reason}): {path} ({path.stat().st_size / 2**20:.1f} MiB)")
         return path
 
@@ -324,7 +373,7 @@ def train(
         validate()
 
     model.train()
-    interval = {"tokens": 0, "seconds": 0.0, "loss_sum": 0.0, "steps": 0}
+    interval = {"tokens": 0, "seconds": 0.0, "loss_sum": 0.0, "steps": 0, "clipped": 0}
     last_val: dict[str, float] | None = None
     last_ckpt: Path | None = resume
     first_loss: float | None = None
@@ -332,7 +381,7 @@ def train(
     consecutive_skips = 0
     use_pin = device.type == "cuda"
 
-    while state.step < cfg.max_steps:
+    while state.step < stop_step:
         t_step = time.perf_counter()
         lr = lr_at(state.step, cfg)
         for group in optimizer.param_groups:
@@ -390,38 +439,42 @@ def train(
         first_loss = step_loss if first_loss is None else first_loss
         interval["loss_sum"] += step_loss
         interval["steps"] += 1
+        interval["clipped"] += int(cfg.grad_clip > 0 and norm > cfg.grad_clip)
+        stopping = state.step >= stop_step
 
-        if state.step == 1 or state.step % cfg.log_every == 0 or state.step == cfg.max_steps:
+        if state.step == 1 or state.step % cfg.log_every == 0 or stopping:
             record = {"event": "train", "step": state.step, "microsteps": state.microsteps, "tokens": state.tokens,
                       "train_loss": interval["loss_sum"] / interval["steps"], "last_step_loss": step_loss,
                       "lr": lr, "grad_norm": norm, "tokens_per_s": interval["tokens"] / interval["seconds"],
                       "elapsed_s": round(wall_base + time.perf_counter() - process_start, 1),
                       "train_s": round(state.train_seconds, 2), "skipped_steps": state.skipped_steps,
-                      **cuda_memory(device)}
+                      "clip_fraction": interval["clipped"] / interval["steps"], "interval_steps": interval["steps"],
+                      "sampler_cursor": getattr(batcher, "cursor", None),
+                      **cuda_memory(device), **(gpu_sample() if device.type == "cuda" else {})}
             metrics.write(record)
             mem = f"  mem {record.get('cuda_allocated_mib', 0):.0f}/{record.get('cuda_reserved_mib', 0):.0f} MiB " \
                   f"(peak {record.get('cuda_peak_allocated_mib', 0):.0f})" if device.type == "cuda" else ""
             print_fn(f"step {state.step:>6}/{cfg.max_steps}  micro {state.microsteps:>7}  tok {state.tokens:>11,}  "
                      f"loss {record['train_loss']:.4f}  lr {lr:.2e}  gnorm {norm:.3f}  "
                      f"{record['tokens_per_s']:,.0f} tok/s{mem}")
-            interval = {"tokens": 0, "seconds": 0.0, "loss_sum": 0.0, "steps": 0}
+            interval = {"tokens": 0, "seconds": 0.0, "loss_sum": 0.0, "steps": 0, "clipped": 0}
 
-        if state.step % cfg.eval_every == 0 or state.step == cfg.max_steps:
+        if state.step % cfg.eval_every == 0 or state.step in (cfg.max_steps, cfg.run_until_step):
             last_val = validate()
-        stopping = stop_at_step is not None and state.step >= stop_at_step
         minutes = (time.perf_counter() - last_ckpt_time) / 60
-        if (state.step % cfg.checkpoint_every_steps == 0 or state.step == cfg.max_steps or stopping
+        if (state.step % cfg.checkpoint_every_steps == 0 or stopping or state.step in milestones
                 or (cfg.checkpoint_every_minutes and minutes >= cfg.checkpoint_every_minutes)):
-            last_ckpt = checkpoint("stop_at_step" if stopping else "scheduled")
-        if stopping:
-            break
+            last_ckpt = checkpoint("stop" if stopping and state.step < cfg.max_steps else
+                                   "final" if state.step == cfg.max_steps else
+                                   "milestone" if state.step in milestones else "scheduled")
 
     state.wall_seconds = wall_base + (time.perf_counter() - process_start)
     summary = {"step": state.step, "microsteps": state.microsteps, "tokens": state.tokens,
                "first_step_loss_this_process": first_loss, "last_step_loss": step_loss,
                "last_val": last_val, "latest_checkpoint": str(last_ckpt) if last_ckpt else None,
                "train_seconds": state.train_seconds, "wall_seconds": state.wall_seconds,
-               "skipped_steps": state.skipped_steps, "finished": state.step >= cfg.max_steps, **cuda_memory(device)}
+               "skipped_steps": state.skipped_steps, "finished": state.step >= cfg.max_steps,
+               "stop_step": stop_step, **sampler_info(), **cuda_memory(device)}
     metrics.write({"event": "end", **summary})
     return summary
 

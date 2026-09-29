@@ -232,7 +232,14 @@ python scripts/train.py --resume $GIBC_WORK_DIR/runs/smoke/checkpoints/step_0000
 python scripts/generate.py --checkpoint <ckpt> --prompt "..."        # sample from a checkpoint
 python scripts/benchmark.py --precision bf16 --micro-batch 8 --grad-accum 8   # one benchmark row
 python scripts/summarize_benchmark.py                                # table + time ESTIMATES
+python scripts/acquire_production.py --config configs/data/production.json   # resumable; --dry-run checks only
+python scripts/build_production_tokens.py --config configs/data/production.json  # audit + immutable tokens
+python scripts/lr_decision.py                                        # predeclared LR rule -> results/lr/
 ```
+
+Token files are hash-verified (streaming SHA-256) once at every training-process start and
+resume. Production uses `"sampler": "shuffled_windows_v1"`: one pass without replacement over
+non-overlapping 513-token windows, with an exact cursor-based resume; exhaustion raises.
 
 Training configs with `"placeholder": true` (benchmark, production) are refused by
 `scripts/train.py` until Stage 4 fills them in and clears the flag. `targets` are pre-shifted

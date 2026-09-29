@@ -1,0 +1,45 @@
+{
+  "config": "configs\\train\\production.json",
+  "ok": true,
+  "window_count": 2148438,
+  "windows_needed": 1953152,
+  "dropped_targets": 375,
+  "order_sha256": "f95bf3ba6b864932cc460f4336067556a1823f6d527ac075cee4ec929ca51228",
+  "checks": [
+    [
+      "token file sha256 (streaming re-hash)",
+      true,
+      "train efb63e4f4902f5e7..., val f4340757b2463485..."
+    ],
+    [
+      "tokenizer sha256 matches token meta",
+      true,
+      "40f595fbedfff2de..."
+    ],
+    [
+      "token ids in [0, vocab)",
+      true,
+      "checked at open"
+    ],
+    [
+      "train tokens >= target",
+      true,
+      "1,100,000,632 >= 1,100,000,000"
+    ],
+    [
+      "enough shuffled full windows",
+      true,
+      "need 1,953,152 of W=2,148,438 (margin 195,286; dropped tail 375 targets)"
+    ],
+    [
+      "validation subset supported",
+      true,
+      "262,144 targets from 10,753,165 val tokens"
+    ],
+    [
+      "free disk >= floor",
+      true,
+      "29.68 GiB free (floor 5.0)"
+    ]
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "pilot_config": "configs/data/pilot.json",
+  "pilot_name": "pilot",
+  "name": "production",
+  "target_train_tokens": 1100000000,
+  "chunk_row_groups": 40,
+  "min_free_gib": 5.0,
+  "bytes_per_token_estimate": 4.6,
+  "read_retries": 4
+}

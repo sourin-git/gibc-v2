@@ -48,11 +48,14 @@ def main() -> int:
         fh.write(json.dumps(result) + "\n")
 
     if result["status"] == "ok":
-        print(f"{args.precision} B={args.micro_batch} accum={args.grad_accum} ({result['tokens_per_update']:,} tok/update): "
-              f"{result['tokens_per_s_mean']:,.0f} tok/s mean, {result['tokens_per_s_median']:,.0f} median, "
-              f"step {result['step_time_s_mean']:.3f} s, peak alloc {result['peak_allocated_mib']:,.0f} MiB, "
-              f"reserved {result['peak_reserved_mib']:,.0f} MiB, skips {result['scaler_skips_measured']}, "
-              f"updates {result['updates_timed']}")
+        print(f"{args.precision} B={args.micro_batch} accum={args.grad_accum} ({result['tokens_per_update']:,} tok/update)")
+        print(f"  whole interval: {result['tokens_per_s_whole_interval']:,.0f} tok/s over "
+              f"{result['whole_interval_updates']} updates / {result['whole_interval_seconds']:.1f} s")
+        print(f"  per update (synced both sides): mean {result['tokens_per_s_per_update_mean']:,.0f} tok/s, "
+              f"median {result['tokens_per_s_per_update_median']:,.0f}; step {result['step_time_s_mean']:.3f} s "
+              f"(min {result['step_time_s_min']:.3f}, max {result['step_time_s_max']:.3f}) over {result['per_update_count']}")
+        print(f"  peak alloc {result['peak_allocated_mib']:,.0f} MiB, reserved {result['peak_reserved_mib']:,.0f} MiB, "
+              f"skips {result['scaler_skips_measured']}, GPU {result['gpu_samples']}")
     else:
         print(f"{args.precision} B={args.micro_batch}: {result['status']} ({result.get('error', '')}); "
               f"allocated after cleanup {result['allocated_after_cleanup_mib']:.1f} MiB")

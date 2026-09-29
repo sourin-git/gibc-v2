@@ -59,9 +59,12 @@ def run(cfg, tokens_dir, run_dir, **kwargs):
     return train(cfg, TINY, tokens_dir, run_dir, REPO_ROOT, print_fn=lambda s: None, **kwargs)
 
 
+def latest_checkpoint(run_dir: Path) -> Path:
+    return max((run_dir / "checkpoints").glob("*step_*.pt"), key=lambda p: int(p.stem.rsplit("_", 1)[1]))
+
+
 def final_params(run_dir: Path) -> dict[str, torch.Tensor]:
-    latest = sorted((run_dir / "checkpoints").glob("step_*.pt"))[-1]
-    return load_checkpoint(latest)["model"]
+    return load_checkpoint(latest_checkpoint(run_dir))["model"]
 
 
 def events(run_dir: Path) -> list[dict]:
@@ -138,7 +141,7 @@ def test_accumulation_matches_single_large_batch(tokens_dir, tmp_path):
 def test_checkpoint_contents_roundtrip(tokens_dir, tmp_path):
     cfg = tiny_train_cfg(max_steps=2)
     run(cfg, tokens_dir, tmp_path / "run")
-    ckpt = load_checkpoint(tmp_path / "run" / "checkpoints" / "step_0000002.pt")
+    ckpt = load_checkpoint(tmp_path / "run" / "checkpoints" / "final_step_0000002.pt")
     for key in ("model", "optimizer", "scaler", "scheduler", "state", "batcher", "rng", "train_config",
                 "model_config", "data", "source"):
         assert key in ckpt, key
@@ -317,6 +320,63 @@ def test_fp16_persistent_overflow_fails_instead_of_looping(tokens_dir, tmp_path,
     assert len([e for e in events(tmp_path / "run") if e["event"] == "scaler_skip"]) == train_mod.MAX_CONSECUTIVE_SCALER_SKIPS
 
 
+# Shuffled sampler in real training, hashes, stop step, milestones ------------------------------
+
+SHUFFLED = dict(sampler="shuffled_windows_v1")
+
+
+def test_shuffled_sampler_resume_matches_uninterrupted_training(tokens_dir, tmp_path):
+    cfg = tiny_train_cfg(max_steps=6, **SHUFFLED)
+    full = run(cfg, tokens_dir, tmp_path / "full")
+    run(cfg, tokens_dir, tmp_path / "split", stop_at_step=3)
+    resumed = run(cfg, tokens_dir, tmp_path / "split", resume=tmp_path / "split" / "checkpoints" / "step_0000003.pt")
+    assert resumed["step"] == 6 and resumed["cursor"] == full["cursor"] == 6 * 3 * 2
+    assert resumed["consumed_sha256"] == full["consumed_sha256"]  # identical window sequence
+    pf, ps = final_params(tmp_path / "full"), final_params(tmp_path / "split")
+    assert all(torch.equal(pf[n], ps[n]) for n in pf)
+    resume_event = [e for e in events(tmp_path / "split") if e["event"] == "resume"][0]
+    assert resume_event["cursor"] == 3 * 3 * 2
+
+
+def test_run_until_step_keeps_full_schedule_horizon(tokens_dir, tmp_path):
+    cfg = tiny_train_cfg(max_steps=100, warmup_steps=10, run_until_step=4, **SHUFFLED)
+    summary = run(cfg, tokens_dir, tmp_path / "run")
+    assert summary["step"] == 4 and not summary["finished"] and summary["stop_step"] == 4
+    lrs = [e["lr"] for e in events(tmp_path / "run") if e["event"] == "train"]
+    assert lrs == [pytest.approx(lr_at(s, cfg)) for s in range(4)]  # warmup of the 100-step schedule, not compressed
+    assert [e["step"] for e in events(tmp_path / "run") if e["event"] == "val"] == [0, 3, 4]
+    assert (tmp_path / "run" / "checkpoints" / "step_0000004.pt").exists()
+
+
+def test_not_enough_windows_fails_before_training(tokens_dir, tmp_path):
+    # 20,000 train tokens / 16 = 1,249 windows; 300 steps x 3 x 2 = 1,800 windows needed.
+    cfg = tiny_train_cfg(max_steps=300, **SHUFFLED)
+    with pytest.raises(ValueError, match="needs 1,800 more windows"):
+        run(cfg, tokens_dir, tmp_path / "run")
+    assert not (tmp_path / "run" / "checkpoints").exists()
+
+
+def test_corrupted_token_file_refused_on_start_and_resume(tokens_dir, tmp_path):
+    cfg = tiny_train_cfg(max_steps=4, **SHUFFLED)
+    run(cfg, tokens_dir, tmp_path / "run", stop_at_step=2)
+    data = bytearray((tokens_dir / "train.bin").read_bytes())
+    data[1001] ^= 0x01
+    (tokens_dir / "train.bin").write_bytes(bytes(data))
+    with pytest.raises(ValueError, match="train.bin: sha256"):
+        run(cfg, tokens_dir, tmp_path / "run", resume=tmp_path / "run" / "checkpoints" / "step_0000002.pt")
+    with pytest.raises(ValueError, match="train.bin: sha256"):
+        run(cfg, tokens_dir, tmp_path / "fresh")
+
+
+def test_milestone_and_final_checkpoints_are_protected(tokens_dir, tmp_path):
+    cfg = tiny_train_cfg(max_steps=8, checkpoint_every_steps=1, keep_checkpoints=2,
+                         milestone_fractions=[0.25, 0.5], **SHUFFLED)
+    run(cfg, tokens_dir, tmp_path / "run")
+    names = sorted(p.name for p in (tmp_path / "run" / "checkpoints").glob("*.pt"))
+    assert names == ["final_step_0000008.pt", "milestone_step_0000002.pt", "milestone_step_0000004.pt",
+                     "step_0000006.pt", "step_0000007.pt"]
+
+
 # Configs -------------------------------------------------------------------------------------
 
 def test_shipped_train_configs():
@@ -328,8 +388,15 @@ def test_shipped_train_configs():
         assert cfg.seq_len <= MAIN_CFG.context_length
     prod = configs["production"]
     assert prod.status["APPROVED_BY_BENCHMARK"] and prod.status["TRAINING_NOT_STARTED"]
-    assert prod.status["LR_WARMUP_FINAL"] is False
-    assert prod.seq_len == 512 and prod.tokens_per_step == 8 * 512 * 8 == 32_768
+    assert prod.status["FINAL_PREFLIGHT_APPROVED"] is False
+    assert prod.seq_len == 512 and prod.tokens_per_step == 8 * 512 * 4 == 16_384
+    assert prod.max_steps * prod.tokens_per_step == 1_000_013_824 == prod.status["target_tokens"]
+    assert prod.sampler == "shuffled_windows_v1" and prod.warmup_steps == 256 and prod.min_lr_ratio == 0.1
+    assert prod.eval_batches * prod.micro_batch_size * prod.seq_len == 262_144
+    for name in ("lr_6e-4", "lr_1e-3"):  # the two LR runs differ only in lr and run_name
+        diff = {k for k, v in configs[name].to_dict().items() if v != configs["lr_6e-4"].to_dict()[k]}
+        assert diff <= {"lr", "run_name"}
+        assert configs[name].max_steps == 61_036 and configs[name].run_until_step == 1024
 
 
 def test_old_checkpoint_config_without_status_still_matches():
@@ -345,7 +412,8 @@ def test_benchmark_harness_runs_real_updates():
     tokens = np.random.default_rng(0).integers(0, TINY.vocab_size, 5000).astype(np.uint16)
     result = run_benchmark(tokens, TINY, tiny_train_cfg(), "bf16", micro_batch=2, grad_accum=2,
                            warmup_updates=1, measured_updates=3)
-    assert result["status"] == "ok" and result["updates_timed"] == 3
+    assert result["status"] == "ok" and result["whole_interval_updates"] == 3 and result["per_update_count"] == 3
     assert result["seq_len"] == TINY.context_length and result["tokens_per_update"] == 2 * 2 * TINY.context_length
-    assert result["tokens_per_s_mean"] > 0 and result["all_losses_finite"]
+    assert result["tokens_per_s_whole_interval"] > 0 and result["tokens_per_s_per_update_mean"] > 0
+    assert result["all_losses_finite"]
     assert result["allocated_after_cleanup_mib"] - result["allocated_before_mib"] < 1.0  # nothing leaked

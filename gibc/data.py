@@ -142,6 +142,89 @@ class Batcher:
         self.rng.bit_generator.state = state["bit_generator"]
 
 
+def file_sha256_streaming(path: Path, chunk_bytes: int = 1 << 24) -> str:
+    """SHA-256 of a file read in 16 MiB chunks (never loads a multi-GB token file into RAM)."""
+    digest = hashlib.sha256()
+    with path.open("rb") as fh:
+        for chunk in iter(lambda: fh.read(chunk_bytes), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def verify_token_files(tokens_dir: Path, meta: dict[str, Any]) -> None:
+    """Recompute the train/val token-file hashes and compare with meta.json. Raises on any mismatch."""
+    for split in SPLITS:
+        path = tokens_dir / f"{split}.bin"
+        actual = file_sha256_streaming(path)
+        expected = meta["splits"][split]["sha256"]
+        if actual != expected:
+            raise ValueError(f"{path}: sha256 {actual} does not match meta.json {expected}; refusing to use it")
+
+
+class SamplerExhausted(RuntimeError):
+    pass
+
+
+SHUFFLED_SAMPLER_VERSION = "shuffled_windows_v1"
+
+
+class ShuffledWindowSampler:
+    """One pass, without replacement, over the non-overlapping windows of a token stream.
+
+    With N tokens and W = (N - 1) // seq_len windows, window i is tokens[seq_len*i : seq_len*i + seq_len + 1],
+    so x = w[:-1] and y = w[1:]. Neighbouring windows share exactly one token (the last target of
+    window i is the first context token of window i+1), every token position 1 .. W*seq_len is a
+    prediction target exactly once, position 0 is context only, and the final (N - 1) - W*seq_len
+    targets are dropped. Windows are visited in the order numpy PCG64(seed).permutation(W); the
+    position in that order (cursor) is the only mutable state, so resume is exact. Running past the
+    last window raises SamplerExhausted (no silent wraparound).
+    """
+
+    def __init__(self, tokens: np.ndarray, seq_len: int, batch_size: int, seed: int) -> None:
+        self.tokens = tokens
+        self.seq_len = seq_len
+        self.batch_size = batch_size
+        self.seed = seed
+        self.window_count = (tokens.size - 1) // seq_len
+        if self.window_count < 1:
+            raise ValueError(f"need at least {seq_len + 1} tokens, have {tokens.size}")
+        self.dropped_targets = (tokens.size - 1) - self.window_count * seq_len
+        self.order = np.random.Generator(np.random.PCG64(seed)).permutation(self.window_count)
+        self.cursor = 0
+
+    @property
+    def remaining_windows(self) -> int:
+        return self.window_count - self.cursor
+
+    def next_batch(self) -> tuple[torch.Tensor, torch.Tensor]:
+        if self.remaining_windows < self.batch_size:
+            raise SamplerExhausted(f"only {self.remaining_windows} unused windows left, batch needs {self.batch_size}")
+        windows = self.order[self.cursor : self.cursor + self.batch_size]
+        self.cursor += self.batch_size
+        return _windows_to_tensors(self.tokens, windows * self.seq_len, self.seq_len)
+
+    def order_fingerprint(self) -> str:
+        return hashlib.sha256(self.order.astype(np.int64).tobytes()).hexdigest()
+
+    def consumed_fingerprint(self) -> str:
+        """Hash of the window indices consumed so far: equal fingerprints = identical data sequence."""
+        return hashlib.sha256(self.order[: self.cursor].astype(np.int64).tobytes()).hexdigest()
+
+    def state_dict(self) -> dict[str, Any]:
+        return {"version": SHUFFLED_SAMPLER_VERSION, "method": "numpy.random.Generator(PCG64(seed)).permutation(W)",
+                "seed": self.seed, "seq_len": self.seq_len, "batch_size": self.batch_size,
+                "window_count": self.window_count, "order_sha256": self.order_fingerprint(), "cursor": self.cursor}
+
+    def load_state_dict(self, state: dict[str, Any]) -> None:
+        mine = self.state_dict()
+        for key in ("version", "method", "seed", "seq_len", "batch_size", "window_count", "order_sha256"):
+            if state[key] != mine[key]:
+                raise ValueError(f"sampler {key} differs from checkpoint: {state[key]!r} vs {mine[key]!r}")
+        if not 0 <= state["cursor"] <= self.window_count:
+            raise ValueError(f"checkpoint cursor {state['cursor']} outside [0, {self.window_count}]")
+        self.cursor = state["cursor"]
+
+
 def fixed_validation_batches(tokens: np.ndarray, seq_len: int, batch_size: int,
                              n_batches: int) -> list[tuple[torch.Tensor, torch.Tensor]]:
     """Evenly spaced, non-random windows: identical on every call, so measurements are comparable."""

@@ -1,0 +1,536 @@
+{
+  "method": "exact SHA-256 of UTF-8 text; no near-duplicate or semantic matching; not a decontamination claim",
+  "train_documents": 1044378,
+  "train_unique_texts": 1039557,
+  "train_duplicate_documents": 4821,
+  "train_texts_with_copies": 4801,
+  "val_documents": 10443,
+  "val_unique_texts": 10442,
+  "val_duplicate_documents": 1,
+  "val_documents_removed_as_train_overlap": 87,
+  "rule": "a validation document whose exact text also occurs in train is removed from validation; train and other duplicates are kept",
+  "removed": [
+    {
+      "val_index": 51,
+      "id": "<urn:uuid:70d7116e-9cf4-4dbe-9afa-03e7f726687a>",
+      "url": "http://kingoffs.com/old-wilmington-cup/",
+      "text_sha256": "d6d223ba24b0233abcc8d0ec783b8ed65c9fefc2e71cd884bb0228c135e2d93c"
+    },
+    {
+      "val_index": 189,
+      "id": "<urn:uuid:5e958115-869c-4d36-8422-82f17106c3fa>",
+      "url": "https://www.wordnik.com/words/sight-reader",
+      "text_sha256": "fe6b317a47348a5c2285d6938f3d25d4113022f76c2ef160ba6a96a6dd839141"
+    },
+    {
+      "val_index": 237,
+      "id": "<urn:uuid:89f51392-84fd-4dc4-9b46-e9ce12bccc2e>",
+      "url": "http://johnhanger.blogspot.com/2013/05/nrdc-study-finds-gas-generation-up-69.html",
+      "text_sha256": "eb40031ad2c62362899b5604fd255ef5fe6bbc5609486eaaa13f4af1a9a78fbc"
+    },
+    {
+      "val_index": 262,
+      "id": "<urn:uuid:058e1f90-df7b-4042-a3d7-75f2097db899>",
+      "url": "http://biology.stackexchange.com/questions/2875/can-rats-pass-on-memories-of-a-maze-to-their-offspring/3359",
+      "text_sha256": "9fe7e447b2bf751fa5daada146f172573fa15786d45d7483af2d6a37057a522e"
+    },
+    {
+      "val_index": 415,
+      "id": "<urn:uuid:3c58df5f-4b04-4059-9de4-8dc2558d5779>",
+      "url": "https://drdivajc.com/2019/09/20/autumn-update/",
+      "text_sha256": "d0b8ab9f2f5c2ff8d292467f7ff8d18df58938a21e953a8d7292b3bfddc6ed5f"
+    },
+    {
+      "val_index": 628,
+      "id": "<urn:uuid:607f920c-1de9-4ec8-8d82-bcfd72661c89>",
+      "url": "http://imagesofoldhawaii.com/anuenue/?shared=email&msg=fail",
+      "text_sha256": "1b1b6f7ec077f69f1ffa14d72501edf70833c6f94146cc87574b93cd0ff8eeb2"
+    },
+    {
+      "val_index": 701,
+      "id": "<urn:uuid:75654f19-aadf-42b4-a1f9-3c038ce1971a>",
+      "url": "https://m.guardian.ng/features/health/corn-silk-beats-bp-obesity/",
+      "text_sha256": "feafcb8c841ddc2bbc397191c2a3b87b9db3ceb28cd95092c43a4212e039d0e2"
+    },
+    {
+      "val_index": 912,
+      "id": "<urn:uuid:c56d9a95-fb7e-4070-a2c6-ec525f067f42>",
+      "url": "http://crc806db.uni-koeln.de/dataset/show/vegetation-and-climate-history-of-the-marmara-region-during-the-last-ca-30000-years-base1491994697/",
+      "text_sha256": "597fc88682fd4a2af018c4e27cb09f0184e40d07a0d947040789b418fe46bae1"
+    },
+    {
+      "val_index": 1045,
+      "id": "<urn:uuid:56bbcab2-5a56-4a21-830d-2bde76e5562f>",
+      "url": "http://www.slate.com/articles/news_and_politics/explainer/2012/02/afghan_quran_burning_protests_what_s_the_right_way_to_dispose_of_a_quran_.single.html",
+      "text_sha256": "18d958a72de59d4e93011f0e2a45cde300459d2ace777b90d9426444eaabb8c1"
+    },
+    {
+      "val_index": 1213,
+      "id": "<urn:uuid:b939b8dd-d949-4491-8261-378bc903b968>",
+      "url": "http://www.pinknews.co.uk/2006/03/30/shock-levels-of-depression-amongst-australian-gays/",
+      "text_sha256": "cbfb06839cff001bcbe98b3acaae3c78fd3072adf20b70e57bfe2fac9e4f5157"
+    },
+    {
+      "val_index": 1225,
+      "id": "<urn:uuid:c932ccfe-4856-448d-bc3f-7e0c14c4fddf>",
+      "url": "http://wyobiodiversity.org/index.php/blogs/learn-about-mullen-fire-impacts-and-help-data-collection/2020/01",
+      "text_sha256": "c72057f869bf85f659c52eefd97de982e12d6d3374b453f4f4038697f6ee609b"
+    },
+    {
+      "val_index": 1255,
+      "id": "<urn:uuid:c31ea12a-b056-4dea-8dff-cc5d85916a9e>",
+      "url": "http://foodtourstokyo.com/2014/09/03/the-japanese-tea-ceremony/",
+      "text_sha256": "4c527628332be7a5bc8c6fefc77b58de3eaf2d928947d147e476ca3f61c9aeca"
+    },
+    {
+      "val_index": 1327,
+      "id": "<urn:uuid:c588e973-0770-4bb9-bbb1-0ea38592cdf5>",
+      "url": "https://materialseducation.org/news/matedu-welcomes-innovatebio-as-new-partner-and-ally/",
+      "text_sha256": "0766c1187b6830aaf771b7ffe125c24b3b3a8bb036da66eac942f0acdf5b99da"
+    },
+    {
+      "val_index": 1439,
+      "id": "<urn:uuid:1aa31c84-133b-4f4c-865a-8fe91997931a>",
+      "url": "https://jeffersonchiro.com/2014/08/04/different-types-of-back-pains/",
+      "text_sha256": "a268ba638fb671178a9cdb5382142828fb9642ecf9fa880883df2d3851993302"
+    },
+    {
+      "val_index": 1772,
+      "id": "<urn:uuid:7bcf4115-a3d7-4a55-9513-640c5974d757>",
+      "url": "http://www.kxii.com/news/headlines/986326.html",
+      "text_sha256": "f74c4de94a615bc46135684665023d74c1da27b401687e72e8dad85faa6be67f"
+    },
+    {
+      "val_index": 1777,
+      "id": "<urn:uuid:4f7e3095-ec31-42af-91b7-d80c7756405b>",
+      "url": "http://blog.conservation.org/2012/09/diving-in-a-deep-sea-cathedral/",
+      "text_sha256": "e57137ae4d12c3ab76b08fcd80ae199351d37093be42b2c9d664b6dd11c84fb2"
+    },
+    {
+      "val_index": 1793,
+      "id": "<urn:uuid:e454387d-3ef5-4222-a77b-d787905ea766>",
+      "url": "http://intuitivefred888.blogspot.com/2017/04/armistice-july-1953-november-1954.html",
+      "text_sha256": "dcc5790e7ba3f45d4e47054dcf49a62aedeb716df2882f30ddfbd294820aaf76"
+    },
+    {
+      "val_index": 1828,
+      "id": "<urn:uuid:8d501132-1616-48f2-ba1b-7deb9117a1ed>",
+      "url": "http://www.irishcentral.com/news/british-archive-files-reveal-ira-targeted-buckingham-palace-during-1970s-london-bombing-campaign-67208887-237666931.html?mob-ua=mobile",
+      "text_sha256": "829b83b4bdc8143eae5a9d756c606156f44a995a02f87600176fa33e675a5732"
+    },
+    {
+      "val_index": 1931,
+      "id": "<urn:uuid:ea27369c-5057-4447-a8e9-c132f9f7085e>",
+      "url": "http://www.marxists.org/history/erol/australia/hill-ssi/chapter3.htm",
+      "text_sha256": "c566f6a227a1da1ec540b4ff0f7d2cd7c66233ece58d9273b6e868247b81380d"
+    },
+    {
+      "val_index": 2135,
+      "id": "<urn:uuid:210232dd-92fe-4983-b5c4-0ff21e3f75a9>",
+      "url": "http://www.lifescript.com/health/centers/digestive/news/2010/03/04/a1c_diabetes_test_better_indicator_of_risk_study.aspx",
+      "text_sha256": "ec8d28f43522d9cdb9b4afa49c982bd048efb6e981e1e77d93617ead5b6921ab"
+    },
+    {
+      "val_index": 2151,
+      "id": "<urn:uuid:3f79bba9-a49b-4374-9f7d-1be9670668d7>",
+      "url": "http://www.braingle.com/brainteasers/17171/90-letters.html",
+      "text_sha256": "122c0b49c37a4f5b86c6f738eb6228d31617ad82bfa529dd9fbed64ba0061bd1"
+    },
+    {
+      "val_index": 2224,
+      "id": "<urn:uuid:7830d3fb-c407-4961-863c-ed0cef34b2f5>",
+      "url": "http://mentalfloss.com/article/54557/can-stress-be-good-thing",
+      "text_sha256": "fe40557415c1bb6eef8705d91c58399b984cdf62eff7eeadea26aef774aece8a"
+    },
+    {
+      "val_index": 2529,
+      "id": "<urn:uuid:9962476e-6748-4359-a175-3dc2d7f00f7d>",
+      "url": "https://www.firstdegree.asia/singapores-property-ration-pack/",
+      "text_sha256": "251d8005522abc76f143c346dd5994a999d65261a78c0b5da808538527b93e3d"
+    },
+    {
+      "val_index": 2631,
+      "id": "<urn:uuid:8f7c2185-5ca0-4647-a220-1266d07bfe86>",
+      "url": "http://ornamentalgrass.ca/drought-tolerance.htm",
+      "text_sha256": "4d20f9d446aeaf99ea6ce62a28ae62771cdf3a3fe6af548afdf785c5b68ccec8"
+    },
+    {
+      "val_index": 2682,
+      "id": "<urn:uuid:36a4b5e1-793a-4ddf-af02-75fcef05539e>",
+      "url": "http://www.eurekalert.org/pub_releases/2011-06/ma-tmp053111.php",
+      "text_sha256": "63ad5b3c485f55aa1aa9437cf19d5d18691c72d5151a6af47186170b75cab3f7"
+    },
+    {
+      "val_index": 2769,
+      "id": "<urn:uuid:b0510955-b690-48b6-b0fd-098a81c63312>",
+      "url": "http://acec2014.acce.edu.au/session/redefining-education-one-one-3-vic-schools",
+      "text_sha256": "50a94c1f67254943fa73f802804ea9d9f590db9edb31005da3eabd73ff53d3f9"
+    },
+    {
+      "val_index": 2927,
+      "id": "<urn:uuid:794ebc5d-c604-4163-b200-2a5727c7109b>",
+      "url": "https://creation.com/herbert-spencer",
+      "text_sha256": "d18beef1f9fc020c7505c4d3abece06355efd556d6c45ff7b70746d26126bac7"
+    },
+    {
+      "val_index": 2984,
+      "id": "<urn:uuid:b456cd58-f7e6-4f38-a82d-a451b89e21db>",
+      "url": "http://www.birdchannel.com/bird-diet-and-health/bird-grooming/damaged-cockatiel-tail-feathers.aspx",
+      "text_sha256": "d92c898a12ca3bd48dfab2a0c249d05053858dbbd59f393995915807191062b6"
+    },
+    {
+      "val_index": 3295,
+      "id": "<urn:uuid:57a40680-3e13-4c0d-bbaf-ee286bfd6691>",
+      "url": "http://ucjeps.berkeley.edu/cgi-bin/get_JM_treatment.pl?8349,8560,8576",
+      "text_sha256": "9147706bed4c9847315d56f7b85f628f5f45012e4588418781b3e06f87cd810f"
+    },
+    {
+      "val_index": 3508,
+      "id": "<urn:uuid:de4d0409-7fd9-4bf3-8b14-baf63b272e33>",
+      "url": "http://menaibridges.co.uk/history/history-of-the-town-of-menai-bridge/",
+      "text_sha256": "128301ca2539941d53732614bf26a5893dd6b6f642d40617fc42b36d07b623fe"
+    },
+    {
+      "val_index": 3622,
+      "id": "<urn:uuid:958ca737-528f-417f-978b-2af5bc476130>",
+      "url": "https://www.mesotheliomasymptoms.com/asbestosis-diagnosis",
+      "text_sha256": "03568c8fb86b96069c1ba7936020e1f45d3ba5642421820eb98681d34bbd8b49"
+    },
+    {
+      "val_index": 3727,
+      "id": "<urn:uuid:499b65ae-7026-4e81-b948-1100123b1002>",
+      "url": "https://www.archaeology.wiki/blog/2017/05/25/agricultural-revolution-anglo-saxon-england-sheds-new-light-medieval-land-use/",
+      "text_sha256": "0d7746252a572d679b79711de55e686e014120090d6f7fea705b55f5c8e51b5e"
+    },
+    {
+      "val_index": 3740,
+      "id": "<urn:uuid:5b1a2079-6915-45f8-bebf-5a559efc8945>",
+      "url": "http://www.congenid.org/",
+      "text_sha256": "2910e7a5bbc430c5428c9da35a44bb5bbcb1c7f2ecf0a9a469b5f8c3434c8cdd"
+    },
+    {
+      "val_index": 4110,
+      "id": "<urn:uuid:607b5f85-387b-4449-a4a3-37250bc55597>",
+      "url": "http://politics.co.uk/opinion-formers/committee-on-climate-change-ccc/article/uk-climate-change-risk-assessment-2017",
+      "text_sha256": "1f48eea4c26c4ebb67239e99abc13a133ed641397adac67d2368d05f4cbf18b5"
+    },
+    {
+      "val_index": 4140,
+      "id": "<urn:uuid:8e10a668-8ce9-47ae-9105-904f366a6978>",
+      "url": "http://www.civicsolar.com/resource/central-inverters-or-microinverters",
+      "text_sha256": "877d706729033a6843ddf9c3a2e271bb4e30b3d1775d8ef75d24bb9ecec5c14b"
+    },
+    {
+      "val_index": 4149,
+      "id": "<urn:uuid:2b9b8b44-783e-4f81-aff8-031691a4bc82>",
+      "url": "http://www.nationsencyclopedia.com/Asia-and-Oceania/China-BANKING-AND-SECURITIES.html",
+      "text_sha256": "552f704a86e52fd7fb7e38e0e93a97cbaed17c625f648b633a1cae12aa5b8585"
+    },
+    {
+      "val_index": 4245,
+      "id": "<urn:uuid:26a05152-72bc-46b7-936c-26501d80252f>",
+      "url": "https://www.injurylawcolorado.com/legal-library/food-poisoning-causes.html",
+      "text_sha256": "a3ed24dd1dd2d875d72a661da45513afa40939898fe6c2c26dc0f4799a6dcc7b"
+    },
+    {
+      "val_index": 4426,
+      "id": "<urn:uuid:3365d830-ab84-4082-b901-34fd026df290>",
+      "url": "http://larryferlazzo.edublogs.org/2012/08/08/what-can-we-learn-about-education-from-the-worlds-tallest-tree/",
+      "text_sha256": "bb6999a50debae48fc6cf356779d1e84ef690c0d5c6d8c7a40aeafead8f7a6a9"
+    },
+    {
+      "val_index": 4562,
+      "id": "<urn:uuid:4d083f77-6cf1-4ca2-82db-c91eed9c2f4f>",
+      "url": "http://geardiary.com/2013/02/02/everything-you-need-to-know-about-esd-in-one-funny-video/",
+      "text_sha256": "07a35e00dff1bf2cf183de1418151948a7582473f6815222ae845dd452de84e9"
+    },
+    {
+      "val_index": 4701,
+      "id": "<urn:uuid:395322b2-c691-4043-8a4d-50549a17f553>",
+      "url": "https://en.panampost.com/panam-staff/2014/10/21/cost-of-canadas-policing-soars-even-amid-falling-crime/",
+      "text_sha256": "761f10d0ab63536a5eb256c678af6db96174ea85f2a178b902b2e26914e3ae87"
+    },
+    {
+      "val_index": 4717,
+      "id": "<urn:uuid:97d41369-e21c-4510-9bf0-d45c1905e427>",
+      "url": "http://www.temple.edu/tempress/titles/1305_reg_right.html",
+      "text_sha256": "1491013ccf6cfadb7aad28733ae93eac67de64222ed1746701a99cd0b2a72775"
+    },
+    {
+      "val_index": 4724,
+      "id": "<urn:uuid:743eb9f1-bc6b-4952-a8a2-55c3ab63ba00>",
+      "url": "https://bmshomewardbound.beverlyschools.org/2020/02/reminders-from-bms-nurses.html",
+      "text_sha256": "fadd94de14611b59182e30b3aca1b5d2c1c80c11249b56eac4ce484b686a9710"
+    },
+    {
+      "val_index": 5046,
+      "id": "<urn:uuid:ec60fa73-597c-4664-b532-b33a86513730>",
+      "url": "https://housetohouse.com/consider-the-eye/",
+      "text_sha256": "4c9fe81fa02da9224e600ed551cc0aaab67be6ea07abcc6b832cd07c1f85398f"
+    },
+    {
+      "val_index": 5121,
+      "id": "<urn:uuid:64faef28-f9ea-472a-bd85-785e613be78e>",
+      "url": "https://politheor.net/killer-cotton-fashions-parasitic-relationship-with-indian-farmers/",
+      "text_sha256": "c6d8e7897b259e83fb5b13359cc7babac4db7860e605043672b334ee156e2205"
+    },
+    {
+      "val_index": 5529,
+      "id": "<urn:uuid:aa0d3e4c-bbba-4c25-9be7-6ef03495564c>",
+      "url": "http://www.daviddarling.info/encyclopedia/L/lipofuscin.html",
+      "text_sha256": "feeea158e6dceb69b3804eaa221c37110bf0bf121d0a2387f50c2057b5ae807e"
+    },
+    {
+      "val_index": 5602,
+      "id": "<urn:uuid:23d22522-4b09-4d73-868f-b127d0eaef9b>",
+      "url": "http://now.humboldt.edu/news/hsu-students-join-national-real-food-challenge/",
+      "text_sha256": "e132f7bcc1cd5bd449fc638936975b7db8380220d26630aa6632ab9c65f1e932"
+    },
+    {
+      "val_index": 5610,
+      "id": "<urn:uuid:fdeab855-50c9-4256-9b02-d0ddcfd083ac>",
+      "url": "http://www.redorbit.com/news/science/1987263/egyptian_jackal_actually_wolf_family_member/",
+      "text_sha256": "7798d76c67296b411b0a7e5c740693289552d13f910c2e83d8442c35db183d5b"
+    },
+    {
+      "val_index": 5756,
+      "id": "<urn:uuid:41362518-ce1c-440c-bff2-8eff5b7675e1>",
+      "url": "https://santafe.edu/research/results/papers/7122-temporal-ordering-of-substitutions-in-rna-evo",
+      "text_sha256": "2c60f43c92ed4142acc05eb0cae9e5f6e238d8dd86ef779a2a98d0aa2d1ddd22"
+    },
+    {
+      "val_index": 6266,
+      "id": "<urn:uuid:6ec67655-fbe1-4d75-a052-395d18a46ab8>",
+      "url": "http://plantpedia.com.au/coriander-coriandrum-sativum/",
+      "text_sha256": "4012084820da342b1b7cb4876445f4807e7036c2122920e01e1972623cff5fc4"
+    },
+    {
+      "val_index": 6388,
+      "id": "<urn:uuid:e10246e7-68ac-483f-9704-12ac9aa41ab2>",
+      "url": "https://ayureveryday.com/vitamin-c-ascorbic-acid-benefits-sources/",
+      "text_sha256": "8c0755cf59987e8725bbbcc5975d9981876e5dca21eb121fbcc40e556bd919bf"
+    },
+    {
+      "val_index": 6482,
+      "id": "<urn:uuid:208d2d9a-e211-42f1-8a09-fa0a7614dac2>",
+      "url": "https://www.sadlersports.com/blog/tag/girls-soccer/",
+      "text_sha256": "4db53d13004407e585e66a95175a0df8cd6a4365b0743991676d840bcf1135b0"
+    },
+    {
+      "val_index": 6492,
+      "id": "<urn:uuid:a9d0f971-158b-4499-8497-4b9d212d844d>",
+      "url": "http://www.talkingfish.org/protecting-ocean-ecosystems/slinging-mud",
+      "text_sha256": "f4ddc56dd6237e1c44a61febbfe7f1bc8d47598dc64674e101fe4e48cdd6b063"
+    },
+    {
+      "val_index": 6566,
+      "id": "<urn:uuid:e2c62b02-aedd-4e27-bbf3-28f298bf054a>",
+      "url": "https://fishact.org/encyclopedia/european-pilchard/",
+      "text_sha256": "4b56fe45864ba1e06056d13b12dc5217916a675f1b08b6ea601e93a2ece428fe"
+    },
+    {
+      "val_index": 6587,
+      "id": "<urn:uuid:d428dd36-32b2-43c0-ab4e-7ecddb257bb2>",
+      "url": "https://blog.enotes.com/2016/10/10/math-brain-teasers-5-famous-paradoxes-that-will-make-you-think/",
+      "text_sha256": "e140b8c561bb1855d620c995cbfaeecca154bcfe8825e925fc1b50c435427530"
+    },
+    {
+      "val_index": 6630,
+      "id": "<urn:uuid:b96f2bcc-b5c7-4ca8-b33c-7c00f32b2190>",
+      "url": "https://www.yourceus.com/pages/psa8389-section-iv-graphic-assessments",
+      "text_sha256": "60c4294d4306cadc5029f0ed3a41fc7e04a3b3e7e3766c8647077356a35e9208"
+    },
+    {
+      "val_index": 6737,
+      "id": "<urn:uuid:89a5956c-d587-4000-81ee-e55359716c37>",
+      "url": "http://dnr.wi.gov/org/caer/ce/eek/veg/trees/whtcedar.htm",
+      "text_sha256": "7646de9b2a156c8726061b482530d0aad59d7239fa01366a40fe2879756f3c78"
+    },
+    {
+      "val_index": 6755,
+      "id": "<urn:uuid:3a32ef17-a718-4299-99dd-8e886c23bbea>",
+      "url": "https://venalsol.com/gb/content/what-is-led-diode",
+      "text_sha256": "91c92499f582da23980e67e540c8bbfee7fa2c0ccb439ed08ed85221a58ac89b"
+    },
+    {
+      "val_index": 6789,
+      "id": "<urn:uuid:34befc9b-04c4-471d-8b48-130874c47ee4>",
+      "url": "https://www.iso-gurgaon.com/important-to-know-about-certification/no-child-left-behind-certificate.html",
+      "text_sha256": "ca3a5135351067f84aeeb23de7ed9c4d886e056fe42bad28e8b4e8fd9aec93be"
+    },
+    {
+      "val_index": 7037,
+      "id": "<urn:uuid:3c931418-6567-4203-bd02-33c96d3f0bc4>",
+      "url": "http://www.nasa.gov/directorates/heo/reports/2004/other.html",
+      "text_sha256": "3cc5720e2520e3ec95455beda040796e1ab10ea70c893668bb64c6193c4f3444"
+    },
+    {
+      "val_index": 7222,
+      "id": "<urn:uuid:f0e67358-9ea3-4599-a644-a6868111984a>",
+      "url": "https://www.the-personal-injury-solicitors.co.uk/burn-injuries-claim/",
+      "text_sha256": "c1370b28c395ad603b4668eee603646e15ff853c6e8715b1cef41531cd90a8eb"
+    },
+    {
+      "val_index": 7368,
+      "id": "<urn:uuid:62bdf02a-e9b9-45a0-aaf6-74e25e73657f>",
+      "url": "https://www.abs.gov.au/ausstats/abs@.nsf/Lookup/5204.0Main%20Features1402007-08?opendocument&tabname=Summary&prodno=5204.0&issue=2007-08&num=&view=",
+      "text_sha256": "6217ce5ee7e7c08ebe750fddbef1718b77b4b2801d9a1b5bd1e0857b88ec2a5c"
+    },
+    {
+      "val_index": 7551,
+      "id": "<urn:uuid:fb5afe1a-84fa-41dd-878d-21486230f274>",
+      "url": "https://www.cordinc.com/blog/2010/10/exploring-the-classical-world.html",
+      "text_sha256": "701f70a98264fe97bcd32ea621868b3faaa26ac826669c1ee817b5372258047e"
+    },
+    {
+      "val_index": 7862,
+      "id": "<urn:uuid:032ca7a3-55a9-42d2-9f6c-892134a10b67>",
+      "url": "https://www.geneseo.edu/geology/prospective_students",
+      "text_sha256": "1d3c6cd06332c7ceabc60ccf311515d3e832f25efa07010fba70c598e023f5d5"
+    },
+    {
+      "val_index": 7871,
+      "id": "<urn:uuid:f08399e8-6169-4d65-84d8-21f58be8a3a0>",
+      "url": "https://www.nasa.gov/home/hqnews/2011/jan/HQ_11-008_Fermi_Thunderstorms.html",
+      "text_sha256": "391de13aa7cd691bebfa74643dbed07f750f3a76103edf82273c14a581f45954"
+    },
+    {
+      "val_index": 7977,
+      "id": "<urn:uuid:78c00ef3-2196-4422-a00a-f774a1ae577f>",
+      "url": "http://www.slate.com/blogs/bad_astronomy/2012/03/16/bafact_math_how_big_does_the_sun_look_from_pluto.html",
+      "text_sha256": "4e1f70a9249d999af9810b4ce75fe10c3f721124a2080df323ccbf1d7ec51c38"
+    },
+    {
+      "val_index": 8031,
+      "id": "<urn:uuid:65aee26a-4fa8-4673-a623-338441b0814a>",
+      "url": "http://www.audiologyonline.com/ask-the-experts/what-is-fenestration-338",
+      "text_sha256": "04b14cab8ea071201620b37fd62ec33dde38da34c8870bc579cba5c607f83965"
+    },
+    {
+      "val_index": 8199,
+      "id": "<urn:uuid:a1db3c24-89dc-4c3a-a77b-311001e6ebff>",
+      "url": "https://aho.org/health-topics/noncommunicable-diseases/",
+      "text_sha256": "7263b83ee5ed1381cea9ccca476c41a28369828088be2a736d32479a1ad3c21f"
+    },
+    {
+      "val_index": 8472,
+      "id": "<urn:uuid:805bf6be-ce6b-48c8-91d8-dd2ee8255dc0>",
+      "url": "https://www.reviewofreligions.org/15887/hazrat-mirza-ghulam-ahmadas-and-his-community/",
+      "text_sha256": "9363739cc10ceb7bcdf0f13e64190146df0be0a1d3141763014e5db9ad6e7ba0"
+    },
+    {
+      "val_index": 8477,
+      "id": "<urn:uuid:55f0f8fe-93ba-44ef-9c23-2ea1bc7950dd>",
+      "url": "http://www.180solarpower.com/rising-electric-rates.html",
+      "text_sha256": "66a6f73fc9126e3e98f02f06978573d5c04b57a47990185e38c524a9614a302e"
+    },
+    {
+      "val_index": 8483,
+      "id": "<urn:uuid:ae07901d-eb62-40b1-8f47-0ef57f7772f0>",
+      "url": "https://geospatial.com/resources/country-data/dominica/",
+      "text_sha256": "5a372a6f4c683eb8855280161b86a9c2bd9f05e7b33a6361318f30a2b451c18e"
+    },
+    {
+      "val_index": 8534,
+      "id": "<urn:uuid:8515eecc-64b2-4661-a721-b339b17660b7>",
+      "url": "http://region19.blogspot.com/2009_11_01_archive.html",
+      "text_sha256": "fc3a21d55fb1b2fde68ae657a5fa91238af173d7a85b03a70febbdd446f06ecf"
+    },
+    {
+      "val_index": 8535,
+      "id": "<urn:uuid:7a5a2e57-71bd-442e-9dab-03b50bd4f8fb>",
+      "url": "https://www.brighthub.com/environment/green-computing/articles/105279/",
+      "text_sha256": "4f769b0b04b3d4784cb69c05dda29c97d57eb27338970aec39bb1f178754fafc"
+    },
+    {
+      "val_index": 8689,
+      "id": "<urn:uuid:784f683b-dd38-49ae-9761-a7664cd75836>",
+      "url": "https://studentloansherpa.com/federal-student-loans-capitalized-interest/",
+      "text_sha256": "b8fdd269e8ea2b7297c0e4b07596cb7e8e29582b1f35d0b9b9c9daf0278e380f"
+    },
+    {
+      "val_index": 8804,
+      "id": "<urn:uuid:2df4aa54-3cb1-4ad4-818e-4a814d3b5dd2>",
+      "url": "https://learnwelsh.cymru/news/national-poetry-day-2018/",
+      "text_sha256": "bd07dd7d75bc568f1946e0422c717d0257d2c5c62e6346d7a452f0e1e2a1b215"
+    },
+    {
+      "val_index": 8916,
+      "id": "<urn:uuid:f17b06c6-eb78-4333-add1-49f7179b6825>",
+      "url": "https://www.srinobharammd.com/conditions/hip-instability/",
+      "text_sha256": "da3f17c66166e3d10eae50b45dbf13ac48f70d615eb4824382d0ecec351093f0"
+    },
+    {
+      "val_index": 8919,
+      "id": "<urn:uuid:248c91b0-4e2d-46fe-a5f7-0c3d5da141c9>",
+      "url": "http://www.villairlanda.it/es/domus-imperiale/",
+      "text_sha256": "e645d1b5d38e5b05b536373f85a59957372a36d8617442ad106d7a3faa00b6b8"
+    },
+    {
+      "val_index": 9191,
+      "id": "<urn:uuid:c6ca2f29-114f-4fec-9366-ddd691856e15>",
+      "url": "https://www.coloradodaily.com/2019/01/03/peace-train-inequality-is-a-matter-of-life-and-death/",
+      "text_sha256": "4fd94efa35cdee05b2a21638de7bf10d02b25a53f2d8b748e2b9e015ead01833"
+    },
+    {
+      "val_index": 9246,
+      "id": "<urn:uuid:6db3a79d-56a9-4f17-8f1e-51c0a26fdfb2>",
+      "url": "https://artistpowell.com/strontium-isotope-dating/",
+      "text_sha256": "890cf6f64d32cc38534edcbe25d4724e3dad978000949b3666f8129ab4988ac3"
+    },
+    {
+      "val_index": 9275,
+      "id": "<urn:uuid:eabf6eb1-b6ee-4392-a3b8-7d744e2f685b>",
+      "url": "https://www.belsky-weinberg-horowitz.com/what-is-ergonomics-and-how-can-it-improve-maryland-workplaces/",
+      "text_sha256": "7268e86e9694c291e85cc536064e98d12c698dc60342c6e5074ef221108a5f00"
+    },
+    {
+      "val_index": 9336,
+      "id": "<urn:uuid:4cd99252-9686-4f47-92b1-f94eed71df49>",
+      "url": "https://americanlibrariesmagazine.org/2014/11/24/a-home-to-the-homeless/",
+      "text_sha256": "6f051e8c202115cbb70ec4a29b260c1169cc24d90e87dcf5658dc4409adebfd6"
+    },
+    {
+      "val_index": 9402,
+      "id": "<urn:uuid:0d3b5a57-41cd-40cc-9811-9a298caae184>",
+      "url": "http://blogs.fsfe.org/ciaran/?p=59",
+      "text_sha256": "72ba4c4edd11ddb1426b19e9a30eaf243914eed2fd977b6b04f62d35e2364d79"
+    },
+    {
+      "val_index": 9472,
+      "id": "<urn:uuid:14bd2b3d-8fdd-4983-9976-c8ed6448712e>",
+      "url": "https://familygrowthlife.com/gardening-kids/",
+      "text_sha256": "629bb9ace679b76355e5c85bba2d1eb2ae807bdc9e772942307f109565d879b0"
+    },
+    {
+      "val_index": 9735,
+      "id": "<urn:uuid:8c1f727b-f277-4f52-b030-b506edb2057f>",
+      "url": "http://egrc.net/articles/Rock/Exodus/BrideGroomOfBlood.html",
+      "text_sha256": "868b18fa8234e7a956fd4df54f3cb84128f1ab7148c81f205c1bdfb2266aa2aa"
+    },
+    {
+      "val_index": 9795,
+      "id": "<urn:uuid:a8e5d906-c77b-4b85-9b7a-6d378dcaabe9>",
+      "url": "http://www.caringnews.com/pub.59/issue.1083/article.4467/",
+      "text_sha256": "5b27a406ea62d05facfd15ac01c7404cc2aad87577929b89f0288fd0035b67e7"
+    },
+    {
+      "val_index": 9870,
+      "id": "<urn:uuid:fab95279-2bfc-458e-8346-bf89cb534333>",
+      "url": "http://www.rebeccahousel.com/blog/march-madness1",
+      "text_sha256": "24dee06b10b6848c7ca35ad2fb1034113109c4fad1bf4b3d6590484603f13ffe"
+    },
+    {
+      "val_index": 10369,
+      "id": "<urn:uuid:cce65bd8-cc06-4e1f-b813-abbeccf2cde5>",
+      "url": "http://mythologywithcrampton-crampton.blogspot.com/2012/10/monday-october-29th-2012.html",
+      "text_sha256": "d8e1da9a6a9a8efcc22ee41da2d999abe1e8eb0485996999a35612a6a3bb2837"
+    },
+    {
+      "val_index": 10376,
+      "id": "<urn:uuid:cb61af6c-0288-4b5c-b14f-5b093dd33439>",
+      "url": "http://www.pbs.org/weta/thewest/people/i_r/reno.htm",
+      "text_sha256": "2c00d55149a32122ef023da15d9cd7c8006b9fb84ad85c1c31fc771f80b24e25"
+    }
+  ]
+}

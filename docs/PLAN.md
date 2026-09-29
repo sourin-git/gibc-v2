@@ -245,30 +245,77 @@ passed. Its metrics are copied to `results/smoke/train_smoke_metrics.jsonl`.
   - Activation checkpointing was not needed: memory isn't constrained and throughput has flattened.
 - **Sustained** 120 s at bf16, micro-batch 8, accumulation 8: 17,823 tokens/s mean, every 20 s
   window within 17,814–17,837. The GPU went 59 → 71 °C, SM clock 1,755 → 1,747 MHz, ~50 W.
-- Hardware config for production: bf16, micro-batch 8 × 512 × accumulation 8 = **32,768 tokens/update**.
-- **Recommended** (pending approval): 1.0B training tokens → `max_steps` 30,518. That is an
-  ESTIMATE of 15.6 h raw and 18.7 h planned at ×1.2 overhead.
+- Hardware config proposed in Stage 4: 8 × 512 × accumulation 8 = 32,768 tokens/update.
+  **Superseded in Stage 5** by the locked 8 × 512 × **4** = 16,384 (max_steps 61,036).
+- **Recommended** (approved in Stage 5): 1.0B training tokens. At the Stage 5 corrected rate,
+  that is an ESTIMATE of 15.7 h raw.
 - Written into `configs/train/production.json`. It stays `"placeholder": true` (refused)
   until LR/warmup are fixed by **one** short optimization sanity experiment, the token target
   is approved, and the production tokens exist.
 - Before production: implement the shuffled one-pass window sampler (below) and milestone
   checkpoints.
 
-## Stage 5: Production data acquisition ☐
+## Stage 5: Production corpus, sampler, integrity, LR sanity ✅
 
-- Continue from the pilot (same dataset, config and revision; the pilot documents are part of
-  the corpus) until **our-tokenizer** training tokens reach D plus a modest reserve (10%),
-  plus the held-out validation portion. Nothing beyond that is downloaded. For the recommended
-  D = 1.0B, that means **≥ 1.1B unique train tokens** (≈ 5.0 GB of text at 4.52 bytes/token),
-  and a ~1% hash validation split (≈ 11M tokens) of which a fixed 64 × 8 × 512 = 262,144-token
-  subset is evaluated.
-- Same Wikipedia-source exclusion and manifest fields as Stage 1.
-- **Sampler (recommended change before production):** replace random-with-replacement windows
-  with a seeded permutation of non-overlapping windows (window i = tokens[512·i : 512·i + 513],
-  so every token is predicted exactly once per pass). The position comes from the global
-  microstep, so resume is exact. With replacement at D ≈ corpus size, about e^-1 ≈ 37% of
-  windows would never be seen and many others seen twice or more.
-- **Check:** the manifest's our-tokenizer token count is ≥ D × (1 + reserve).
+- **Benchmark timing fix:** the in-update sync happens before the optimizer step. Timing now
+  brackets with `torch.cuda.synchronize()` (whole interval + per update). Only the locked shape
+  is rerun: `results/benchmark/stage5_corrected_timing.jsonl`.
+- **Token-file integrity:** a streaming SHA-256 (`gibc.data.verify_token_files`) runs once at
+  every training-process start and resume, before the corpus is used. A mismatch raises.
+- **Acquisition continuation** (`gibc/production_data.py`, `scripts/acquire_production.py`,
+  `configs/data/production.json`):
+  - The cursor is derived from the pilot manifest and verified against the real parquet layout
+    (round-robin order, full row groups, row sum): position 21 = `007_00000.parquet`, row group 1,
+    next zero-based row **148** (rows 0–147 consumed).
+  - Same revision, file list, round-robin policy, filters, salt and tokenizer.
+  - Chunks of ≤ 40 row groups are written as `.partial` and renamed only once `chunk.json` is
+    complete. A restart re-verifies completed chunks and redoes partial ones.
+  - Stops at the document where pilot + continuation train tokens (our tokenizer, incl. EOT) first
+    reach 1.1B.
+  - Disk check: refuses if < 5 GiB would remain.
+- **Build** (`scripts/build_production_tokens.py`):
+  - Re-verifies every chunk and pilot hash.
+  - Exact-text SHA-256 audit: counts duplicates and removes validation copies that also occur in
+    train (recorded in `results/data/production_duplicate_audit.json`). This is not a
+    decontamination claim.
+  - Tokenizes with the frozen tokenizer into read-only `tokens/production/{train,val}.bin`, with
+    meta copied to `results/data/`.
+- **Sampler `shuffled_windows_v1`** (`gibc.data.ShuffledWindowSampler`):
+  - W = ⌊(N−1)/512⌋ windows, window i = tokens[512i : 512i+513], so each target is predicted
+    exactly once. Position 0 is context only; the final (N−1) − 512W targets are dropped.
+  - Order: `PCG64(seed).permutation(W)`.
+  - The checkpoint stores version, seed, W, the order hash and the cursor, and restore verifies
+    them. Exhaustion raises; training checks there are enough windows before step 1.
+- **Checkpoints:** rolling `step_*` files (keep N), plus protected `milestone_step_*` files (at
+  `milestone_fractions`) and `final_step_*`. `run_until_step` stops early without shortening
+  the LR schedule.
+- **LR sanity** (exactly two runs, 6e-4 and 1e-3; `configs/train/lr_*.json`; decision by
+  `scripts/lr_decision.py` using the predeclared rule) → `results/lr/lr_decision.json`.
+
+### Stage 5 results (measured)
+
+- **Corrected throughput** (bf16, 8 × 512 × 4): 17,685 tokens/s over a synced 60-update
+  interval; per-update synced 17,679 tokens/s. Stage 4's figure was 17,730.
+- **Corpus:**
+  - Pilot + 27 continuation chunks; 1,043,530 continuation documents read, 9,661 excluded as
+    Wikipedia-source.
+  - Exact-text audit: 4,821 duplicate train documents (kept); 87 validation documents removed as
+    train overlap.
+  - Train: 1,044,378 documents, **1,100,000,632** tokens, sha256 `efb63e4f…`.
+  - Val: 10,356 documents, **10,753,165** tokens, sha256 `f4340757…`.
+- **Sampler:** W = 2,148,438 windows; production needs 1,953,152; 375 tail targets dropped.
+- **LR runs** (both passed the rule):
+
+  | peak LR | val@0 | @256 | @512 | @768 | @1024 |
+  |---|---|---|---|---|---|
+  | 6e-4 | 10.1761 | 6.0780 | 5.4730 | 5.1535 | 4.9451 |
+  | 1e-3 | 10.1761 | 5.9812 | 5.3949 | 5.0932 | 4.8853 |
+
+  Late-mean margin 0.0601 ≥ 0.02 and a better val@1024, so **1e-3 is selected**. The 6e-4 run
+  was stopped at step 512 and resumed in a fresh process. Its consumed-window hash at step 1024
+  equals the uninterrupted 1e-3 run's.
+- `configs/train/production.json` holds the proposal. It is still `placeholder` /
+  `TRAINING_NOT_STARTED` until final preflight approval (`scripts/verify_production_data.py` passes).
 
 ## Stage 6: Evaluation pipeline, validated before the main run ☐
 

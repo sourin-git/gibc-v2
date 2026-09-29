@@ -7,9 +7,13 @@ import torch
 
 from gibc.data import (
     Batcher,
+    SamplerExhausted,
+    ShuffledWindowSampler,
+    file_sha256_streaming,
     fixed_validation_batches,
     open_token_file,
     prepare_token_splits,
+    verify_token_files,
     write_token_file,
 )
 from gibc.tokenizer import EOT_TOKEN, decode, load_tokenizer
@@ -111,6 +115,113 @@ def test_batcher_covers_last_valid_window():
     assert torch.equal(y[:, -1], torch.full((8,), int(tokens[-1])))
     with pytest.raises(ValueError):
         Batcher(tokens, seq_len=20, batch_size=1, seed=0)
+
+
+# Shuffled one-pass window sampler -------------------------------------------------------------
+
+def numbered(n: int) -> np.ndarray:
+    return np.arange(n, dtype=np.uint16)  # token value == position, so targets identify themselves
+
+
+def drain(sampler) -> list[tuple[torch.Tensor, torch.Tensor]]:
+    out = []
+    while sampler.remaining_windows >= sampler.batch_size:
+        out.append(sampler.next_batch())
+    return out
+
+
+@pytest.mark.parametrize("n", [17, 33, 40, 49])
+def test_windows_cover_every_target_once_and_drop_tail(n):
+    seq = 8
+    s = ShuffledWindowSampler(numbered(n), seq_len=seq, batch_size=1, seed=0)
+    assert s.window_count == (n - 1) // seq
+    assert s.dropped_targets == (n - 1) - s.window_count * seq
+    batches = drain(s)
+    targets = sorted(int(t) for _, y in batches for t in y.flatten())
+    assert targets == list(range(1, s.window_count * seq + 1))  # no duplicates, no skipped full-window target
+    for x, y in batches:
+        start = int(x[0, 0])
+        assert start % seq == 0  # window i starts at seq*i
+        assert torch.equal(x[0], torch.arange(start, start + seq)) and torch.equal(y[0], torch.arange(start + 1, start + seq + 1))
+    # Neighbouring windows share exactly one token: the last target of i is the first context token of i+1.
+    by_start = {int(x[0, 0]): (x[0], y[0]) for x, y in batches}
+    starts = sorted(by_start)
+    for a, b in zip(starts, starts[1:]):
+        (xa, ya), (xb, yb) = by_start[a], by_start[b]
+        assert b == a + seq and int(xb[0]) == int(ya[-1])
+        assert set(torch.cat([xa, ya]).tolist()) & set(torch.cat([xb, yb]).tolist()) == {b}
+    assert 0 not in targets  # position zero is context only
+
+
+def test_boundary_lengths():
+    with pytest.raises(ValueError):
+        ShuffledWindowSampler(numbered(8), seq_len=8, batch_size=1, seed=0)  # 7 targets < one window
+    s = ShuffledWindowSampler(numbered(9), seq_len=8, batch_size=1, seed=0)
+    assert s.window_count == 1 and s.dropped_targets == 0
+
+
+def test_shuffle_is_deterministic_and_seed_dependent():
+    a = ShuffledWindowSampler(numbered(4000), 8, 4, seed=3)
+    b = ShuffledWindowSampler(numbered(4000), 8, 4, seed=3)
+    c = ShuffledWindowSampler(numbered(4000), 8, 4, seed=4)
+    assert a.order_fingerprint() == b.order_fingerprint() != c.order_fingerprint()
+    assert all(torch.equal(p[0], q[0]) for p, q in zip(drain(a), drain(b)))
+    assert sorted(a.order.tolist()) == list(range(a.window_count))  # a permutation: without replacement
+
+
+def test_exhaustion_raises_without_wraparound():
+    s = ShuffledWindowSampler(numbered(8 * 10 + 1), 8, 4, seed=0)  # 10 windows
+    s.next_batch(), s.next_batch()
+    assert s.remaining_windows == 2
+    with pytest.raises(SamplerExhausted):
+        s.next_batch()
+    assert s.cursor == 8  # no partial consumption on failure
+
+
+def test_sampler_resume_continues_exactly():
+    tokens = numbered(8 * 100 + 5)
+    full = ShuffledWindowSampler(tokens, 8, 3, seed=9)
+    expected = [full.next_batch() for _ in range(20)]
+    first = ShuffledWindowSampler(tokens, 8, 3, seed=9)
+    got = [first.next_batch() for _ in range(7)]
+    state = first.state_dict()
+    resumed = ShuffledWindowSampler(tokens, 8, 3, seed=9)
+    resumed.load_state_dict(state)
+    got += [resumed.next_batch() for _ in range(13)]
+    assert all(torch.equal(a[0], b[0]) and torch.equal(a[1], b[1]) for a, b in zip(got, expected))
+    assert resumed.consumed_fingerprint() == full.consumed_fingerprint()
+
+
+@pytest.mark.parametrize("change", [{"seed": 10}, {"seq_len": 4}, {"batch_size": 2}])
+def test_sampler_restore_rejects_changed_immutables(change):
+    tokens = numbered(8 * 100 + 5)
+    state = ShuffledWindowSampler(tokens, 8, 3, seed=9).state_dict()
+    args = {"seq_len": 8, "batch_size": 3, "seed": 9, **change}
+    with pytest.raises(ValueError, match="differs"):
+        ShuffledWindowSampler(tokens, **args).load_state_dict(state)
+    with pytest.raises(ValueError, match="window_count"):
+        ShuffledWindowSampler(numbered(8 * 101 + 5), 8, 3, seed=9).load_state_dict(state)
+
+
+# Token-file hash verification ----------------------------------------------------------------
+
+def test_streaming_hash_and_corruption_detected(tmp_path):
+    import hashlib
+
+    arr = np.arange(100_000, dtype=np.uint16) % 24_000
+    for split in ("train", "val"):
+        arr.tofile(tmp_path / f"{split}.bin")
+    digest = hashlib.sha256(arr.tobytes()).hexdigest()
+    assert file_sha256_streaming(tmp_path / "train.bin", chunk_bytes=4096) == digest
+    meta = {"splits": {"train": {"sha256": digest}, "val": {"sha256": digest}}}
+    verify_token_files(tmp_path, meta)
+    with (tmp_path / "val.bin").open("r+b") as fh:  # flip one byte in the middle
+        fh.seek(12_345)
+        byte = fh.read(1)
+        fh.seek(12_345)
+        fh.write(bytes([byte[0] ^ 0xFF]))
+    with pytest.raises(ValueError, match="val.bin: sha256"):
+        verify_token_files(tmp_path, meta)
 
 
 def test_validation_batches_fixed():
