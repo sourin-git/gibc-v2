@@ -1,0 +1,1170 @@
+{
+  "warning": "SMOKE TEST ONLY - NOT OFFICIAL RESULTS. Limited examples on a 1,024-step LR-sanity checkpoint; scores are not model quality and must not be reported, tuned on, or used for decisions.",
+  "task": "piqa",
+  "seconds": 28.284350599999016,
+  "examples": 20,
+  "requests_crosschecked": 40,
+  "max_abs_loglik_diff_vs_source_model": 2.1189451217651367e-05,
+  "results_NOT_OFFICIAL": {
+    "name": "piqa",
+    "alias": "piqa",
+    "sample_len": 20,
+    "acc,none": 0.6,
+    "acc_stderr,none": "N/A",
+    "acc_norm,none": 0.65,
+    "acc_norm_stderr,none": "N/A"
+  },
+  "n_samples": {
+    "original": 1838,
+    "effective": 20
+  },
+  "versions": 1.0,
+  "config": {
+    "task": "piqa",
+    "dataset_path": "baber/piqa",
+    "training_split": "train",
+    "validation_split": "validation",
+    "doc_to_text": "Question: {{goal}}\nAnswer:",
+    "doc_to_target": "label",
+    "unsafe_code": false,
+    "doc_to_choice": "{{[sol1, sol2]}}",
+    "description": "",
+    "target_delimiter": " ",
+    "fewshot_delimiter": "\n\n",
+    "fewshot_config": {
+      "sampler": "default",
+      "split": null,
+      "process_docs": null,
+      "fewshot_indices": null,
+      "samples": null,
+      "doc_to_text": "Question: {{goal}}\nAnswer:",
+      "doc_to_choice": "{{[sol1, sol2]}}",
+      "doc_to_target": "label",
+      "gen_prefix": null,
+      "fewshot_delimiter": "\n\n",
+      "target_delimiter": " "
+    },
+    "num_fewshot": 0,
+    "metric_list": [
+      {
+        "metric": "acc",
+        "aggregation": "mean",
+        "higher_is_better": true
+      },
+      {
+        "metric": "acc_norm",
+        "aggregation": "mean",
+        "higher_is_better": true
+      }
+    ],
+    "output_type": "multiple_choice",
+    "repeats": 1,
+    "should_decontaminate": true,
+    "doc_to_decontamination_query": "goal",
+    "metadata": {
+      "version": 1.0,
+      "config_source": "C:\\gibc-work\\venv\\Lib\\site-packages\\lm_eval\\tasks\\piqa\\piqa.yaml"
+    }
+  },
+  "lm_eval_config": {
+    "model": "C:\\gibc-work\\exports\\lr_1e-3_step_0001024",
+    "model_args": null,
+    "model_num_parameters": 42968576,
+    "model_dtype": "torch.float32",
+    "model_revision": "main",
+    "model_sha": "",
+    "batch_size": null,
+    "batch_sizes": [],
+    "device": null,
+    "use_cache": null,
+    "limit": 20,
+    "bootstrap_iters": 0,
+    "gen_kwargs": null,
+    "random_seed": 0,
+    "numpy_seed": 1234,
+    "torch_seed": 1234,
+    "fewshot_seed": 1234
+  },
+  "samples": [
+    {
+      "doc_id": 0,
+      "doc": {
+        "goal": "How do I ready a guinea pig cage for it's new occupants?",
+        "sol1": "Provide the guinea pig with a cage full of a few inches of bedding made of ripped paper strips, you will also need to supply it with a water bottle and a food dish.",
+        "sol2": "Provide the guinea pig with a cage full of a few inches of bedding made of ripped jeans material, you will also need to supply it with a water bottle and a food dish.",
+        "label": 0
+      },
+      "target": 0,
+      "arguments": [
+        [
+          "Question: How do I ready a guinea pig cage for it's new occupants?\nAnswer:",
+          " Provide the guinea pig with a cage full of a few inches of bedding made of ripped paper strips, you will also need to supply it with a water bottle and a food dish."
+        ],
+        [
+          "Question: How do I ready a guinea pig cage for it's new occupants?\nAnswer:",
+          " Provide the guinea pig with a cage full of a few inches of bedding made of ripped jeans material, you will also need to supply it with a water bottle and a food dish."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -164.13282775878906,
+            false
+          ]
+        ],
+        [
+          [
+            -174.53445434570312,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -164.13282775878906,
+          false
+        ],
+        [
+          -174.53445434570312,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "ab177c9b9ad0fd48149e873e3d4804752991338a90c2072f52b975f86a7ca78e",
+      "prompt_hash": "14e2e90bdc64add59c76a88c2efb217a132b459947f9f2e3bbe8580b71beb533",
+      "target_hash": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "acc": 1.0,
+      "acc_norm": 1.0
+    },
+    {
+      "doc_id": 1,
+      "doc": {
+        "goal": "dresser",
+        "sol1": "replace drawer with bobby pin ",
+        "sol2": "finish, woodgrain with  bobby pin ",
+        "label": 1
+      },
+      "target": 1,
+      "arguments": [
+        [
+          "Question: dresser\nAnswer:",
+          " replace drawer with bobby pin "
+        ],
+        [
+          "Question: dresser\nAnswer:",
+          " finish, woodgrain with  bobby pin "
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -58.565338134765625,
+            false
+          ]
+        ],
+        [
+          [
+            -82.80723571777344,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -58.565338134765625,
+          false
+        ],
+        [
+          -82.80723571777344,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "efca48ba31552995499f4b6dd5d2a0cf39296941ffad6e951b7840b6a3b01795",
+      "prompt_hash": "83ed1685df44e1de246dd58e93f1a55805949f19f2ad435bcaa59038262f877c",
+      "target_hash": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "acc": 0.0,
+      "acc_norm": 0.0
+    },
+    {
+      "doc_id": 2,
+      "doc": {
+        "goal": "To fight Ivan Drago in Rocky for sega master system.",
+        "sol1": "Drago isn't in this game because it was released before Rocky IV.",
+        "sol2": "You have to defeat Apollo Creed and Clubber Lang first.",
+        "label": 1
+      },
+      "target": 1,
+      "arguments": [
+        [
+          "Question: To fight Ivan Drago in Rocky for sega master system.\nAnswer:",
+          " Drago isn't in this game because it was released before Rocky IV."
+        ],
+        [
+          "Question: To fight Ivan Drago in Rocky for sega master system.\nAnswer:",
+          " You have to defeat Apollo Creed and Clubber Lang first."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -90.42453002929688,
+            false
+          ]
+        ],
+        [
+          [
+            -92.05940246582031,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -90.42453002929688,
+          false
+        ],
+        [
+          -92.05940246582031,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "4abd7fecc2810cf1a912698be93697ef8d0930074475a6f07cf541e934cda3aa",
+      "prompt_hash": "31c59e4fa20c69ae99d6dd53675910c792b3486675e5a5ffac293569819fa6ca",
+      "target_hash": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "acc": 0.0,
+      "acc_norm": 0.0
+    },
+    {
+      "doc_id": 3,
+      "doc": {
+        "goal": "Make outdoor pillow.",
+        "sol1": "Blow into tin can and tie with rubber band.",
+        "sol2": "Blow into trash bag and tie with rubber band.",
+        "label": 1
+      },
+      "target": 1,
+      "arguments": [
+        [
+          "Question: Make outdoor pillow.\nAnswer:",
+          " Blow into tin can and tie with rubber band."
+        ],
+        [
+          "Question: Make outdoor pillow.\nAnswer:",
+          " Blow into trash bag and tie with rubber band."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -73.4858169555664,
+            false
+          ]
+        ],
+        [
+          [
+            -64.14965057373047,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -73.4858169555664,
+          false
+        ],
+        [
+          -64.14965057373047,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "96feb64b66ada8ee9b5e62a227494c70d7b18a5f1298cff287aad79a0fffbc91",
+      "prompt_hash": "479df7fd3298379c1801efc235650d355dc67e78a8d94485d432ba9d56b8dc97",
+      "target_hash": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "acc": 1.0,
+      "acc_norm": 1.0
+    },
+    {
+      "doc_id": 4,
+      "doc": {
+        "goal": "ice box",
+        "sol1": "will turn into a cooler if you add water to it",
+        "sol2": "will turn into a cooler if you add soda to it",
+        "label": 0
+      },
+      "target": 0,
+      "arguments": [
+        [
+          "Question: ice box\nAnswer:",
+          " will turn into a cooler if you add water to it"
+        ],
+        [
+          "Question: ice box\nAnswer:",
+          " will turn into a cooler if you add soda to it"
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -57.24818420410156,
+            false
+          ]
+        ],
+        [
+          [
+            -64.7258529663086,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -57.24818420410156,
+          false
+        ],
+        [
+          -64.7258529663086,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "8a5898846c3d77b7f1ef86092792adf8f142407667766e215cd9d318a494638b",
+      "prompt_hash": "31b0de661145252c0dfc6bcec8a9e315e763b787a17f1c44665ae6bea0317a8a",
+      "target_hash": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "acc": 1.0,
+      "acc_norm": 1.0
+    },
+    {
+      "doc_id": 5,
+      "doc": {
+        "goal": "Remove soap scum from shower door.",
+        "sol1": "Rub hard with bed sheets, then rinse.",
+        "sol2": "Rub hard with dryer sheets, then rinse.",
+        "label": 1
+      },
+      "target": 1,
+      "arguments": [
+        [
+          "Question: Remove soap scum from shower door.\nAnswer:",
+          " Rub hard with bed sheets, then rinse."
+        ],
+        [
+          "Question: Remove soap scum from shower door.\nAnswer:",
+          " Rub hard with dryer sheets, then rinse."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -61.54874038696289,
+            false
+          ]
+        ],
+        [
+          [
+            -64.77964782714844,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -61.54874038696289,
+          false
+        ],
+        [
+          -64.77964782714844,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "4ce36c3721b0c07f932fa8a9b410e2bfec5eaf62fb6285638ea53f6808e20fe7",
+      "prompt_hash": "3ce2c9aeb4ab9be042309c72cb5c48e3bdd02373f0c19e397e9ba86256f232b9",
+      "target_hash": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "acc": 0.0,
+      "acc_norm": 1.0
+    },
+    {
+      "doc_id": 6,
+      "doc": {
+        "goal": "Recycle a spray bottle for a new cleaner.",
+        "sol1": "Open the top of the empty spray bottle and check for damage. Rinse the bottle then fill halfway with warm water. Replace the spray nozzle and pump a few times to clear the hose. Empty sparrow bottle and allow to dry before using with a new cleaner.",
+        "sol2": "Open the top of the empty spray bottle and check for damage. Rinse the bottle then fill halfway with warm water. Replace the spray nozzle and pump a few times to clear the hose. Empty spray bottle and allow to dry before using with a new cleaner.",
+        "label": 1
+      },
+      "target": 1,
+      "arguments": [
+        [
+          "Question: Recycle a spray bottle for a new cleaner.\nAnswer:",
+          " Open the top of the empty spray bottle and check for damage. Rinse the bottle then fill halfway with warm water. Replace the spray nozzle and pump a few times to clear the hose. Empty sparrow bottle and allow to dry before using with a new cleaner."
+        ],
+        [
+          "Question: Recycle a spray bottle for a new cleaner.\nAnswer:",
+          " Open the top of the empty spray bottle and check for damage. Rinse the bottle then fill halfway with warm water. Replace the spray nozzle and pump a few times to clear the hose. Empty spray bottle and allow to dry before using with a new cleaner."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -284.2597351074219,
+            false
+          ]
+        ],
+        [
+          [
+            -270.37835693359375,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -284.2597351074219,
+          false
+        ],
+        [
+          -270.37835693359375,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "8b4a4f7dfb6035e649303df3237b70eee56386cb6a9a46fed3558bcd938aa1e6",
+      "prompt_hash": "36ff22ee2423015cf2aaa5e657a19b53563bf6dfc6fd284d548655c81539c312",
+      "target_hash": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "acc": 1.0,
+      "acc_norm": 1.0
+    },
+    {
+      "doc_id": 7,
+      "doc": {
+        "goal": "How do you attach toilet paper to a glass jar?",
+        "sol1": "Press a piece of double-sided tape to the glass jar and then press the toilet paper onto the tape.",
+        "sol2": "Spread mayonnaise all over the jar with your palms and then roll the jar in toilet paper.",
+        "label": 0
+      },
+      "target": 0,
+      "arguments": [
+        [
+          "Question: How do you attach toilet paper to a glass jar?\nAnswer:",
+          " Press a piece of double-sided tape to the glass jar and then press the toilet paper onto the tape."
+        ],
+        [
+          "Question: How do you attach toilet paper to a glass jar?\nAnswer:",
+          " Spread mayonnaise all over the jar with your palms and then roll the jar in toilet paper."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -107.44169616699219,
+            false
+          ]
+        ],
+        [
+          [
+            -122.55109405517578,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -107.44169616699219,
+          false
+        ],
+        [
+          -122.55109405517578,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "90a1a24dcba318e7ae192de2710f4c245600425e7e4009ab5d192153667bc5e4",
+      "prompt_hash": "b8929987a61e8e5b607375fc7466bd37c1a5134bb7cf30fdd3cf9f6c3e5d6927",
+      "target_hash": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "acc": 1.0,
+      "acc_norm": 1.0
+    },
+    {
+      "doc_id": 8,
+      "doc": {
+        "goal": "How to make tissue paper window decorations?",
+        "sol1": "Find tissue paper and fold it in half. Take scissors and cut out pieces of the paper in the middle. When you are done tape it to your window.",
+        "sol2": "Find tissue paper and fold it in half. Take scissors and tear out pieces of the paper in the middle. When you are done tape it to your window.",
+        "label": 0
+      },
+      "target": 0,
+      "arguments": [
+        [
+          "Question: How to make tissue paper window decorations?\nAnswer:",
+          " Find tissue paper and fold it in half. Take scissors and cut out pieces of the paper in the middle. When you are done tape it to your window."
+        ],
+        [
+          "Question: How to make tissue paper window decorations?\nAnswer:",
+          " Find tissue paper and fold it in half. Take scissors and tear out pieces of the paper in the middle. When you are done tape it to your window."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -160.4551239013672,
+            false
+          ]
+        ],
+        [
+          [
+            -164.16700744628906,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -160.4551239013672,
+          false
+        ],
+        [
+          -164.16700744628906,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "f3d2ad257b6663c4cd75fa70d41f8dc5a335ee1c9dfd8d2ca8d011f05c8bc3d5",
+      "prompt_hash": "30d9543ecd27ee1ee3e254e9a0b72e9bde0f15656fefea7e0d98bf9c75df21ad",
+      "target_hash": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "acc": 1.0,
+      "acc_norm": 1.0
+    },
+    {
+      "doc_id": 9,
+      "doc": {
+        "goal": "Neatly wrap up an extension cord.",
+        "sol1": "Wrap the cord around your hand and elbow.",
+        "sol2": "Wrap the cord around your hand and knee.",
+        "label": 0
+      },
+      "target": 0,
+      "arguments": [
+        [
+          "Question: Neatly wrap up an extension cord.\nAnswer:",
+          " Wrap the cord around your hand and elbow."
+        ],
+        [
+          "Question: Neatly wrap up an extension cord.\nAnswer:",
+          " Wrap the cord around your hand and knee."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -48.21278762817383,
+            false
+          ]
+        ],
+        [
+          [
+            -49.057098388671875,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -48.21278762817383,
+          false
+        ],
+        [
+          -49.057098388671875,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "0c9eca023fb1e56eee4666f8d1f88b040a27fe1354c6a54fbcd1eab5769a3432",
+      "prompt_hash": "66965c79359ecf4bda282a567aa3e3c81b856dff695ffc4ba2a18d94ac7bc918",
+      "target_hash": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "acc": 1.0,
+      "acc_norm": 1.0
+    },
+    {
+      "doc_id": 10,
+      "doc": {
+        "goal": "Extend life of flowers in vase.",
+        "sol1": "Add small amount of coffee in vase.",
+        "sol2": "Add small amount of 7UP in vase.",
+        "label": 1
+      },
+      "target": 1,
+      "arguments": [
+        [
+          "Question: Extend life of flowers in vase.\nAnswer:",
+          " Add small amount of coffee in vase."
+        ],
+        [
+          "Question: Extend life of flowers in vase.\nAnswer:",
+          " Add small amount of 7UP in vase."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -41.22534942626953,
+            false
+          ]
+        ],
+        [
+          [
+            -58.95378875732422,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -41.22534942626953,
+          false
+        ],
+        [
+          -58.95378875732422,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "c06efded47018519082e4d3554e9fb9f78a9f016971d64b62d7d4bc1d1fc4529",
+      "prompt_hash": "03d172f4ba2335b45837defb17f8e2a399fc8be5c2ba6fb7073909aa24799cf6",
+      "target_hash": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "acc": 0.0,
+      "acc_norm": 0.0
+    },
+    {
+      "doc_id": 11,
+      "doc": {
+        "goal": "how do you put eyelashes on?",
+        "sol1": "glue them on with mascara.",
+        "sol2": "put eyelash glue on the fake eyelashes and then let it get tacky. then, place it on top of your actual eyelashes and let it dry on.",
+        "label": 1
+      },
+      "target": 1,
+      "arguments": [
+        [
+          "Question: how do you put eyelashes on?\nAnswer:",
+          " glue them on with mascara."
+        ],
+        [
+          "Question: how do you put eyelashes on?\nAnswer:",
+          " put eyelash glue on the fake eyelashes and then let it get tacky. then, place it on top of your actual eyelashes and let it dry on."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -54.998870849609375,
+            false
+          ]
+        ],
+        [
+          [
+            -183.62237548828125,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -54.998870849609375,
+          false
+        ],
+        [
+          -183.62237548828125,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "46fdb2eaea91dbf9626ba0771a221b0f8f46bac75055fc75b8e066b9b2bc87bc",
+      "prompt_hash": "c6cc3ead1c074c78e55d1233df501dc653c391c1dafd0e8cd445f51ab72094dd",
+      "target_hash": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "acc": 0.0,
+      "acc_norm": 1.0
+    },
+    {
+      "doc_id": 12,
+      "doc": {
+        "goal": "Find spices easily in the kitchen.",
+        "sol1": "Arrange spices from hot to mild in the kitchen in order to find them by taste.",
+        "sol2": "Arrange your spices alphabetically to make finding them easy.",
+        "label": 1
+      },
+      "target": 1,
+      "arguments": [
+        [
+          "Question: Find spices easily in the kitchen.\nAnswer:",
+          " Arrange spices from hot to mild in the kitchen in order to find them by taste."
+        ],
+        [
+          "Question: Find spices easily in the kitchen.\nAnswer:",
+          " Arrange your spices alphabetically to make finding them easy."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -95.1576919555664,
+            false
+          ]
+        ],
+        [
+          [
+            -71.46914672851562,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -95.1576919555664,
+          false
+        ],
+        [
+          -71.46914672851562,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "edeb8b5ed13fe9d8fab88c71533c7d06a240e8b43a3a9e6bdb35056a4ff97dab",
+      "prompt_hash": "aea7b6f056018f34b7b44f0b6e1f23c250b6a13ff1632edd84676ba04ce6fb87",
+      "target_hash": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "acc": 1.0,
+      "acc_norm": 1.0
+    },
+    {
+      "doc_id": 13,
+      "doc": {
+        "goal": "peeler",
+        "sol1": "can be used as a decoration on a television ",
+        "sol2": "can be used as a decoration on a sock ",
+        "label": 0
+      },
+      "target": 0,
+      "arguments": [
+        [
+          "Question: peeler\nAnswer:",
+          " can be used as a decoration on a television "
+        ],
+        [
+          "Question: peeler\nAnswer:",
+          " can be used as a decoration on a sock "
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -56.45842742919922,
+            false
+          ]
+        ],
+        [
+          [
+            -60.70321273803711,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -56.45842742919922,
+          false
+        ],
+        [
+          -60.70321273803711,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "cd86d1f7dfd4655a359eeb128588343db3f02466938e54ddb77ab0d8404386cb",
+      "prompt_hash": "185609984dfb83733622b29c04775d70851a1bdcef256c020ef33e9f26a39b40",
+      "target_hash": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "acc": 1.0,
+      "acc_norm": 1.0
+    },
+    {
+      "doc_id": 14,
+      "doc": {
+        "goal": "How to clean blinds without tearing them up",
+        "sol1": "Place a cloth on each side of a pair of tongs.",
+        "sol2": "Find a feather duster, and cut the feathers off every two inches.",
+        "label": 0
+      },
+      "target": 0,
+      "arguments": [
+        [
+          "Question: How to clean blinds without tearing them up\nAnswer:",
+          " Place a cloth on each side of a pair of tongs."
+        ],
+        [
+          "Question: How to clean blinds without tearing them up\nAnswer:",
+          " Find a feather duster, and cut the feathers off every two inches."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -57.43706512451172,
+            false
+          ]
+        ],
+        [
+          [
+            -79.26361083984375,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -57.43706512451172,
+          false
+        ],
+        [
+          -79.26361083984375,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "8fbe666ce7651f81fabc1ebe6baf75bdc29c1e5202072b4317b1ee3ba350f6c3",
+      "prompt_hash": "19c09760bd3108b9e203748e922d9cfb2431d504103ad571f2feba8280135209",
+      "target_hash": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "acc": 1.0,
+      "acc_norm": 0.0
+    },
+    {
+      "doc_id": 15,
+      "doc": {
+        "goal": "What material is a steel rocking chair made out of?",
+        "sol1": "The frame is steel and then fabric can be added if you wish.",
+        "sol2": "The frame is plastic and fabric can be added if you wish",
+        "label": 0
+      },
+      "target": 0,
+      "arguments": [
+        [
+          "Question: What material is a steel rocking chair made out of?\nAnswer:",
+          " The frame is steel and then fabric can be added if you wish."
+        ],
+        [
+          "Question: What material is a steel rocking chair made out of?\nAnswer:",
+          " The frame is plastic and fabric can be added if you wish"
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -63.752559661865234,
+            false
+          ]
+        ],
+        [
+          [
+            -54.01042938232422,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -63.752559661865234,
+          false
+        ],
+        [
+          -54.01042938232422,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "b976c004e4010d6652b425f8fa97280ad46115671501b84d013248fd5c60597a",
+      "prompt_hash": "35143160c4b2b139bf103e72ed4156f444f21f2d3d4e8d7850811e0bc95881aa",
+      "target_hash": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "acc": 0.0,
+      "acc_norm": 0.0
+    },
+    {
+      "doc_id": 16,
+      "doc": {
+        "goal": "To get a video game console for a cheap price,",
+        "sol1": "look for the console on a website that sells used goods.",
+        "sol2": "look up which console is the cheapest one in store.",
+        "label": 0
+      },
+      "target": 0,
+      "arguments": [
+        [
+          "Question: To get a video game console for a cheap price,\nAnswer:",
+          " look for the console on a website that sells used goods."
+        ],
+        [
+          "Question: To get a video game console for a cheap price,\nAnswer:",
+          " look up which console is the cheapest one in store."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -62.636260986328125,
+            false
+          ]
+        ],
+        [
+          [
+            -62.55112075805664,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -62.636260986328125,
+          false
+        ],
+        [
+          -62.55112075805664,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "35b1a7c289b1eca3203f71a1b3f78a53834d803ce0552881c53c5c7f5b0aed0d",
+      "prompt_hash": "bc0c85fc06a6aecdf6569475ea7ce7f23c2433feae5c92fd7e521b8bc5f50dab",
+      "target_hash": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "acc": 0.0,
+      "acc_norm": 1.0
+    },
+    {
+      "doc_id": 17,
+      "doc": {
+        "goal": "How do you properly prepare a steak.",
+        "sol1": "Take the steak out of warm storage and let come to room temperature, generously add salt and pepper to both sides and let sit for 10 minutes.",
+        "sol2": "Take the steak out of cold storage and let come to room temperature, generously add salt and pepper to both sides and let sit for 10 minutes.",
+        "label": 1
+      },
+      "target": 1,
+      "arguments": [
+        [
+          "Question: How do you properly prepare a steak.\nAnswer:",
+          " Take the steak out of warm storage and let come to room temperature, generously add salt and pepper to both sides and let sit for 10 minutes."
+        ],
+        [
+          "Question: How do you properly prepare a steak.\nAnswer:",
+          " Take the steak out of cold storage and let come to room temperature, generously add salt and pepper to both sides and let sit for 10 minutes."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -159.55517578125,
+            false
+          ]
+        ],
+        [
+          [
+            -159.99966430664062,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -159.55517578125,
+          false
+        ],
+        [
+          -159.99966430664062,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "f09e4029bdc34f57788af600e6437b1171e41b2dbfdcd43daca32d701f7b2908",
+      "prompt_hash": "bc3e7c9fefb80b4201934b2ff06f37da43e51096fbc7947cda6482ea98dc21dd",
+      "target_hash": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "acc": 0.0,
+      "acc_norm": 0.0
+    },
+    {
+      "doc_id": 18,
+      "doc": {
+        "goal": "To cream butter and sugar together, you can",
+        "sol1": "Place it in a bowl and use a hand warmer",
+        "sol2": "Place in a bowl and use a hand mixer",
+        "label": 1
+      },
+      "target": 1,
+      "arguments": [
+        [
+          "Question: To cream butter and sugar together, you can\nAnswer:",
+          " Place it in a bowl and use a hand warmer"
+        ],
+        [
+          "Question: To cream butter and sugar together, you can\nAnswer:",
+          " Place in a bowl and use a hand mixer"
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -52.28809356689453,
+            false
+          ]
+        ],
+        [
+          [
+            -45.213008880615234,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -52.28809356689453,
+          false
+        ],
+        [
+          -45.213008880615234,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "8a74c68d917f7129f924801f923235a7049416ac826bfed88406951a2f69191a",
+      "prompt_hash": "f77c578296e519b1911072d28c5074cd8517a4d0e95212f2c1a7ff165553f1f6",
+      "target_hash": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "acc": 1.0,
+      "acc_norm": 1.0
+    },
+    {
+      "doc_id": 19,
+      "doc": {
+        "goal": "How to best cut the meat to place on a grill?",
+        "sol1": "Place a knife on the grill for around 15 minutes for the blade to be red hot. Gently push the knife through the meat to get a perfect cut.",
+        "sol2": "Use a sharp knife or scissor and cut the meat properly as per the required size.",
+        "label": 1
+      },
+      "target": 1,
+      "arguments": [
+        [
+          "Question: How to best cut the meat to place on a grill?\nAnswer:",
+          " Place a knife on the grill for around 15 minutes for the blade to be red hot. Gently push the knife through the meat to get a perfect cut."
+        ],
+        [
+          "Question: How to best cut the meat to place on a grill?\nAnswer:",
+          " Use a sharp knife or scissor and cut the meat properly as per the required size."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -158.37625122070312,
+            false
+          ]
+        ],
+        [
+          [
+            -95.39450073242188,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -158.37625122070312,
+          false
+        ],
+        [
+          -95.39450073242188,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "45b660951a4ba21ba3acd5b0ff7bf793fe23347f3c5a979a1ce2421cb091eec3",
+      "prompt_hash": "de5d4eb1b6897f44263b8263caa43229cb160f1ddb0c61eee529f7eb4f7c7526",
+      "target_hash": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "acc": 1.0,
+      "acc_norm": 0.0
+    }
+  ]
+}

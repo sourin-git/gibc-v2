@@ -33,6 +33,18 @@ def load_checkpoint(path: Path) -> dict[str, Any]:
     return payload
 
 
+def load_model_from_checkpoint(path: Path, device: str = "cpu"):
+    """Rebuild the CausalLM from any compatible project checkpoint (config + weights), in eval mode.
+    Returns (model, checkpoint_dict)."""
+    from gibc.config import ModelConfig
+    from gibc.model import CausalLM
+
+    payload = load_checkpoint(path)
+    model = CausalLM(ModelConfig.from_dict(payload["model_config"]))
+    model.load_state_dict(payload["model"], strict=True)
+    return model.to(device).eval(), payload
+
+
 def capture_rng_state() -> dict[str, Any]:
     name, keys, pos, has_gauss, cached = np.random.get_state()
     return {

@@ -1,0 +1,64 @@
+{
+  "warning": "SMOKE TEST ONLY - NOT OFFICIAL RESULTS. Limited examples on a 1,024-step LR-sanity checkpoint; scores are not model quality and must not be reported, tuned on, or used for decisions.",
+  "export": "C:\\gibc-work\\exports\\lr_1e-3_step_0001024",
+  "source_checkpoint": "C:\\gibc-work\\runs\\lr_1e-3\\checkpoints\\step_0001024.pt",
+  "source_checkpoint_sha256": "84d760cfcc862c8c6dbf53ddca5f8e69cdaac3cc538a99e72b5ca8a77f64aad3",
+  "limit": 20,
+  "num_fewshot": 0,
+  "dtype": "float32",
+  "max_length": 512,
+  "batch_size": 8,
+  "model_load_seconds": 3.4,
+  "tasks": {
+    "hellaswag": {
+      "examples": 20,
+      "seconds": 41.8,
+      "requests": 80,
+      "max_abs_loglik_diff_vs_source_model": 2.09808349609375e-05,
+      "version": 1.0,
+      "metrics_NOT_OFFICIAL": {
+        "acc,none": 0.35,
+        "acc_stderr,none": "N/A",
+        "acc_norm,none": 0.25,
+        "acc_norm_stderr,none": "N/A"
+      }
+    },
+    "arc_easy": {
+      "examples": 20,
+      "seconds": 27.7,
+      "requests": 80,
+      "max_abs_loglik_diff_vs_source_model": 1.33514404296875e-05,
+      "version": 1.0,
+      "metrics_NOT_OFFICIAL": {
+        "acc,none": 0.25,
+        "acc_stderr,none": "N/A",
+        "acc_norm,none": 0.2,
+        "acc_norm_stderr,none": "N/A"
+      }
+    },
+    "piqa": {
+      "examples": 20,
+      "seconds": 28.3,
+      "requests": 40,
+      "max_abs_loglik_diff_vs_source_model": 2.1189451217651367e-05,
+      "version": 1.0,
+      "metrics_NOT_OFFICIAL": {
+        "acc,none": 0.6,
+        "acc_stderr,none": "N/A",
+        "acc_norm,none": 0.65,
+        "acc_norm_stderr,none": "N/A"
+      }
+    },
+    "winogrande": {
+      "examples": 20,
+      "seconds": 28.6,
+      "requests": 40,
+      "max_abs_loglik_diff_vs_source_model": 1.633167266845703e-05,
+      "version": 1.0,
+      "metrics_NOT_OFFICIAL": {
+        "acc,none": 0.55,
+        "acc_stderr,none": "N/A"
+      }
+    }
+  }
+}

@@ -202,6 +202,17 @@ preprocessing, tokenizer, window length and stride, and the unit perplexity is n
 Label the reported number with that exact methodology; do not present it as a universal
 standard. Do not compute several perplexity variants to pick a favorable one.
 
+**Fixed in Stage 6** (`gibc/wikitext.py`, before any final-model result):
+- `Salesforce/wikitext` / `wikitext-103-raw-v1` / `test` at revision `b08601e0…`.
+- Rows concatenated unchanged; one EOT prefix used as context only.
+- Rolling windows of 512 with stride 256; each of the 303,524 tokens is scored once.
+- Metric: exp(total NLL / N). Label: "WikiText-103 test token perplexity under the documented
+  project methodology".
+- lm-eval tasks: 0-shot (our methodology unless organizers specify otherwise), fp32,
+  max_length 512, evaluated on the HF export only after `scripts/verify_hf_export.py` passes.
+- Anything run with `--limit`/`--max-targets` is written under a `SMOKE_NOT_OFFICIAL` name and is
+  never reported.
+
 ## AI assistance disclosure
 
 This project is built with Claude Code (Anthropic) as the implementation assistant. The README
@@ -235,6 +246,11 @@ python scripts/summarize_benchmark.py                                # table + t
 python scripts/acquire_production.py --config configs/data/production.json   # resumable; --dry-run checks only
 python scripts/build_production_tokens.py --config configs/data/production.json  # audit + immutable tokens
 python scripts/lr_decision.py                                        # predeclared LR rule -> results/lr/
+python scripts/export_hf.py --checkpoint <ckpt.pt>                   # local HF Llama export (no downloads)
+python scripts/verify_hf_export.py --export <dir>                    # fresh-process parity gates
+python scripts/eval_lm_eval_smoke.py --export <dir> --limit 20       # SMOKE, NOT OFFICIAL
+python scripts/audit_eval_requests.py --export <dir>                 # truncation audit + runtime ESTIMATES
+python scripts/eval_wikitext103.py --export <dir> [--max-targets N]  # N set = SMOKE, NOT OFFICIAL
 ```
 
 Token files are hash-verified (streaming SHA-256) once at every training-process start and

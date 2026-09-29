@@ -1,0 +1,2110 @@
+{
+  "warning": "SMOKE TEST ONLY - NOT OFFICIAL RESULTS. Limited examples on a 1,024-step LR-sanity checkpoint; scores are not model quality and must not be reported, tuned on, or used for decisions.",
+  "task": "hellaswag",
+  "seconds": 41.819384999998874,
+  "examples": 20,
+  "requests_crosschecked": 80,
+  "max_abs_loglik_diff_vs_source_model": 2.09808349609375e-05,
+  "results_NOT_OFFICIAL": {
+    "name": "hellaswag",
+    "alias": "hellaswag",
+    "sample_len": 20,
+    "acc,none": 0.35,
+    "acc_stderr,none": "N/A",
+    "acc_norm,none": 0.25,
+    "acc_norm_stderr,none": "N/A"
+  },
+  "n_samples": {
+    "original": 10042,
+    "effective": 20
+  },
+  "versions": 1.0,
+  "config": {
+    "task": "hellaswag",
+    "dataset_path": "Rowan/hellaswag",
+    "training_split": "train",
+    "validation_split": "validation",
+    "process_docs": "def process_docs(dataset: datasets.Dataset) -> datasets.Dataset:\n    def _process_doc(doc):\n        ctx = doc[\"ctx_a\"] + \" \" + doc[\"ctx_b\"].capitalize()\n        out_doc = {\n            \"query\": preprocess(doc[\"activity_label\"] + \": \" + ctx),\n            \"choices\": [preprocess(ending) for ending in doc[\"endings\"]],\n            \"gold\": int(doc[\"label\"]),\n        }\n        return out_doc\n\n    return dataset.map(_process_doc)\n",
+    "doc_to_text": "{{query}}",
+    "doc_to_target": "{{label}}",
+    "unsafe_code": false,
+    "doc_to_choice": "choices",
+    "description": "",
+    "target_delimiter": " ",
+    "fewshot_delimiter": "\n\n",
+    "fewshot_config": {
+      "sampler": "default",
+      "split": null,
+      "process_docs": "<function process_docs at 0x0000023573970E00>",
+      "fewshot_indices": null,
+      "samples": null,
+      "doc_to_text": "{{query}}",
+      "doc_to_choice": "choices",
+      "doc_to_target": "{{label}}",
+      "gen_prefix": null,
+      "fewshot_delimiter": "\n\n",
+      "target_delimiter": " "
+    },
+    "num_fewshot": 0,
+    "metric_list": [
+      {
+        "metric": "acc",
+        "aggregation": "mean",
+        "higher_is_better": true
+      },
+      {
+        "metric": "acc_norm",
+        "aggregation": "mean",
+        "higher_is_better": true
+      }
+    ],
+    "output_type": "multiple_choice",
+    "repeats": 1,
+    "should_decontaminate": false,
+    "metadata": {
+      "version": 1.0,
+      "config_source": "C:\\gibc-work\\venv\\Lib\\site-packages\\lm_eval\\tasks\\hellaswag\\hellaswag.yaml"
+    }
+  },
+  "lm_eval_config": {
+    "model": "C:\\gibc-work\\exports\\lr_1e-3_step_0001024",
+    "model_args": null,
+    "model_num_parameters": 42968576,
+    "model_dtype": "torch.float32",
+    "model_revision": "main",
+    "model_sha": "",
+    "batch_size": null,
+    "batch_sizes": [],
+    "device": null,
+    "use_cache": null,
+    "limit": 20,
+    "bootstrap_iters": 0,
+    "gen_kwargs": null,
+    "random_seed": 0,
+    "numpy_seed": 1234,
+    "torch_seed": 1234,
+    "fewshot_seed": 1234
+  },
+  "samples": [
+    {
+      "doc_id": 0,
+      "doc": {
+        "ind": 24,
+        "activity_label": "Roof shingle removal",
+        "ctx_a": "A man is sitting on a roof.",
+        "ctx_b": "he",
+        "ctx": "A man is sitting on a roof. he",
+        "endings": [
+          "is using wrap to wrap a pair of skis.",
+          "is ripping level tiles off.",
+          "is holding a rubik's cube.",
+          "starts pulling up roofing on a roof."
+        ],
+        "source_id": "activitynet~v_-JhWjGDPHMY",
+        "split": "val",
+        "split_type": "indomain",
+        "label": "3",
+        "query": "Roof shingle removal: A man is sitting on a roof. He",
+        "choices": [
+          "is using wrap to wrap a pair of skis.",
+          "is ripping level tiles off.",
+          "is holding a rubik's cube.",
+          "starts pulling up roofing on a roof."
+        ],
+        "gold": 3
+      },
+      "target": 3,
+      "arguments": [
+        [
+          "Roof shingle removal: A man is sitting on a roof. He",
+          " is using wrap to wrap a pair of skis."
+        ],
+        [
+          "Roof shingle removal: A man is sitting on a roof. He",
+          " is ripping level tiles off."
+        ],
+        [
+          "Roof shingle removal: A man is sitting on a roof. He",
+          " is holding a rubik's cube."
+        ],
+        [
+          "Roof shingle removal: A man is sitting on a roof. He",
+          " starts pulling up roofing on a roof."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -61.15609359741211,
+            false
+          ]
+        ],
+        [
+          [
+            -48.88489532470703,
+            false
+          ]
+        ],
+        [
+          [
+            -50.40849304199219,
+            false
+          ]
+        ],
+        [
+          [
+            -41.152774810791016,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -61.15609359741211,
+          false
+        ],
+        [
+          -48.88489532470703,
+          false
+        ],
+        [
+          -50.40849304199219,
+          false
+        ],
+        [
+          -41.152774810791016,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "5fa398b50d156bdf77b474f3b43a03352e9a46bddfc7bb62e1038f7b4f12bbd1",
+      "prompt_hash": "e63087504993cd36ee0de69dc9b1ab25ac86550530f0b38fd17b14d3c4cf4f38",
+      "target_hash": "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce",
+      "acc": 1.0,
+      "acc_norm": 1.0
+    },
+    {
+      "doc_id": 1,
+      "doc": {
+        "ind": 92,
+        "activity_label": "Clean and jerk",
+        "ctx_a": "A lady walks to a barbell. She bends down and grabs the pole.",
+        "ctx_b": "the lady",
+        "ctx": "A lady walks to a barbell. She bends down and grabs the pole. the lady",
+        "endings": [
+          "swings and lands in her arms.",
+          "pulls the barbell forward.",
+          "pulls a rope attached to the barbell.",
+          "stands and lifts the weight over her head."
+        ],
+        "source_id": "activitynet~v_-lJS58hyo1c",
+        "split": "val",
+        "split_type": "zeroshot",
+        "label": "3",
+        "query": "Clean and jerk: A lady walks to a barbell. She bends down and grabs the pole. The lady",
+        "choices": [
+          "swings and lands in her arms.",
+          "pulls the barbell forward.",
+          "pulls a rope attached to the barbell.",
+          "stands and lifts the weight over her head."
+        ],
+        "gold": 3
+      },
+      "target": 3,
+      "arguments": [
+        [
+          "Clean and jerk: A lady walks to a barbell. She bends down and grabs the pole. The lady",
+          " swings and lands in her arms."
+        ],
+        [
+          "Clean and jerk: A lady walks to a barbell. She bends down and grabs the pole. The lady",
+          " pulls the barbell forward."
+        ],
+        [
+          "Clean and jerk: A lady walks to a barbell. She bends down and grabs the pole. The lady",
+          " pulls a rope attached to the barbell."
+        ],
+        [
+          "Clean and jerk: A lady walks to a barbell. She bends down and grabs the pole. The lady",
+          " stands and lifts the weight over her head."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -36.89460372924805,
+            false
+          ]
+        ],
+        [
+          [
+            -31.226665496826172,
+            false
+          ]
+        ],
+        [
+          [
+            -37.69038391113281,
+            false
+          ]
+        ],
+        [
+          [
+            -46.528106689453125,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -36.89460372924805,
+          false
+        ],
+        [
+          -31.226665496826172,
+          false
+        ],
+        [
+          -37.69038391113281,
+          false
+        ],
+        [
+          -46.528106689453125,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "08296d87a2d1cb270a714773cb78d37f02f82661a082462fa53b437dfa0e3a5e",
+      "prompt_hash": "3b9f9052a08d02c8e1569c3193b21da7a40a88d23a03431937a57658ccfbd8e3",
+      "target_hash": "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce",
+      "acc": 0.0,
+      "acc_norm": 0.0
+    },
+    {
+      "doc_id": 2,
+      "doc": {
+        "ind": 106,
+        "activity_label": "Canoeing",
+        "ctx_a": "Two women in a child are shown in a canoe while a man pulls the canoe while standing in the water, with other individuals visible in the background.",
+        "ctx_b": "the child and a different man",
+        "ctx": "Two women in a child are shown in a canoe while a man pulls the canoe while standing in the water, with other individuals visible in the background. the child and a different man",
+        "endings": [
+          "are then shown paddling down a river in a boat while a woman talks.",
+          "are driving the canoe, they go down the river flowing side to side.",
+          "sit in a canoe while the man paddles.",
+          "walking go down the rapids, while the man in his helicopter almost falls and goes out of canoehood."
+        ],
+        "source_id": "activitynet~v_-xQvJmC2jhk",
+        "split": "val",
+        "split_type": "indomain",
+        "label": "2",
+        "query": "Canoeing: Two women in a child are shown in a canoe while a man pulls the canoe while standing in the water, with other individuals visible in the background. The child and a different man",
+        "choices": [
+          "are then shown paddling down a river in a boat while a woman talks.",
+          "are driving the canoe, they go down the river flowing side to side.",
+          "sit in a canoe while the man paddles.",
+          "walking go down the rapids, while the man in his helicopter almost falls and goes out of canoehood."
+        ],
+        "gold": 2
+      },
+      "target": 2,
+      "arguments": [
+        [
+          "Canoeing: Two women in a child are shown in a canoe while a man pulls the canoe while standing in the water, with other individuals visible in the background. The child and a different man",
+          " are then shown paddling down a river in a boat while a woman talks."
+        ],
+        [
+          "Canoeing: Two women in a child are shown in a canoe while a man pulls the canoe while standing in the water, with other individuals visible in the background. The child and a different man",
+          " are driving the canoe, they go down the river flowing side to side."
+        ],
+        [
+          "Canoeing: Two women in a child are shown in a canoe while a man pulls the canoe while standing in the water, with other individuals visible in the background. The child and a different man",
+          " sit in a canoe while the man paddles."
+        ],
+        [
+          "Canoeing: Two women in a child are shown in a canoe while a man pulls the canoe while standing in the water, with other individuals visible in the background. The child and a different man",
+          " walking go down the rapids, while the man in his helicopter almost falls and goes out of canoehood."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -86.71207427978516,
+            false
+          ]
+        ],
+        [
+          [
+            -81.86674499511719,
+            false
+          ]
+        ],
+        [
+          [
+            -56.715553283691406,
+            false
+          ]
+        ],
+        [
+          [
+            -133.6485137939453,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -86.71207427978516,
+          false
+        ],
+        [
+          -81.86674499511719,
+          false
+        ],
+        [
+          -56.715553283691406,
+          false
+        ],
+        [
+          -133.6485137939453,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "14dc9b1c3f03ef369e0e9976562d362f58e37cadb9bebf25ee5dabdc3ff6ad7d",
+      "prompt_hash": "fe85f7beb5549c53ae662741c373d9e854aa42fc4c070ba4503a0ded863f2dfe",
+      "target_hash": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35",
+      "acc": 1.0,
+      "acc_norm": 0.0
+    },
+    {
+      "doc_id": 3,
+      "doc": {
+        "ind": 114,
+        "activity_label": "High jump",
+        "ctx_a": "A boy is running down a track.",
+        "ctx_b": "the boy",
+        "ctx": "A boy is running down a track. the boy",
+        "endings": [
+          "runs into a car.",
+          "gets in a mat.",
+          "lifts his body above the height of a pole.",
+          "stands on his hands and springs."
+        ],
+        "source_id": "activitynet~v_-zHX3Gdx6I4",
+        "split": "val",
+        "split_type": "zeroshot",
+        "label": "2",
+        "query": "High jump: A boy is running down a track. The boy",
+        "choices": [
+          "runs into a car.",
+          "gets in a mat.",
+          "lifts his body above the height of a pole.",
+          "stands on his hands and springs."
+        ],
+        "gold": 2
+      },
+      "target": 2,
+      "arguments": [
+        [
+          "High jump: A boy is running down a track. The boy",
+          " runs into a car."
+        ],
+        [
+          "High jump: A boy is running down a track. The boy",
+          " gets in a mat."
+        ],
+        [
+          "High jump: A boy is running down a track. The boy",
+          " lifts his body above the height of a pole."
+        ],
+        [
+          "High jump: A boy is running down a track. The boy",
+          " stands on his hands and springs."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -17.13949966430664,
+            false
+          ]
+        ],
+        [
+          [
+            -24.01448631286621,
+            false
+          ]
+        ],
+        [
+          [
+            -51.7357177734375,
+            false
+          ]
+        ],
+        [
+          [
+            -31.140193939208984,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -17.13949966430664,
+          false
+        ],
+        [
+          -24.01448631286621,
+          false
+        ],
+        [
+          -51.7357177734375,
+          false
+        ],
+        [
+          -31.140193939208984,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "7a5346b1d9309aa52799e598a5ccbff33ccd8c18c1d1056da412389ea5bd9e8b",
+      "prompt_hash": "a2df73697ab4570dea4ab99211b81e98edfa0a5615a9b83a38f48341c0734e80",
+      "target_hash": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35",
+      "acc": 0.0,
+      "acc_norm": 0.0
+    },
+    {
+      "doc_id": 4,
+      "doc": {
+        "ind": 116,
+        "activity_label": "High jump",
+        "ctx_a": "The boy lifts his body above the height of a pole. The boy lands on his back on to a red mat.",
+        "ctx_b": "the boy",
+        "ctx": "The boy lifts his body above the height of a pole. The boy lands on his back on to a red mat. the boy",
+        "endings": [
+          "turns his body around on the mat.",
+          "gets up from the mat.",
+          "continues to lift his body over the pole.",
+          "wiggles out of the mat."
+        ],
+        "source_id": "activitynet~v_-zHX3Gdx6I4",
+        "split": "val",
+        "split_type": "zeroshot",
+        "label": "1",
+        "query": "High jump: The boy lifts his body above the height of a pole. The boy lands on his back on to a red mat. The boy",
+        "choices": [
+          "turns his body around on the mat.",
+          "gets up from the mat.",
+          "continues to lift his body over the pole.",
+          "wiggles out of the mat."
+        ],
+        "gold": 1
+      },
+      "target": 1,
+      "arguments": [
+        [
+          "High jump: The boy lifts his body above the height of a pole. The boy lands on his back on to a red mat. The boy",
+          " turns his body around on the mat."
+        ],
+        [
+          "High jump: The boy lifts his body above the height of a pole. The boy lands on his back on to a red mat. The boy",
+          " gets up from the mat."
+        ],
+        [
+          "High jump: The boy lifts his body above the height of a pole. The boy lands on his back on to a red mat. The boy",
+          " continues to lift his body over the pole."
+        ],
+        [
+          "High jump: The boy lifts his body above the height of a pole. The boy lands on his back on to a red mat. The boy",
+          " wiggles out of the mat."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -37.15956115722656,
+            false
+          ]
+        ],
+        [
+          [
+            -26.857927322387695,
+            false
+          ]
+        ],
+        [
+          [
+            -37.230201721191406,
+            false
+          ]
+        ],
+        [
+          [
+            -35.80706787109375,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -37.15956115722656,
+          false
+        ],
+        [
+          -26.857927322387695,
+          false
+        ],
+        [
+          -37.230201721191406,
+          false
+        ],
+        [
+          -35.80706787109375,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "0ea20e56c00cb5efbd1db09b523ddfb3dca721b1e17d740270d39d0296ee621c",
+      "prompt_hash": "8a1432f2aa0f0a07e3c133ac5c43561fc3849ada1e1c45066a6f13aa4ccac951",
+      "target_hash": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "acc": 1.0,
+      "acc_norm": 0.0
+    },
+    {
+      "doc_id": 5,
+      "doc": {
+        "ind": 117,
+        "activity_label": "High jump",
+        "ctx_a": "The boy lands on his back on to a red mat. The boy gets up from the mat.",
+        "ctx_b": "the boy",
+        "ctx": "The boy lands on his back on to a red mat. The boy gets up from the mat. the boy",
+        "endings": [
+          "starts doing spins.",
+          "celebrates by clapping and flexing both arms.",
+          "is dancing on the mat.",
+          "does jump jacks on his stick."
+        ],
+        "source_id": "activitynet~v_-zHX3Gdx6I4",
+        "split": "val",
+        "split_type": "zeroshot",
+        "label": "1",
+        "query": "High jump: The boy lands on his back on to a red mat. The boy gets up from the mat. The boy",
+        "choices": [
+          "starts doing spins.",
+          "celebrates by clapping and flexing both arms.",
+          "is dancing on the mat.",
+          "does jump jacks on his stick."
+        ],
+        "gold": 1
+      },
+      "target": 1,
+      "arguments": [
+        [
+          "High jump: The boy lands on his back on to a red mat. The boy gets up from the mat. The boy",
+          " starts doing spins."
+        ],
+        [
+          "High jump: The boy lands on his back on to a red mat. The boy gets up from the mat. The boy",
+          " celebrates by clapping and flexing both arms."
+        ],
+        [
+          "High jump: The boy lands on his back on to a red mat. The boy gets up from the mat. The boy",
+          " is dancing on the mat."
+        ],
+        [
+          "High jump: The boy lands on his back on to a red mat. The boy gets up from the mat. The boy",
+          " does jump jacks on his stick."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -31.99542808532715,
+            false
+          ]
+        ],
+        [
+          [
+            -57.5336799621582,
+            false
+          ]
+        ],
+        [
+          [
+            -26.930116653442383,
+            false
+          ]
+        ],
+        [
+          [
+            -45.45510482788086,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -31.99542808532715,
+          false
+        ],
+        [
+          -57.5336799621582,
+          false
+        ],
+        [
+          -26.930116653442383,
+          false
+        ],
+        [
+          -45.45510482788086,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "c10764353478517efdd4ff86e98cae2843877ae3bff5e1af117d05e581340b96",
+      "prompt_hash": "b31af94ae9da048b8880edf3975c89966e1b43e56bbd9411fcb16783729c235c",
+      "target_hash": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "acc": 0.0,
+      "acc_norm": 0.0
+    },
+    {
+      "doc_id": 6,
+      "doc": {
+        "ind": 149,
+        "activity_label": "Playing harmonica",
+        "ctx_a": "A man is standing in front of a camera. He starts playing a harmonica for the camera.",
+        "ctx_b": "he",
+        "ctx": "A man is standing in front of a camera. He starts playing a harmonica for the camera. he",
+        "endings": [
+          "begins to play the harmonica with his body while looking at the camera.",
+          "seems to be singing while playing the harmonica.",
+          "rocks back and forth to the music as he goes.",
+          "painted a fence in front of the camera."
+        ],
+        "source_id": "activitynet~v_0RUMAGGab1k",
+        "split": "val",
+        "split_type": "zeroshot",
+        "label": "2",
+        "query": "Playing harmonica: A man is standing in front of a camera. He starts playing a harmonica for the camera. He",
+        "choices": [
+          "begins to play the harmonica with his body while looking at the camera.",
+          "seems to be singing while playing the harmonica.",
+          "rocks back and forth to the music as he goes.",
+          "painted a fence in front of the camera."
+        ],
+        "gold": 2
+      },
+      "target": 2,
+      "arguments": [
+        [
+          "Playing harmonica: A man is standing in front of a camera. He starts playing a harmonica for the camera. He",
+          " begins to play the harmonica with his body while looking at the camera."
+        ],
+        [
+          "Playing harmonica: A man is standing in front of a camera. He starts playing a harmonica for the camera. He",
+          " seems to be singing while playing the harmonica."
+        ],
+        [
+          "Playing harmonica: A man is standing in front of a camera. He starts playing a harmonica for the camera. He",
+          " rocks back and forth to the music as he goes."
+        ],
+        [
+          "Playing harmonica: A man is standing in front of a camera. He starts playing a harmonica for the camera. He",
+          " painted a fence in front of the camera."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -53.236331939697266,
+            false
+          ]
+        ],
+        [
+          [
+            -44.09465408325195,
+            false
+          ]
+        ],
+        [
+          [
+            -50.68133544921875,
+            false
+          ]
+        ],
+        [
+          [
+            -29.771259307861328,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -53.236331939697266,
+          false
+        ],
+        [
+          -44.09465408325195,
+          false
+        ],
+        [
+          -50.68133544921875,
+          false
+        ],
+        [
+          -29.771259307861328,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "cf8a9b3f0c6672e4f6502cc4bb4add452f8ea8a996a72179a69f28d2e2218d27",
+      "prompt_hash": "2125cc80f3a2322cc77c38dce4e23d737b484e2170b182f8709e3832f548cc6d",
+      "target_hash": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35",
+      "acc": 0.0,
+      "acc_norm": 0.0
+    },
+    {
+      "doc_id": 7,
+      "doc": {
+        "ind": 170,
+        "activity_label": "Sumo",
+        "ctx_a": "A cartoon animation video is shown with people wandering around and rockets being shot.",
+        "ctx_b": "two men",
+        "ctx": "A cartoon animation video is shown with people wandering around and rockets being shot. two men",
+        "endings": [
+          "fight robots of evil and ends with a to be continued.",
+          "are then shown in closeups shooting a shot put.",
+          "push a child in a speedboat in the water.",
+          "look in the cameraman's eye and smile."
+        ],
+        "source_id": "activitynet~v_0WVkoTBmhA0",
+        "split": "val",
+        "split_type": "indomain",
+        "label": "0",
+        "query": "Sumo: A cartoon animation video is shown with people wandering around and rockets being shot. Two men",
+        "choices": [
+          "fight robots of evil and ends with a to be continued.",
+          "are then shown in closeups shooting a shot put.",
+          "push a child in a speedboat in the water.",
+          "look in the cameraman's eye and smile."
+        ],
+        "gold": 0
+      },
+      "target": 0,
+      "arguments": [
+        [
+          "Sumo: A cartoon animation video is shown with people wandering around and rockets being shot. Two men",
+          " fight robots of evil and ends with a to be continued."
+        ],
+        [
+          "Sumo: A cartoon animation video is shown with people wandering around and rockets being shot. Two men",
+          " are then shown in closeups shooting a shot put."
+        ],
+        [
+          "Sumo: A cartoon animation video is shown with people wandering around and rockets being shot. Two men",
+          " push a child in a speedboat in the water."
+        ],
+        [
+          "Sumo: A cartoon animation video is shown with people wandering around and rockets being shot. Two men",
+          " look in the cameraman's eye and smile."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -85.30416870117188,
+            false
+          ]
+        ],
+        [
+          [
+            -71.67182922363281,
+            false
+          ]
+        ],
+        [
+          [
+            -56.35501480102539,
+            false
+          ]
+        ],
+        [
+          [
+            -57.265380859375,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -85.30416870117188,
+          false
+        ],
+        [
+          -71.67182922363281,
+          false
+        ],
+        [
+          -56.35501480102539,
+          false
+        ],
+        [
+          -57.265380859375,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "484959f4cb60c490dfc7ae2431a4fc70b81f0784109e5626ff465f3ce22430b6",
+      "prompt_hash": "18d0f3b52cea323e10cb807c98f1d19817a68167d4364461b1f8c7a4b4b57a5d",
+      "target_hash": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "acc": 0.0,
+      "acc_norm": 0.0
+    },
+    {
+      "doc_id": 8,
+      "doc": {
+        "ind": 180,
+        "activity_label": "Sharpening knives",
+        "ctx_a": "A man is holding a pocket knife while sitting on some rocks in the wilderness.",
+        "ctx_b": "then he",
+        "ctx": "A man is holding a pocket knife while sitting on some rocks in the wilderness. then he",
+        "endings": [
+          "opens a can of oil put oil on the knife, and puts oil on a knife and press it through a can filled with oil then cuts several pieces from the sandwiches.",
+          "takes a small stone from the flowing river and smashes it on another stone.",
+          "uses the knife to shave his leg.",
+          "sand the rocks and tops them by using strong pressure."
+        ],
+        "source_id": "activitynet~v_0bosp4-pyTM",
+        "split": "val",
+        "split_type": "zeroshot",
+        "label": "1",
+        "query": "Sharpening knives: A man is holding a pocket knife while sitting on some rocks in the wilderness. Then he",
+        "choices": [
+          "opens a can of oil put oil on the knife, and puts oil on a knife and press it through a can filled with oil then cuts several pieces from the sandwiches.",
+          "takes a small stone from the flowing river and smashes it on another stone.",
+          "uses the knife to shave his leg.",
+          "sand the rocks and tops them by using strong pressure."
+        ],
+        "gold": 1
+      },
+      "target": 1,
+      "arguments": [
+        [
+          "Sharpening knives: A man is holding a pocket knife while sitting on some rocks in the wilderness. Then he",
+          " opens a can of oil put oil on the knife, and puts oil on a knife and press it through a can filled with oil then cuts several pieces from the sandwiches."
+        ],
+        [
+          "Sharpening knives: A man is holding a pocket knife while sitting on some rocks in the wilderness. Then he",
+          " takes a small stone from the flowing river and smashes it on another stone."
+        ],
+        [
+          "Sharpening knives: A man is holding a pocket knife while sitting on some rocks in the wilderness. Then he",
+          " uses the knife to shave his leg."
+        ],
+        [
+          "Sharpening knives: A man is holding a pocket knife while sitting on some rocks in the wilderness. Then he",
+          " sand the rocks and tops them by using strong pressure."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -191.41201782226562,
+            false
+          ]
+        ],
+        [
+          [
+            -76.94096374511719,
+            false
+          ]
+        ],
+        [
+          [
+            -38.26572036743164,
+            false
+          ]
+        ],
+        [
+          [
+            -69.74280548095703,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -191.41201782226562,
+          false
+        ],
+        [
+          -76.94096374511719,
+          false
+        ],
+        [
+          -38.26572036743164,
+          false
+        ],
+        [
+          -69.74280548095703,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "0126fc20b6dd7239b4da25fc7fa0ed5c3ccfc4c6060cbf91aefc99002f10f791",
+      "prompt_hash": "45e62663742a4c7c3befabde85ab526edc2d9b60e460a34f2eaa3292c9d41109",
+      "target_hash": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "acc": 0.0,
+      "acc_norm": 1.0
+    },
+    {
+      "doc_id": 9,
+      "doc": {
+        "ind": 182,
+        "activity_label": "Sharpening knives",
+        "ctx_a": "Then he takes a small stone from the flowing river and smashes it on another stone. He starts to crush the small stone to smaller pieces.",
+        "ctx_b": "he",
+        "ctx": "Then he takes a small stone from the flowing river and smashes it on another stone. He starts to crush the small stone to smaller pieces. he",
+        "endings": [
+          "cuts the center stone in half and blow it on to make it bigger.",
+          "grind it hard to make the pieces smaller.",
+          "eventually brings it back into view and adds it to the smaller ones to make a small triangular shaped piece.",
+          "starts to party with them and throw the pieces by hand while they celebrate."
+        ],
+        "source_id": "activitynet~v_0bosp4-pyTM",
+        "split": "val",
+        "split_type": "zeroshot",
+        "label": "1",
+        "query": "Sharpening knives: Then he takes a small stone from the flowing river and smashes it on another stone. He starts to crush the small stone to smaller pieces. He",
+        "choices": [
+          "cuts the center stone in half and blow it on to make it bigger.",
+          "grind it hard to make the pieces smaller.",
+          "eventually brings it back into view and adds it to the smaller ones to make a small triangular shaped piece.",
+          "starts to party with them and throw the pieces by hand while they celebrate."
+        ],
+        "gold": 1
+      },
+      "target": 1,
+      "arguments": [
+        [
+          "Sharpening knives: Then he takes a small stone from the flowing river and smashes it on another stone. He starts to crush the small stone to smaller pieces. He",
+          " cuts the center stone in half and blow it on to make it bigger."
+        ],
+        [
+          "Sharpening knives: Then he takes a small stone from the flowing river and smashes it on another stone. He starts to crush the small stone to smaller pieces. He",
+          " grind it hard to make the pieces smaller."
+        ],
+        [
+          "Sharpening knives: Then he takes a small stone from the flowing river and smashes it on another stone. He starts to crush the small stone to smaller pieces. He",
+          " eventually brings it back into view and adds it to the smaller ones to make a small triangular shaped piece."
+        ],
+        [
+          "Sharpening knives: Then he takes a small stone from the flowing river and smashes it on another stone. He starts to crush the small stone to smaller pieces. He",
+          " starts to party with them and throw the pieces by hand while they celebrate."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -68.19778442382812,
+            false
+          ]
+        ],
+        [
+          [
+            -47.50532531738281,
+            false
+          ]
+        ],
+        [
+          [
+            -99.24038696289062,
+            false
+          ]
+        ],
+        [
+          [
+            -78.42381286621094,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -68.19778442382812,
+          false
+        ],
+        [
+          -47.50532531738281,
+          false
+        ],
+        [
+          -99.24038696289062,
+          false
+        ],
+        [
+          -78.42381286621094,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "582468b8b065e8950cbabd91aa14735d6c953b12ac8a01b5365d6c556d42f462",
+      "prompt_hash": "cc372cb637fd587aec1ed3b6ec8b1b3d5bb9b57be79ccdc94f5aae343c2e354e",
+      "target_hash": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "acc": 1.0,
+      "acc_norm": 0.0
+    },
+    {
+      "doc_id": 10,
+      "doc": {
+        "ind": 185,
+        "activity_label": "Sharpening knives",
+        "ctx_a": "Then he takes a piece of bark and rubs the powered stone pieces onto it. The stone particles stick to the wet piece of wood.",
+        "ctx_b": "he",
+        "ctx": "Then he takes a piece of bark and rubs the powered stone pieces onto it. The stone particles stick to the wet piece of wood. he",
+        "endings": [
+          "uses a small brush to polish one of the stone pieces.",
+          "then uses a strip of sealing tape to seal the board and then smooths the bottom of the board.",
+          "walks towards the camera.",
+          "then takes the knife and sharpens it against the wood piece."
+        ],
+        "source_id": "activitynet~v_0bosp4-pyTM",
+        "split": "val",
+        "split_type": "zeroshot",
+        "label": "3",
+        "query": "Sharpening knives: Then he takes a piece of bark and rubs the powered stone pieces onto it. The stone particles stick to the wet piece of wood. He",
+        "choices": [
+          "uses a small brush to polish one of the stone pieces.",
+          "then uses a strip of sealing tape to seal the board and then smooths the bottom of the board.",
+          "walks towards the camera.",
+          "then takes the knife and sharpens it against the wood piece."
+        ],
+        "gold": 3
+      },
+      "target": 3,
+      "arguments": [
+        [
+          "Sharpening knives: Then he takes a piece of bark and rubs the powered stone pieces onto it. The stone particles stick to the wet piece of wood. He",
+          " uses a small brush to polish one of the stone pieces."
+        ],
+        [
+          "Sharpening knives: Then he takes a piece of bark and rubs the powered stone pieces onto it. The stone particles stick to the wet piece of wood. He",
+          " then uses a strip of sealing tape to seal the board and then smooths the bottom of the board."
+        ],
+        [
+          "Sharpening knives: Then he takes a piece of bark and rubs the powered stone pieces onto it. The stone particles stick to the wet piece of wood. He",
+          " walks towards the camera."
+        ],
+        [
+          "Sharpening knives: Then he takes a piece of bark and rubs the powered stone pieces onto it. The stone particles stick to the wet piece of wood. He",
+          " then takes the knife and sharpens it against the wood piece."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -51.20856475830078,
+            false
+          ]
+        ],
+        [
+          [
+            -92.61627197265625,
+            false
+          ]
+        ],
+        [
+          [
+            -24.244853973388672,
+            false
+          ]
+        ],
+        [
+          [
+            -63.98046875,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -51.20856475830078,
+          false
+        ],
+        [
+          -92.61627197265625,
+          false
+        ],
+        [
+          -24.244853973388672,
+          false
+        ],
+        [
+          -63.98046875,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "2c66b3471927da82aeb19419c918c2fc86eb124aba74b4a74bfc4cadf754d6a5",
+      "prompt_hash": "72feaf2aadb2f61b7ecb2260b375cdb8a3b905007ae3e708f031ad8afaadc248",
+      "target_hash": "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce",
+      "acc": 0.0,
+      "acc_norm": 0.0
+    },
+    {
+      "doc_id": 11,
+      "doc": {
+        "ind": 186,
+        "activity_label": "Sharpening knives",
+        "ctx_a": "The stone particles stick to the wet piece of wood. He then takes the knife and sharpens it against the wood piece.",
+        "ctx_b": "he",
+        "ctx": "The stone particles stick to the wet piece of wood. He then takes the knife and sharpens it against the wood piece. he",
+        "endings": [
+          "then cuts off the excess hair of the wood.",
+          "scrapes the wood with a broom in the cutting tool used in sharpening the instrument.",
+          "writes on the board again.",
+          "then notices a little black and green poisonous frog sitting next to him."
+        ],
+        "source_id": "activitynet~v_0bosp4-pyTM",
+        "split": "val",
+        "split_type": "zeroshot",
+        "label": "3",
+        "query": "Sharpening knives: The stone particles stick to the wet piece of wood. He then takes the knife and sharpens it against the wood piece. He",
+        "choices": [
+          "then cuts off the excess hair of the wood.",
+          "scrapes the wood with a broom in the cutting tool used in sharpening the instrument.",
+          "writes on the board again.",
+          "then notices a little black and green poisonous frog sitting next to him."
+        ],
+        "gold": 3
+      },
+      "target": 3,
+      "arguments": [
+        [
+          "Sharpening knives: The stone particles stick to the wet piece of wood. He then takes the knife and sharpens it against the wood piece. He",
+          " then cuts off the excess hair of the wood."
+        ],
+        [
+          "Sharpening knives: The stone particles stick to the wet piece of wood. He then takes the knife and sharpens it against the wood piece. He",
+          " scrapes the wood with a broom in the cutting tool used in sharpening the instrument."
+        ],
+        [
+          "Sharpening knives: The stone particles stick to the wet piece of wood. He then takes the knife and sharpens it against the wood piece. He",
+          " writes on the board again."
+        ],
+        [
+          "Sharpening knives: The stone particles stick to the wet piece of wood. He then takes the knife and sharpens it against the wood piece. He",
+          " then notices a little black and green poisonous frog sitting next to him."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -42.392433166503906,
+            false
+          ]
+        ],
+        [
+          [
+            -94.77372741699219,
+            false
+          ]
+        ],
+        [
+          [
+            -27.563488006591797,
+            false
+          ]
+        ],
+        [
+          [
+            -83.87432098388672,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -42.392433166503906,
+          false
+        ],
+        [
+          -94.77372741699219,
+          false
+        ],
+        [
+          -27.563488006591797,
+          false
+        ],
+        [
+          -83.87432098388672,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "7a95aeb6da7b8c30435620767171cd53f9dfde87ff88ab95ef356143375c808e",
+      "prompt_hash": "504e31f4ca094b72e2aebe2d106153a04b8d75dbf9d8b2b4cb53ec9299b41c85",
+      "target_hash": "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce",
+      "acc": 0.0,
+      "acc_norm": 0.0
+    },
+    {
+      "doc_id": 12,
+      "doc": {
+        "ind": 187,
+        "activity_label": "Sharpening knives",
+        "ctx_a": "He then takes the knife and sharpens it against the wood piece. He then notices a little black and green poisonous frog sitting next to him.",
+        "ctx_b": "the frog",
+        "ctx": "He then takes the knife and sharpens it against the wood piece. He then notices a little black and green poisonous frog sitting next to him. the frog",
+        "endings": [
+          "eventually gets to get up and marches out of the room waving its body about.",
+          "then starts to get up from the chair and begins walking towards the camera.",
+          "then escapes and jumps away.",
+          "is acting crazy and attacking him while he is cooking."
+        ],
+        "source_id": "activitynet~v_0bosp4-pyTM",
+        "split": "val",
+        "split_type": "zeroshot",
+        "label": "2",
+        "query": "Sharpening knives: He then takes the knife and sharpens it against the wood piece. He then notices a little black and green poisonous frog sitting next to him. The frog",
+        "choices": [
+          "eventually gets to get up and marches out of the room waving its body about.",
+          "then starts to get up from the chair and begins walking towards the camera.",
+          "then escapes and jumps away.",
+          "is acting crazy and attacking him while he is cooking."
+        ],
+        "gold": 2
+      },
+      "target": 2,
+      "arguments": [
+        [
+          "Sharpening knives: He then takes the knife and sharpens it against the wood piece. He then notices a little black and green poisonous frog sitting next to him. The frog",
+          " eventually gets to get up and marches out of the room waving its body about."
+        ],
+        [
+          "Sharpening knives: He then takes the knife and sharpens it against the wood piece. He then notices a little black and green poisonous frog sitting next to him. The frog",
+          " then starts to get up from the chair and begins walking towards the camera."
+        ],
+        [
+          "Sharpening knives: He then takes the knife and sharpens it against the wood piece. He then notices a little black and green poisonous frog sitting next to him. The frog",
+          " then escapes and jumps away."
+        ],
+        [
+          "Sharpening knives: He then takes the knife and sharpens it against the wood piece. He then notices a little black and green poisonous frog sitting next to him. The frog",
+          " is acting crazy and attacking him while he is cooking."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -80.84538269042969,
+            false
+          ]
+        ],
+        [
+          [
+            -56.09121322631836,
+            false
+          ]
+        ],
+        [
+          [
+            -31.764841079711914,
+            false
+          ]
+        ],
+        [
+          [
+            -58.330326080322266,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -80.84538269042969,
+          false
+        ],
+        [
+          -56.09121322631836,
+          false
+        ],
+        [
+          -31.764841079711914,
+          false
+        ],
+        [
+          -58.330326080322266,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "62ab2f9bbb8f3420eb0fd351fb281d4caf54f8c19a1061b0b2f0bc59343f1803",
+      "prompt_hash": "d1d027c3f78499e22d20d935c2d5cd4ffd4ba8dba378f1c185323e99d9e710a5",
+      "target_hash": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35",
+      "acc": 1.0,
+      "acc_norm": 0.0
+    },
+    {
+      "doc_id": 13,
+      "doc": {
+        "ind": 188,
+        "activity_label": "Sharpening knives",
+        "ctx_a": "He then notices a little black and green poisonous frog sitting next to him. The frog then escapes and jumps away.",
+        "ctx_b": "he",
+        "ctx": "He then notices a little black and green poisonous frog sitting next to him. The frog then escapes and jumps away. he",
+        "endings": [
+          "sits and hugs another man and also adjusts his camera.",
+          "then sits there staring at his text machine as if he has actually been given a gift from god.",
+          "explains how the frog secretes a poisonous fluid that can be extremely harmful.",
+          "takes the frog on his hand and tickles the back of it."
+        ],
+        "source_id": "activitynet~v_0bosp4-pyTM",
+        "split": "val",
+        "split_type": "zeroshot",
+        "label": "2",
+        "query": "Sharpening knives: He then notices a little black and green poisonous frog sitting next to him. The frog then escapes and jumps away. He",
+        "choices": [
+          "sits and hugs another man and also adjusts his camera.",
+          "then sits there staring at his text machine as if he has actually been given a gift from god.",
+          "explains how the frog secretes a poisonous fluid that can be extremely harmful.",
+          "takes the frog on his hand and tickles the back of it."
+        ],
+        "gold": 2
+      },
+      "target": 2,
+      "arguments": [
+        [
+          "Sharpening knives: He then notices a little black and green poisonous frog sitting next to him. The frog then escapes and jumps away. He",
+          " sits and hugs another man and also adjusts his camera."
+        ],
+        [
+          "Sharpening knives: He then notices a little black and green poisonous frog sitting next to him. The frog then escapes and jumps away. He",
+          " then sits there staring at his text machine as if he has actually been given a gift from god."
+        ],
+        [
+          "Sharpening knives: He then notices a little black and green poisonous frog sitting next to him. The frog then escapes and jumps away. He",
+          " explains how the frog secretes a poisonous fluid that can be extremely harmful."
+        ],
+        [
+          "Sharpening knives: He then notices a little black and green poisonous frog sitting next to him. The frog then escapes and jumps away. He",
+          " takes the frog on his hand and tickles the back of it."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -68.53482818603516,
+            false
+          ]
+        ],
+        [
+          [
+            -113.85700988769531,
+            false
+          ]
+        ],
+        [
+          [
+            -74.31867218017578,
+            false
+          ]
+        ],
+        [
+          [
+            -56.22072219848633,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -68.53482818603516,
+          false
+        ],
+        [
+          -113.85700988769531,
+          false
+        ],
+        [
+          -74.31867218017578,
+          false
+        ],
+        [
+          -56.22072219848633,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "52663538776e90b5bf411555ce1b5fc5e6f3720b904f79f0e965699a766bca5b",
+      "prompt_hash": "a505754a101ea43aca2c0c6458e615e583f49f91c1674d11f1b27e693c717399",
+      "target_hash": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35",
+      "acc": 0.0,
+      "acc_norm": 1.0
+    },
+    {
+      "doc_id": 14,
+      "doc": {
+        "ind": 192,
+        "activity_label": "Playing bagpipes",
+        "ctx_a": "A person is playing bagpipes out in a park. A man and two boys watching from a far.",
+        "ctx_b": "the camera",
+        "ctx": "A person is playing bagpipes out in a park. A man and two boys watching from a far. the camera",
+        "endings": [
+          "shoots areas all around the park while the bagpipes play.",
+          "is covered to the boy that is playing there.",
+          "then goes black and we see a black opening scene.",
+          "watching the boy and boy as they play a game of drums."
+        ],
+        "source_id": "activitynet~v_0dgmG3h9RLA",
+        "split": "val",
+        "split_type": "indomain",
+        "label": "0",
+        "query": "Playing bagpipes: A person is playing bagpipes out in a park. A man and two boys watching from a far. The camera",
+        "choices": [
+          "shoots areas all around the park while the bagpipes play.",
+          "is covered to the boy that is playing there.",
+          "then goes black and we see a black opening scene.",
+          "watching the boy and boy as they play a game of drums."
+        ],
+        "gold": 0
+      },
+      "target": 0,
+      "arguments": [
+        [
+          "Playing bagpipes: A person is playing bagpipes out in a park. A man and two boys watching from a far. The camera",
+          " shoots areas all around the park while the bagpipes play."
+        ],
+        [
+          "Playing bagpipes: A person is playing bagpipes out in a park. A man and two boys watching from a far. The camera",
+          " is covered to the boy that is playing there."
+        ],
+        [
+          "Playing bagpipes: A person is playing bagpipes out in a park. A man and two boys watching from a far. The camera",
+          " then goes black and we see a black opening scene."
+        ],
+        [
+          "Playing bagpipes: A person is playing bagpipes out in a park. A man and two boys watching from a far. The camera",
+          " watching the boy and boy as they play a game of drums."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -64.90082550048828,
+            false
+          ]
+        ],
+        [
+          [
+            -42.551177978515625,
+            false
+          ]
+        ],
+        [
+          [
+            -53.18852615356445,
+            false
+          ]
+        ],
+        [
+          [
+            -67.49201965332031,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -64.90082550048828,
+          false
+        ],
+        [
+          -42.551177978515625,
+          false
+        ],
+        [
+          -53.18852615356445,
+          false
+        ],
+        [
+          -67.49201965332031,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "2680415957b99e4ddb3ccf808fdfedc675c462544e04007b2ed375dc37f7c024",
+      "prompt_hash": "b75f0bbabcd50beffa5c062e4828f087feb7b788810b1ad7ead00544354d4152",
+      "target_hash": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "acc": 0.0,
+      "acc_norm": 0.0
+    },
+    {
+      "doc_id": 15,
+      "doc": {
+        "ind": 200,
+        "activity_label": "Playing water polo",
+        "ctx_a": "Two people are seen passing a ball back and fourth in a pool and leads into one speaking to the camera.",
+        "ctx_b": "the man",
+        "ctx": "Two people are seen passing a ball back and fourth in a pool and leads into one speaking to the camera. the man",
+        "endings": [
+          "dips the ball and walks back with the boy and pours detergent into a cup again.",
+          "then throws the ball into the pool and begins running around with a sail in his hand while a group of men watch.",
+          "then takes a drink having a conversation with another man and another man leads into him throwing balls in the water and laughing to the camera.",
+          "demonstrates how to properly throw the ball with his hands while still speaking to the camera."
+        ],
+        "source_id": "activitynet~v_0hWGSkDnRHA",
+        "split": "val",
+        "split_type": "indomain",
+        "label": "3",
+        "query": "Playing water polo: Two people are seen passing a ball back and fourth in a pool and leads into one speaking to the camera. The man",
+        "choices": [
+          "dips the ball and walks back with the boy and pours detergent into a cup again.",
+          "then throws the ball into the pool and begins running around with a sail in his hand while a group of men watch.",
+          "then takes a drink having a conversation with another man and another man leads into him throwing balls in the water and laughing to the camera.",
+          "demonstrates how to properly throw the ball with his hands while still speaking to the camera."
+        ],
+        "gold": 3
+      },
+      "target": 3,
+      "arguments": [
+        [
+          "Playing water polo: Two people are seen passing a ball back and fourth in a pool and leads into one speaking to the camera. The man",
+          " dips the ball and walks back with the boy and pours detergent into a cup again."
+        ],
+        [
+          "Playing water polo: Two people are seen passing a ball back and fourth in a pool and leads into one speaking to the camera. The man",
+          " then throws the ball into the pool and begins running around with a sail in his hand while a group of men watch."
+        ],
+        [
+          "Playing water polo: Two people are seen passing a ball back and fourth in a pool and leads into one speaking to the camera. The man",
+          " then takes a drink having a conversation with another man and another man leads into him throwing balls in the water and laughing to the camera."
+        ],
+        [
+          "Playing water polo: Two people are seen passing a ball back and fourth in a pool and leads into one speaking to the camera. The man",
+          " demonstrates how to properly throw the ball with his hands while still speaking to the camera."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -103.56108093261719,
+            false
+          ]
+        ],
+        [
+          [
+            -108.42605590820312,
+            false
+          ]
+        ],
+        [
+          [
+            -134.91085815429688,
+            false
+          ]
+        ],
+        [
+          [
+            -73.84465026855469,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -103.56108093261719,
+          false
+        ],
+        [
+          -108.42605590820312,
+          false
+        ],
+        [
+          -134.91085815429688,
+          false
+        ],
+        [
+          -73.84465026855469,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "0384db989930603e0809ceaf319f29925f5bf3cfb1abf72f042639a6696a64d5",
+      "prompt_hash": "86efcb84bd36a457f529020d1d6ba9139565939fd71c39393f87e962d901690d",
+      "target_hash": "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce",
+      "acc": 1.0,
+      "acc_norm": 1.0
+    },
+    {
+      "doc_id": 16,
+      "doc": {
+        "ind": 225,
+        "activity_label": "Having an ice cream",
+        "ctx_a": "A woman is sitting at a table in a fast food restaurant while eating. She continually speaks to nobody as she eats.",
+        "ctx_b": "she",
+        "ctx": "A woman is sitting at a table in a fast food restaurant while eating. She continually speaks to nobody as she eats. she",
+        "endings": [
+          "is then seen sitting alone as she eats a cold brown ice cream.",
+          "pauses in the process of eating to enjoy her food.",
+          "stands up and grabs her purse, continuing to talk and laugh as she leaves.",
+          "picks up another chocolate bar and chews it as she talks."
+        ],
+        "source_id": "activitynet~v_15vwVfNA99o",
+        "split": "val",
+        "split_type": "zeroshot",
+        "label": "2",
+        "query": "Having an ice cream: A woman is sitting at a table in a fast food restaurant while eating. She continually speaks to nobody as she eats. She",
+        "choices": [
+          "is then seen sitting alone as she eats a cold brown ice cream.",
+          "pauses in the process of eating to enjoy her food.",
+          "stands up and grabs her purse, continuing to talk and laugh as she leaves.",
+          "picks up another chocolate bar and chews it as she talks."
+        ],
+        "gold": 2
+      },
+      "target": 2,
+      "arguments": [
+        [
+          "Having an ice cream: A woman is sitting at a table in a fast food restaurant while eating. She continually speaks to nobody as she eats. She",
+          " is then seen sitting alone as she eats a cold brown ice cream."
+        ],
+        [
+          "Having an ice cream: A woman is sitting at a table in a fast food restaurant while eating. She continually speaks to nobody as she eats. She",
+          " pauses in the process of eating to enjoy her food."
+        ],
+        [
+          "Having an ice cream: A woman is sitting at a table in a fast food restaurant while eating. She continually speaks to nobody as she eats. She",
+          " stands up and grabs her purse, continuing to talk and laugh as she leaves."
+        ],
+        [
+          "Having an ice cream: A woman is sitting at a table in a fast food restaurant while eating. She continually speaks to nobody as she eats. She",
+          " picks up another chocolate bar and chews it as she talks."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -65.08560943603516,
+            false
+          ]
+        ],
+        [
+          [
+            -50.71488952636719,
+            false
+          ]
+        ],
+        [
+          [
+            -84.89347839355469,
+            false
+          ]
+        ],
+        [
+          [
+            -64.77823638916016,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -65.08560943603516,
+          false
+        ],
+        [
+          -50.71488952636719,
+          false
+        ],
+        [
+          -84.89347839355469,
+          false
+        ],
+        [
+          -64.77823638916016,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "774e007f2eaa07ec1e4aa0cb1545908c84ba1b20ce4a7d3f556d13576cffffc4",
+      "prompt_hash": "0ea9954019676be17596ecd77838fea5ddb2751209ef4ab56539e1e26c8ca90b",
+      "target_hash": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35",
+      "acc": 0.0,
+      "acc_norm": 0.0
+    },
+    {
+      "doc_id": 17,
+      "doc": {
+        "ind": 245,
+        "activity_label": "Cheerleading",
+        "ctx_a": "A group of cheerleaders run onto a stage before a cheering audience.",
+        "ctx_b": "they",
+        "ctx": "A group of cheerleaders run onto a stage before a cheering audience. they",
+        "endings": [
+          "get into formation, then begin dancing and flipping as male cheerleaders join them.",
+          "perform a cheer routine before the girls, along with makeup artists, spread out and pose.",
+          "take turns jumping on each other like they are performing karate.",
+          "are then shown performing the type of cheerleading dance, using batons and pole vaults."
+        ],
+        "source_id": "activitynet~v_1AZxtWKkRlo",
+        "split": "val",
+        "split_type": "indomain",
+        "label": "0",
+        "query": "Cheerleading: A group of cheerleaders run onto a stage before a cheering audience. They",
+        "choices": [
+          "get into formation, then begin dancing and flipping as male cheerleaders join them.",
+          "perform a cheer routine before the girls, along with makeup artists, spread out and pose.",
+          "take turns jumping on each other like they are performing karate.",
+          "are then shown performing the type of cheerleading dance, using batons and pole vaults."
+        ],
+        "gold": 0
+      },
+      "target": 0,
+      "arguments": [
+        [
+          "Cheerleading: A group of cheerleaders run onto a stage before a cheering audience. They",
+          " get into formation, then begin dancing and flipping as male cheerleaders join them."
+        ],
+        [
+          "Cheerleading: A group of cheerleaders run onto a stage before a cheering audience. They",
+          " perform a cheer routine before the girls, along with makeup artists, spread out and pose."
+        ],
+        [
+          "Cheerleading: A group of cheerleaders run onto a stage before a cheering audience. They",
+          " take turns jumping on each other like they are performing karate."
+        ],
+        [
+          "Cheerleading: A group of cheerleaders run onto a stage before a cheering audience. They",
+          " are then shown performing the type of cheerleading dance, using batons and pole vaults."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -107.63340759277344,
+            false
+          ]
+        ],
+        [
+          [
+            -111.9924087524414,
+            false
+          ]
+        ],
+        [
+          [
+            -79.93583679199219,
+            false
+          ]
+        ],
+        [
+          [
+            -120.41234588623047,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -107.63340759277344,
+          false
+        ],
+        [
+          -111.9924087524414,
+          false
+        ],
+        [
+          -79.93583679199219,
+          false
+        ],
+        [
+          -120.41234588623047,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "f3f6dc9e0647507a2fa48c8dacfbc0c29165ac41b736aec1155bbf04190304a9",
+      "prompt_hash": "bd356da53b44f39e0cfe8b2cd81e018020c5098cad8752091139618eabb91fdb",
+      "target_hash": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "acc": 0.0,
+      "acc_norm": 0.0
+    },
+    {
+      "doc_id": 18,
+      "doc": {
+        "ind": 246,
+        "activity_label": "Cheerleading",
+        "ctx_a": "A group of cheerleaders run onto a stage before a cheering audience. They get into formation, then begin dancing and flipping as male cheerleaders join them.",
+        "ctx_b": "they all",
+        "ctx": "A group of cheerleaders run onto a stage before a cheering audience. They get into formation, then begin dancing and flipping as male cheerleaders join them. they all",
+        "endings": [
+          "dance and flip on stage while hanging their hats on the sides.",
+          "continue dancing and flipping, doing hand springs.",
+          "dance together with flip up their sleeves.",
+          "perform their routines as the studio rashes to a halt with cheerleaders in the audience."
+        ],
+        "source_id": "activitynet~v_1AZxtWKkRlo",
+        "split": "val",
+        "split_type": "indomain",
+        "label": "1",
+        "query": "Cheerleading: A group of cheerleaders run onto a stage before a cheering audience. They get into formation, then begin dancing and flipping as male cheerleaders join them. They all",
+        "choices": [
+          "dance and flip on stage while hanging their hats on the sides.",
+          "continue dancing and flipping, doing hand springs.",
+          "dance together with flip up their sleeves.",
+          "perform their routines as the studio rashes to a halt with cheerleaders in the audience."
+        ],
+        "gold": 1
+      },
+      "target": 1,
+      "arguments": [
+        [
+          "Cheerleading: A group of cheerleaders run onto a stage before a cheering audience. They get into formation, then begin dancing and flipping as male cheerleaders join them. They all",
+          " dance and flip on stage while hanging their hats on the sides."
+        ],
+        [
+          "Cheerleading: A group of cheerleaders run onto a stage before a cheering audience. They get into formation, then begin dancing and flipping as male cheerleaders join them. They all",
+          " continue dancing and flipping, doing hand springs."
+        ],
+        [
+          "Cheerleading: A group of cheerleaders run onto a stage before a cheering audience. They get into formation, then begin dancing and flipping as male cheerleaders join them. They all",
+          " dance together with flip up their sleeves."
+        ],
+        [
+          "Cheerleading: A group of cheerleaders run onto a stage before a cheering audience. They get into formation, then begin dancing and flipping as male cheerleaders join them. They all",
+          " perform their routines as the studio rashes to a halt with cheerleaders in the audience."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -75.10092163085938,
+            false
+          ]
+        ],
+        [
+          [
+            -59.86884307861328,
+            false
+          ]
+        ],
+        [
+          [
+            -45.568458557128906,
+            false
+          ]
+        ],
+        [
+          [
+            -101.21985626220703,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -75.10092163085938,
+          false
+        ],
+        [
+          -59.86884307861328,
+          false
+        ],
+        [
+          -45.568458557128906,
+          false
+        ],
+        [
+          -101.21985626220703,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "c16d0f94317c1715fbffb7f2a88f39cdeaa5be7550445adb5f3987cf13f094e6",
+      "prompt_hash": "b68132b02f78017757db5ac3ff9a327ddb6349f09fde6086f019383e851ef8e1",
+      "target_hash": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "acc": 0.0,
+      "acc_norm": 0.0
+    },
+    {
+      "doc_id": 19,
+      "doc": {
+        "ind": 247,
+        "activity_label": "Cheerleading",
+        "ctx_a": "They get into formation, then begin dancing and flipping as male cheerleaders join them. They all continue dancing and flipping, doing hand springs.",
+        "ctx_b": "when they",
+        "ctx": "They get into formation, then begin dancing and flipping as male cheerleaders join them. They all continue dancing and flipping, doing hand springs. when they",
+        "endings": [
+          "are done, they shake hands and walk away, but cheers are heard all around as they're finished.",
+          "are finished, they jump up and down happily and walk off the stage, exhausted.",
+          "are done, a male cheerleader is crowned and an instant replay is shown.",
+          "come down from their workout, they all stop to bow and applaud, then they continue dancing."
+        ],
+        "source_id": "activitynet~v_1AZxtWKkRlo",
+        "split": "val",
+        "split_type": "indomain",
+        "label": "1",
+        "query": "Cheerleading: They get into formation, then begin dancing and flipping as male cheerleaders join them. They all continue dancing and flipping, doing hand springs. When they",
+        "choices": [
+          "are done, they shake hands and walk away, but cheers are heard all around as they're finished.",
+          "are finished, they jump up and down happily and walk off the stage, exhausted.",
+          "are done, a male cheerleader is crowned and an instant replay is shown.",
+          "come down from their workout, they all stop to bow and applaud, then they continue dancing."
+        ],
+        "gold": 1
+      },
+      "target": 1,
+      "arguments": [
+        [
+          "Cheerleading: They get into formation, then begin dancing and flipping as male cheerleaders join them. They all continue dancing and flipping, doing hand springs. When they",
+          " are done, they shake hands and walk away, but cheers are heard all around as they're finished."
+        ],
+        [
+          "Cheerleading: They get into formation, then begin dancing and flipping as male cheerleaders join them. They all continue dancing and flipping, doing hand springs. When they",
+          " are finished, they jump up and down happily and walk off the stage, exhausted."
+        ],
+        [
+          "Cheerleading: They get into formation, then begin dancing and flipping as male cheerleaders join them. They all continue dancing and flipping, doing hand springs. When they",
+          " are done, a male cheerleader is crowned and an instant replay is shown."
+        ],
+        [
+          "Cheerleading: They get into formation, then begin dancing and flipping as male cheerleaders join them. They all continue dancing and flipping, doing hand springs. When they",
+          " come down from their workout, they all stop to bow and applaud, then they continue dancing."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -98.94061279296875,
+            false
+          ]
+        ],
+        [
+          [
+            -78.18153381347656,
+            false
+          ]
+        ],
+        [
+          [
+            -94.66140747070312,
+            false
+          ]
+        ],
+        [
+          [
+            -100.41348266601562,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -98.94061279296875,
+          false
+        ],
+        [
+          -78.18153381347656,
+          false
+        ],
+        [
+          -94.66140747070312,
+          false
+        ],
+        [
+          -100.41348266601562,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc",
+        "acc_norm"
+      ],
+      "doc_hash": "c98d31121922704d814cc7ea9bf0e04e3d52284824d62a886a795fe540a4f1dc",
+      "prompt_hash": "22b8224c4cb5425320cd6ae40564ef1f14e30ccfb8ba7a82b73326f1ea44c892",
+      "target_hash": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "acc": 1.0,
+      "acc_norm": 1.0
+    }
+  ]
+}

@@ -1,0 +1,275 @@
+{
+  "note": "request audit + runtime ESTIMATES; no accuracy computed",
+  "max_length": 512,
+  "truncation_rule": "input = (context_enc + continuation_enc)[-(max_length+1):][:-1] (left-truncate context); assert len(continuation_enc) <= max_length",
+  "batch_size": 8,
+  "dtype": "float32",
+  "tasks": {
+    "hellaswag": {
+      "dataset": "Rowan/hellaswag/None",
+      "split_scored": "validation",
+      "version": 1.0,
+      "documents": 10042,
+      "requests": 40168,
+      "empty_context_requests": 0,
+      "tokens_ctx_plus_cont": {
+        "max": 163,
+        "p50": 91.0,
+        "p99": 131.0,
+        "mean": 83.03515236008764
+      },
+      "continuation_tokens_max": 92,
+      "requests_needing_truncation": 0,
+      "fraction_needing_truncation": 0.0,
+      "continuation_exceeds_max_length": 0,
+      "timing_sample_requests": 400,
+      "seconds_per_request_measured": 0.003861120249994201,
+      "ESTIMATED_full_scoring_seconds": 155.09347820176708,
+      "task_config": {
+        "task": "hellaswag",
+        "dataset_path": "Rowan/hellaswag",
+        "training_split": "train",
+        "validation_split": "validation",
+        "process_docs": "def process_docs(dataset: datasets.Dataset) -> datasets.Dataset:\n    def _process_doc(doc):\n        ctx = doc[\"ctx_a\"] + \" \" + doc[\"ctx_b\"].capitalize()\n        out_doc = {\n            \"query\": preprocess(doc[\"activity_label\"] + \": \" + ctx),\n            \"choices\": [preprocess(ending) for ending in doc[\"endings\"]],\n            \"gold\": int(doc[\"label\"]),\n        }\n        return out_doc\n\n    return dataset.map(_process_doc)\n",
+        "doc_to_text": "{{query}}",
+        "doc_to_target": "{{label}}",
+        "unsafe_code": false,
+        "doc_to_choice": "choices",
+        "description": "",
+        "target_delimiter": " ",
+        "fewshot_delimiter": "\n\n",
+        "fewshot_config": {
+          "sampler": "default",
+          "split": null,
+          "process_docs": "<function process_docs at 0x000002DBC043ECA0>",
+          "fewshot_indices": null,
+          "samples": null,
+          "doc_to_text": "{{query}}",
+          "doc_to_choice": "choices",
+          "doc_to_target": "{{label}}",
+          "gen_prefix": null,
+          "fewshot_delimiter": "\n\n",
+          "target_delimiter": " "
+        },
+        "metric_list": [
+          {
+            "metric": "acc",
+            "aggregation": "mean",
+            "higher_is_better": true
+          },
+          {
+            "metric": "acc_norm",
+            "aggregation": "mean",
+            "higher_is_better": true
+          }
+        ],
+        "output_type": "multiple_choice",
+        "repeats": 1,
+        "should_decontaminate": false,
+        "metadata": {
+          "version": 1.0,
+          "config_source": "C:\\gibc-work\\venv\\Lib\\site-packages\\lm_eval\\tasks\\hellaswag\\hellaswag.yaml"
+        }
+      }
+    },
+    "arc_easy": {
+      "dataset": "allenai/ai2_arc/ARC-Easy",
+      "split_scored": "test",
+      "version": 1.0,
+      "documents": 2376,
+      "requests": 9501,
+      "empty_context_requests": 0,
+      "tokens_ctx_plus_cont": {
+        "max": 160,
+        "p50": 28.0,
+        "p99": 81.0,
+        "mean": 32.35133143879592
+      },
+      "continuation_tokens_max": 33,
+      "requests_needing_truncation": 0,
+      "fraction_needing_truncation": 0.0,
+      "continuation_exceeds_max_length": 0,
+      "timing_sample_requests": 400,
+      "seconds_per_request_measured": 0.0028290089999973133,
+      "ESTIMATED_full_scoring_seconds": 26.878414508974473,
+      "task_config": {
+        "task": "arc_easy",
+        "dataset_path": "allenai/ai2_arc",
+        "dataset_name": "ARC-Easy",
+        "training_split": "train",
+        "validation_split": "validation",
+        "test_split": "test",
+        "doc_to_text": "Question: {{question}}\nAnswer:",
+        "doc_to_target": "{{choices.label.index(answerKey)}}",
+        "unsafe_code": false,
+        "doc_to_choice": "{{choices.text}}",
+        "description": "",
+        "target_delimiter": " ",
+        "fewshot_delimiter": "\n\n",
+        "fewshot_config": {
+          "sampler": "default",
+          "split": null,
+          "process_docs": null,
+          "fewshot_indices": null,
+          "samples": null,
+          "doc_to_text": "Question: {{question}}\nAnswer:",
+          "doc_to_choice": "{{choices.text}}",
+          "doc_to_target": "{{choices.label.index(answerKey)}}",
+          "gen_prefix": null,
+          "fewshot_delimiter": "\n\n",
+          "target_delimiter": " "
+        },
+        "metric_list": [
+          {
+            "metric": "acc",
+            "aggregation": "mean",
+            "higher_is_better": true
+          },
+          {
+            "metric": "acc_norm",
+            "aggregation": "mean",
+            "higher_is_better": true
+          }
+        ],
+        "output_type": "multiple_choice",
+        "repeats": 1,
+        "should_decontaminate": true,
+        "doc_to_decontamination_query": "Question: {{question}}\nAnswer:",
+        "metadata": {
+          "version": 1.0,
+          "config_source": "C:\\gibc-work\\venv\\Lib\\site-packages\\lm_eval\\tasks\\arc\\arc_easy.yaml"
+        }
+      }
+    },
+    "piqa": {
+      "dataset": "baber/piqa/None",
+      "split_scored": "validation",
+      "version": 1.0,
+      "documents": 1838,
+      "requests": 3676,
+      "empty_context_requests": 0,
+      "tokens_ctx_plus_cont": {
+        "max": 261,
+        "p50": 31.0,
+        "p99": 138.0,
+        "mean": 38.24211099020675
+      },
+      "continuation_tokens_max": 252,
+      "requests_needing_truncation": 0,
+      "fraction_needing_truncation": 0.0,
+      "continuation_exceeds_max_length": 0,
+      "timing_sample_requests": 400,
+      "seconds_per_request_measured": 0.0030046025000046938,
+      "ESTIMATED_full_scoring_seconds": 11.044918790017254,
+      "task_config": {
+        "task": "piqa",
+        "dataset_path": "baber/piqa",
+        "training_split": "train",
+        "validation_split": "validation",
+        "doc_to_text": "Question: {{goal}}\nAnswer:",
+        "doc_to_target": "label",
+        "unsafe_code": false,
+        "doc_to_choice": "{{[sol1, sol2]}}",
+        "description": "",
+        "target_delimiter": " ",
+        "fewshot_delimiter": "\n\n",
+        "fewshot_config": {
+          "sampler": "default",
+          "split": null,
+          "process_docs": null,
+          "fewshot_indices": null,
+          "samples": null,
+          "doc_to_text": "Question: {{goal}}\nAnswer:",
+          "doc_to_choice": "{{[sol1, sol2]}}",
+          "doc_to_target": "label",
+          "gen_prefix": null,
+          "fewshot_delimiter": "\n\n",
+          "target_delimiter": " "
+        },
+        "metric_list": [
+          {
+            "metric": "acc",
+            "aggregation": "mean",
+            "higher_is_better": true
+          },
+          {
+            "metric": "acc_norm",
+            "aggregation": "mean",
+            "higher_is_better": true
+          }
+        ],
+        "output_type": "multiple_choice",
+        "repeats": 1,
+        "should_decontaminate": true,
+        "doc_to_decontamination_query": "goal",
+        "metadata": {
+          "version": 1.0,
+          "config_source": "C:\\gibc-work\\venv\\Lib\\site-packages\\lm_eval\\tasks\\piqa\\piqa.yaml"
+        }
+      }
+    },
+    "winogrande": {
+      "dataset": "allenai/winogrande/winogrande_xl",
+      "split_scored": "validation",
+      "version": 1.0,
+      "documents": 1267,
+      "requests": 2534,
+      "empty_context_requests": 0,
+      "tokens_ctx_plus_cont": {
+        "max": 43,
+        "p50": 24.0,
+        "p99": 35.67000000000007,
+        "mean": 24.277032359905288
+      },
+      "continuation_tokens_max": 22,
+      "requests_needing_truncation": 0,
+      "fraction_needing_truncation": 0.0,
+      "continuation_exceeds_max_length": 0,
+      "timing_sample_requests": 400,
+      "seconds_per_request_measured": 0.0020754772500004037,
+      "ESTIMATED_full_scoring_seconds": 5.259259351501023,
+      "task_config": {
+        "task": "winogrande",
+        "dataset_path": "allenai/winogrande",
+        "dataset_name": "winogrande_xl",
+        "training_split": "train",
+        "validation_split": "validation",
+        "doc_to_text": "def doc_to_text(doc):\n    answer_to_num = {\"1\": 0, \"2\": 1}\n    return answer_to_num[doc[\"answer\"]]\n",
+        "doc_to_target": "def doc_to_target(doc):\n    idx = doc[\"sentence\"].index(\"_\") + 1\n    return doc[\"sentence\"][idx:].strip()\n",
+        "unsafe_code": false,
+        "doc_to_choice": "def doc_to_choice(doc):\n    idx = doc[\"sentence\"].index(\"_\")\n    options = [doc[\"option1\"], doc[\"option2\"]]\n    return [doc[\"sentence\"][:idx] + opt for opt in options]\n",
+        "description": "",
+        "target_delimiter": " ",
+        "fewshot_delimiter": "\n\n",
+        "fewshot_config": {
+          "sampler": "default",
+          "split": null,
+          "process_docs": null,
+          "fewshot_indices": null,
+          "samples": null,
+          "doc_to_text": "<function doc_to_text at 0x000002DBC556A980>",
+          "doc_to_choice": "<function doc_to_choice at 0x000002DBC556AB60>",
+          "doc_to_target": "<function doc_to_target at 0x000002DBC556AAC0>",
+          "gen_prefix": null,
+          "fewshot_delimiter": "\n\n",
+          "target_delimiter": " "
+        },
+        "metric_list": [
+          {
+            "metric": "acc",
+            "aggregation": "mean",
+            "higher_is_better": true
+          }
+        ],
+        "output_type": "multiple_choice",
+        "repeats": 1,
+        "should_decontaminate": true,
+        "doc_to_decontamination_query": "sentence",
+        "metadata": {
+          "version": 1.0,
+          "config_source": "C:\\gibc-work\\venv\\Lib\\site-packages\\lm_eval\\tasks\\winogrande\\default.yaml"
+        }
+      }
+    }
+  }
+}

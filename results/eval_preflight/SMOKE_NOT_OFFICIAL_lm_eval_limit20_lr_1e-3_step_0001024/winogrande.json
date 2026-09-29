@@ -1,0 +1,1124 @@
+{
+  "warning": "SMOKE TEST ONLY - NOT OFFICIAL RESULTS. Limited examples on a 1,024-step LR-sanity checkpoint; scores are not model quality and must not be reported, tuned on, or used for decisions.",
+  "task": "winogrande",
+  "seconds": 28.57634589999725,
+  "examples": 20,
+  "requests_crosschecked": 40,
+  "max_abs_loglik_diff_vs_source_model": 1.633167266845703e-05,
+  "results_NOT_OFFICIAL": {
+    "name": "winogrande",
+    "alias": "winogrande",
+    "sample_len": 20,
+    "acc,none": 0.55,
+    "acc_stderr,none": "N/A"
+  },
+  "n_samples": {
+    "original": 1267,
+    "effective": 20
+  },
+  "versions": 1.0,
+  "config": {
+    "task": "winogrande",
+    "dataset_path": "allenai/winogrande",
+    "dataset_name": "winogrande_xl",
+    "training_split": "train",
+    "validation_split": "validation",
+    "doc_to_text": "def doc_to_text(doc):\n    answer_to_num = {\"1\": 0, \"2\": 1}\n    return answer_to_num[doc[\"answer\"]]\n",
+    "doc_to_target": "def doc_to_target(doc):\n    idx = doc[\"sentence\"].index(\"_\") + 1\n    return doc[\"sentence\"][idx:].strip()\n",
+    "unsafe_code": false,
+    "doc_to_choice": "def doc_to_choice(doc):\n    idx = doc[\"sentence\"].index(\"_\")\n    options = [doc[\"option1\"], doc[\"option2\"]]\n    return [doc[\"sentence\"][:idx] + opt for opt in options]\n",
+    "description": "",
+    "target_delimiter": " ",
+    "fewshot_delimiter": "\n\n",
+    "fewshot_config": {
+      "sampler": "default",
+      "split": null,
+      "process_docs": null,
+      "fewshot_indices": null,
+      "samples": null,
+      "doc_to_text": "<function doc_to_text at 0x00000235733BDD00>",
+      "doc_to_choice": "<function doc_to_choice at 0x0000023575F6B7E0>",
+      "doc_to_target": "<function doc_to_target at 0x00000235733BFCE0>",
+      "gen_prefix": null,
+      "fewshot_delimiter": "\n\n",
+      "target_delimiter": " "
+    },
+    "num_fewshot": 0,
+    "metric_list": [
+      {
+        "metric": "acc",
+        "aggregation": "mean",
+        "higher_is_better": true
+      }
+    ],
+    "output_type": "multiple_choice",
+    "repeats": 1,
+    "should_decontaminate": true,
+    "doc_to_decontamination_query": "sentence",
+    "metadata": {
+      "version": 1.0,
+      "config_source": "C:\\gibc-work\\venv\\Lib\\site-packages\\lm_eval\\tasks\\winogrande\\default.yaml"
+    }
+  },
+  "lm_eval_config": {
+    "model": "C:\\gibc-work\\exports\\lr_1e-3_step_0001024",
+    "model_args": null,
+    "model_num_parameters": 42968576,
+    "model_dtype": "torch.float32",
+    "model_revision": "main",
+    "model_sha": "",
+    "batch_size": null,
+    "batch_sizes": [],
+    "device": null,
+    "use_cache": null,
+    "limit": 20,
+    "bootstrap_iters": 0,
+    "gen_kwargs": null,
+    "random_seed": 0,
+    "numpy_seed": 1234,
+    "torch_seed": 1234,
+    "fewshot_seed": 1234
+  },
+  "samples": [
+    {
+      "doc_id": 0,
+      "doc": {
+        "sentence": "Sarah was a much better surgeon than Maria so _ always got the easier cases.",
+        "option1": "Sarah",
+        "option2": "Maria",
+        "answer": "2"
+      },
+      "target": "always got the easier cases.",
+      "arguments": [
+        [
+          "Sarah was a much better surgeon than Maria so Sarah",
+          " always got the easier cases."
+        ],
+        [
+          "Sarah was a much better surgeon than Maria so Maria",
+          " always got the easier cases."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -38.601985931396484,
+            false
+          ]
+        ],
+        [
+          [
+            -38.73115539550781,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -38.601985931396484,
+          false
+        ],
+        [
+          -38.73115539550781,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc"
+      ],
+      "doc_hash": "62d625e23b0883658b0d294bdd30125e28c9d8ebecb11a21bdd4345c9a7694cf",
+      "prompt_hash": "661ccece6fed4147d0c129db906b2dec86490bd9f520717c8cebe010eb3e3df1",
+      "target_hash": "85a2a1bd3293fb7367fc630cef4752be8223c1b4142b62116747b5155c508854",
+      "acc": 0.0
+    },
+    {
+      "doc_id": 1,
+      "doc": {
+        "sentence": "Sarah was a much better surgeon than Maria so _ always got the harder cases.",
+        "option1": "Sarah",
+        "option2": "Maria",
+        "answer": "1"
+      },
+      "target": "always got the harder cases.",
+      "arguments": [
+        [
+          "Sarah was a much better surgeon than Maria so Sarah",
+          " always got the harder cases."
+        ],
+        [
+          "Sarah was a much better surgeon than Maria so Maria",
+          " always got the harder cases."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -39.910301208496094,
+            false
+          ]
+        ],
+        [
+          [
+            -40.051780700683594,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -39.910301208496094,
+          false
+        ],
+        [
+          -40.051780700683594,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc"
+      ],
+      "doc_hash": "d226101e430a0a0f4e8ef184361900507b8d3ebedcef8abf70463f246dbc02d4",
+      "prompt_hash": "661ccece6fed4147d0c129db906b2dec86490bd9f520717c8cebe010eb3e3df1",
+      "target_hash": "72966a19e5082dc0567c7b6c0b3f85684ec366be1e3d82c8fa5bdcd786b4aace",
+      "acc": 1.0
+    },
+    {
+      "doc_id": 2,
+      "doc": {
+        "sentence": "They were worried the wine would ruin the bed and the blanket, but the _ was't ruined.",
+        "option1": "blanket",
+        "option2": "bed",
+        "answer": "2"
+      },
+      "target": "was't ruined.",
+      "arguments": [
+        [
+          "They were worried the wine would ruin the bed and the blanket, but the blanket",
+          " was't ruined."
+        ],
+        [
+          "They were worried the wine would ruin the bed and the blanket, but the bed",
+          " was't ruined."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -22.427335739135742,
+            false
+          ]
+        ],
+        [
+          [
+            -21.903804779052734,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -22.427335739135742,
+          false
+        ],
+        [
+          -21.903804779052734,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc"
+      ],
+      "doc_hash": "94e89cb5299b83ede5d7c4e4ba57778513a9d978d273fb806f2645ff70c4896c",
+      "prompt_hash": "9b51dfabc7eed26ee8ab21c23e5f86520ad75a24d5a245cbe2e78ba54c0b0495",
+      "target_hash": "38ea59bcb42719c7cd807fcbedc2d873550739efba5a4cc74044f1d8c698035a",
+      "acc": 1.0
+    },
+    {
+      "doc_id": 3,
+      "doc": {
+        "sentence": "Terry tried to bake the eggplant in the toaster oven but the _ was too big.",
+        "option1": "eggplant",
+        "option2": "toaster",
+        "answer": "1"
+      },
+      "target": "was too big.",
+      "arguments": [
+        [
+          "Terry tried to bake the eggplant in the toaster oven but the eggplant",
+          " was too big."
+        ],
+        [
+          "Terry tried to bake the eggplant in the toaster oven but the toaster",
+          " was too big."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -13.75275707244873,
+            false
+          ]
+        ],
+        [
+          [
+            -14.876960754394531,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -13.75275707244873,
+          false
+        ],
+        [
+          -14.876960754394531,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc"
+      ],
+      "doc_hash": "8c3abea8de4114c94fb261875cc9fd20f8096b7153552e1fc66a6678c0e676a5",
+      "prompt_hash": "7ef3b4ddf52e8c0262483c06206012c1ff49d6e386677ee3d73da58f6f898b1b",
+      "target_hash": "d70e093bcf9228c16228db378e617dc6d215c0bce81e9fc9401d7415df96419a",
+      "acc": 1.0
+    },
+    {
+      "doc_id": 4,
+      "doc": {
+        "sentence": "At night, Jeffrey always stays up later than Hunter to watch TV because _ wakes up late.",
+        "option1": "Jeffrey",
+        "option2": "Hunter",
+        "answer": "1"
+      },
+      "target": "wakes up late.",
+      "arguments": [
+        [
+          "At night, Jeffrey always stays up later than Hunter to watch TV because Jeffrey",
+          " wakes up late."
+        ],
+        [
+          "At night, Jeffrey always stays up later than Hunter to watch TV because Hunter",
+          " wakes up late."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -24.12017250061035,
+            false
+          ]
+        ],
+        [
+          [
+            -24.22825050354004,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -24.12017250061035,
+          false
+        ],
+        [
+          -24.22825050354004,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc"
+      ],
+      "doc_hash": "2c618f426819090d637048979deffbfc894e7d4b07bcb66ef162dd39ae32853e",
+      "prompt_hash": "37a05f8e8035de16d1c81daa2de5985331a54b1d50dd1a5a7e28623c199e2317",
+      "target_hash": "91c4d7c32c95a3e7d3326b3150d119e8c0d8d690844c31b6e3e18f0e760108de",
+      "acc": 1.0
+    },
+    {
+      "doc_id": 5,
+      "doc": {
+        "sentence": "The cat of Sarah has some mouth problems, so she takes it to see Maria. _ is a responsible cat owner.",
+        "option1": "Sarah",
+        "option2": "Maria",
+        "answer": "1"
+      },
+      "target": "is a responsible cat owner.",
+      "arguments": [
+        [
+          "The cat of Sarah has some mouth problems, so she takes it to see Maria. Sarah",
+          " is a responsible cat owner."
+        ],
+        [
+          "The cat of Sarah has some mouth problems, so she takes it to see Maria. Maria",
+          " is a responsible cat owner."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -25.503082275390625,
+            false
+          ]
+        ],
+        [
+          [
+            -25.371408462524414,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -25.503082275390625,
+          false
+        ],
+        [
+          -25.371408462524414,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc"
+      ],
+      "doc_hash": "dbf1bbd57b5f99123f9af9816697790309dbc67712af66a1ba910e73e63bcc92",
+      "prompt_hash": "06259b8709f736c1bd39c583512ebbb3f9816fa2190874eb387c6f3bc91ea7c5",
+      "target_hash": "6f474f9d040970a7e6a3d430798f9d93ef251f45bbab769238a4503784687a1b",
+      "acc": 0.0
+    },
+    {
+      "doc_id": 6,
+      "doc": {
+        "sentence": "The home that my parents had when I was in school was a lot nicer than my house now because the _ was sophisticated.",
+        "option1": "home",
+        "option2": "house",
+        "answer": "1"
+      },
+      "target": "was sophisticated.",
+      "arguments": [
+        [
+          "The home that my parents had when I was in school was a lot nicer than my house now because the home",
+          " was sophisticated."
+        ],
+        [
+          "The home that my parents had when I was in school was a lot nicer than my house now because the house",
+          " was sophisticated."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -14.645715713500977,
+            false
+          ]
+        ],
+        [
+          [
+            -14.430131912231445,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -14.645715713500977,
+          false
+        ],
+        [
+          -14.430131912231445,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc"
+      ],
+      "doc_hash": "74c0ad4d201a8171cff5c9385c8fbf44d28d5cd822de067cb49fe0838cbec2b5",
+      "prompt_hash": "3ddb8a8f8d2f43e73e7c33a263a2b2eab656b85a55f56b10c285115efca6ab66",
+      "target_hash": "2db0f0c8da102016c29763f0d4b17d097be185aad2f766c8247300490b697c0a",
+      "acc": 0.0
+    },
+    {
+      "doc_id": 7,
+      "doc": {
+        "sentence": "The home that my parents had when I was in school was a lot nicer than my house now because the _ is trashy.",
+        "option1": "home",
+        "option2": "house",
+        "answer": "2"
+      },
+      "target": "is trashy.",
+      "arguments": [
+        [
+          "The home that my parents had when I was in school was a lot nicer than my house now because the home",
+          " is trashy."
+        ],
+        [
+          "The home that my parents had when I was in school was a lot nicer than my house now because the house",
+          " is trashy."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -19.75554656982422,
+            false
+          ]
+        ],
+        [
+          [
+            -18.55643081665039,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -19.75554656982422,
+          false
+        ],
+        [
+          -18.55643081665039,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc"
+      ],
+      "doc_hash": "d2165f7f4417bda998b168bc88c7e8e7769bfd41609dfa1fbde9900dbe6685d1",
+      "prompt_hash": "3ddb8a8f8d2f43e73e7c33a263a2b2eab656b85a55f56b10c285115efca6ab66",
+      "target_hash": "c023e63490c6f83e05fbfe26b04f1c07caf34aed3dc1a0bd84c4924c0ab68d63",
+      "acc": 1.0
+    },
+    {
+      "doc_id": 8,
+      "doc": {
+        "sentence": "Natalie has a rich husband and lots of money, Jennifer is poor _ needs to make her clothes.",
+        "option1": "Natalie",
+        "option2": "Jennifer",
+        "answer": "2"
+      },
+      "target": "needs to make her clothes.",
+      "arguments": [
+        [
+          "Natalie has a rich husband and lots of money, Jennifer is poor Natalie",
+          " needs to make her clothes."
+        ],
+        [
+          "Natalie has a rich husband and lots of money, Jennifer is poor Jennifer",
+          " needs to make her clothes."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -27.38677406311035,
+            false
+          ]
+        ],
+        [
+          [
+            -25.06342315673828,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -27.38677406311035,
+          false
+        ],
+        [
+          -25.06342315673828,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc"
+      ],
+      "doc_hash": "edc81f665465706823d2a5cf9e5c0dfa4e51fd56dd8528eab4b9e74f1edbe332",
+      "prompt_hash": "adf2532fd9075a1b134440f7e0c565e2f16673eff4c80377ea4abd88b3a692b4",
+      "target_hash": "a3267d6f6e611617103b54e604fa2a05a95fcd342def4c5b2c1e403054d1e348",
+      "acc": 1.0
+    },
+    {
+      "doc_id": 9,
+      "doc": {
+        "sentence": "Joe immediately went to bakery before the bank because the _ had a limited supply of what he wanted.",
+        "option1": "bakery",
+        "option2": "bank",
+        "answer": "1"
+      },
+      "target": "had a limited supply of what he wanted.",
+      "arguments": [
+        [
+          "Joe immediately went to bakery before the bank because the bakery",
+          " had a limited supply of what he wanted."
+        ],
+        [
+          "Joe immediately went to bakery before the bank because the bank",
+          " had a limited supply of what he wanted."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -38.54610061645508,
+            false
+          ]
+        ],
+        [
+          [
+            -37.208045959472656,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -38.54610061645508,
+          false
+        ],
+        [
+          -37.208045959472656,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc"
+      ],
+      "doc_hash": "587be19a7754f500f81a20ed00c65fd5c510386521dc847f846fb7ba55a74558",
+      "prompt_hash": "b0a9269b9e238d504c98eff2f384c68fa0fac3dab58823b3cb15ae0e8af58df4",
+      "target_hash": "1ff39943ba69b73f52ed66ba62aa83a451f214f2a13836c525ce469050fa810a",
+      "acc": 0.0
+    },
+    {
+      "doc_id": 10,
+      "doc": {
+        "sentence": "Joe immediately went to bakery before the bank because the _ had a substantial supply of what he wanted.",
+        "option1": "bakery",
+        "option2": "bank",
+        "answer": "2"
+      },
+      "target": "had a substantial supply of what he wanted.",
+      "arguments": [
+        [
+          "Joe immediately went to bakery before the bank because the bakery",
+          " had a substantial supply of what he wanted."
+        ],
+        [
+          "Joe immediately went to bakery before the bank because the bank",
+          " had a substantial supply of what he wanted."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -39.1760368347168,
+            false
+          ]
+        ],
+        [
+          [
+            -37.78700256347656,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -39.1760368347168,
+          false
+        ],
+        [
+          -37.78700256347656,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc"
+      ],
+      "doc_hash": "3f0d2b98333b1f59e4177aec7a9105aba425bd1bd7650727d46c415a9230afbd",
+      "prompt_hash": "b0a9269b9e238d504c98eff2f384c68fa0fac3dab58823b3cb15ae0e8af58df4",
+      "target_hash": "7e3923d639a77277072bec0f5ad402907ce733452440276c501e832f4b615486",
+      "acc": 1.0
+    },
+    {
+      "doc_id": 11,
+      "doc": {
+        "sentence": "I had to read an entire story for class tomorrow. Luckily, the _ was canceled.",
+        "option1": "story",
+        "option2": "class",
+        "answer": "2"
+      },
+      "target": "was canceled.",
+      "arguments": [
+        [
+          "I had to read an entire story for class tomorrow. Luckily, the story",
+          " was canceled."
+        ],
+        [
+          "I had to read an entire story for class tomorrow. Luckily, the class",
+          " was canceled."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -23.30107879638672,
+            false
+          ]
+        ],
+        [
+          [
+            -22.63846206665039,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -23.30107879638672,
+          false
+        ],
+        [
+          -22.63846206665039,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc"
+      ],
+      "doc_hash": "fab5033b81cae8dcae2aac76b52ee1d9c576f896b1d87438c745f46064986879",
+      "prompt_hash": "20f833de67813394fd325cf4fde99b24af4dbea0a12d04beacb66b95692fd269",
+      "target_hash": "d69629b66f75ac670260eaf7f132d1b9be3336dc6978e62dd2616e96ae52d30b",
+      "acc": 1.0
+    },
+    {
+      "doc_id": 12,
+      "doc": {
+        "sentence": "I had to read an entire story for class tomorrow. Luckily, the _ was short.",
+        "option1": "story",
+        "option2": "class",
+        "answer": "1"
+      },
+      "target": "was short.",
+      "arguments": [
+        [
+          "I had to read an entire story for class tomorrow. Luckily, the story",
+          " was short."
+        ],
+        [
+          "I had to read an entire story for class tomorrow. Luckily, the class",
+          " was short."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -12.7193603515625,
+            false
+          ]
+        ],
+        [
+          [
+            -12.776801109313965,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -12.7193603515625,
+          false
+        ],
+        [
+          -12.776801109313965,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc"
+      ],
+      "doc_hash": "9278c35642eb6de5bc69b49b2689fbef5d6cb4d350772a065cd406bff692b767",
+      "prompt_hash": "20f833de67813394fd325cf4fde99b24af4dbea0a12d04beacb66b95692fd269",
+      "target_hash": "4d51d8ca7c938596c488615d083e6e91e7cce7c6e4393b53d94da2bf7650cd31",
+      "acc": 1.0
+    },
+    {
+      "doc_id": 13,
+      "doc": {
+        "sentence": "He had enough time between classes to go to a cafe or to the library. He went to the _ because his paper could wait.",
+        "option1": "cafe",
+        "option2": "library",
+        "answer": "1"
+      },
+      "target": "because his paper could wait.",
+      "arguments": [
+        [
+          "He had enough time between classes to go to a cafe or to the library. He went to the cafe",
+          " because his paper could wait."
+        ],
+        [
+          "He had enough time between classes to go to a cafe or to the library. He went to the library",
+          " because his paper could wait."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -31.08458709716797,
+            false
+          ]
+        ],
+        [
+          [
+            -30.415538787841797,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -31.08458709716797,
+          false
+        ],
+        [
+          -30.415538787841797,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc"
+      ],
+      "doc_hash": "de166f3704da6dca41d6f7d59176652fe7b4a6383505b151feb667263eb408f5",
+      "prompt_hash": "8fabaff12a8d772778393e24f6c8502be7685feac9eb5ea0b1485273281a46ac",
+      "target_hash": "9d301a6cd51658ae1dd54fb039769be29bdfc3926a63168e6814506c81b2ff37",
+      "acc": 0.0
+    },
+    {
+      "doc_id": 14,
+      "doc": {
+        "sentence": "He had enough time between classes to go to a cafe or to the library. He went to the _ because his paper was due soon.",
+        "option1": "cafe",
+        "option2": "library",
+        "answer": "2"
+      },
+      "target": "because his paper was due soon.",
+      "arguments": [
+        [
+          "He had enough time between classes to go to a cafe or to the library. He went to the cafe",
+          " because his paper was due soon."
+        ],
+        [
+          "He had enough time between classes to go to a cafe or to the library. He went to the library",
+          " because his paper was due soon."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -36.055233001708984,
+            false
+          ]
+        ],
+        [
+          [
+            -35.196319580078125,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -36.055233001708984,
+          false
+        ],
+        [
+          -35.196319580078125,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc"
+      ],
+      "doc_hash": "00e4ca19427668d2127eba24a61488a18ada9940410c2e04cd5e3ef77592009c",
+      "prompt_hash": "8fabaff12a8d772778393e24f6c8502be7685feac9eb5ea0b1485273281a46ac",
+      "target_hash": "af5ca402319e80f0aa4583db256109771b0611babf89c5f46d35a23c0da483ae",
+      "acc": 1.0
+    },
+    {
+      "doc_id": 15,
+      "doc": {
+        "sentence": "Lindsey like to read graphic novels but Natalie liked classic literature to read. _ bought the new Frank Miller comic at the book store.",
+        "option1": "Lindsey",
+        "option2": "Natalie",
+        "answer": "1"
+      },
+      "target": "bought the new Frank Miller comic at the book store.",
+      "arguments": [
+        [
+          "Lindsey like to read graphic novels but Natalie liked classic literature to read. Lindsey",
+          " bought the new Frank Miller comic at the book store."
+        ],
+        [
+          "Lindsey like to read graphic novels but Natalie liked classic literature to read. Natalie",
+          " bought the new Frank Miller comic at the book store."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -70.09864807128906,
+            false
+          ]
+        ],
+        [
+          [
+            -70.03073120117188,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -70.09864807128906,
+          false
+        ],
+        [
+          -70.03073120117188,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc"
+      ],
+      "doc_hash": "0dd87a75673051a522b9efdbbdc898f0b33e8e430df055d2ad1df78b65e29eca",
+      "prompt_hash": "3ef089f182e3f24687a280aafb98c94126c6497ec097cfcc7fe74542c6ff1f00",
+      "target_hash": "4400f88969d8eb4ef74d7fa0732b5a43d2dac0a749c6c1d698468822b496ec09",
+      "acc": 0.0
+    },
+    {
+      "doc_id": 16,
+      "doc": {
+        "sentence": "Michael just bought brand new wheels for his truck unlike Leslie because _ wheels were new and perfect.",
+        "option1": "Michael",
+        "option2": "Leslie",
+        "answer": "2"
+      },
+      "target": "wheels were new and perfect.",
+      "arguments": [
+        [
+          "Michael just bought brand new wheels for his truck unlike Leslie because Michael",
+          " wheels were new and perfect."
+        ],
+        [
+          "Michael just bought brand new wheels for his truck unlike Leslie because Leslie",
+          " wheels were new and perfect."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -39.19103240966797,
+            false
+          ]
+        ],
+        [
+          [
+            -38.29961395263672,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -39.19103240966797,
+          false
+        ],
+        [
+          -38.29961395263672,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc"
+      ],
+      "doc_hash": "c9807a3706444e9b03ca9ead57fded7d5a343c14e62c410bf16f42dd041eac3b",
+      "prompt_hash": "9df8f1cc254a2c9c8f6481804d1d6b56b2015a2fec3edd5b0911e6be3e75f331",
+      "target_hash": "693f0a86af720a0ec0a365355ce16d6e586b191cab58d9291ce78b5370e8313d",
+      "acc": 1.0
+    },
+    {
+      "doc_id": 17,
+      "doc": {
+        "sentence": "Michael just bought brand new wheels for his truck unlike Leslie because _ wheels were old and used.",
+        "option1": "Michael",
+        "option2": "Leslie",
+        "answer": "1"
+      },
+      "target": "wheels were old and used.",
+      "arguments": [
+        [
+          "Michael just bought brand new wheels for his truck unlike Leslie because Michael",
+          " wheels were old and used."
+        ],
+        [
+          "Michael just bought brand new wheels for his truck unlike Leslie because Leslie",
+          " wheels were old and used."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -34.33549499511719,
+            false
+          ]
+        ],
+        [
+          [
+            -32.993656158447266,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -34.33549499511719,
+          false
+        ],
+        [
+          -32.993656158447266,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc"
+      ],
+      "doc_hash": "abda76c1f735178d1a0c3d07fa0123ea44bc443faa8485f8bd6c7daf3184f4da",
+      "prompt_hash": "9df8f1cc254a2c9c8f6481804d1d6b56b2015a2fec3edd5b0911e6be3e75f331",
+      "target_hash": "dd16e354fe1eeac1f79443c1f0593de5244a7f5cdddc37752589c26ca589d0fe",
+      "acc": 0.0
+    },
+    {
+      "doc_id": 18,
+      "doc": {
+        "sentence": "Leslie was nervous around parrots but Neil was not, since _ was bitten by a bird early in life.",
+        "option1": "Leslie",
+        "option2": "Neil",
+        "answer": "1"
+      },
+      "target": "was bitten by a bird early in life.",
+      "arguments": [
+        [
+          "Leslie was nervous around parrots but Neil was not, since Leslie",
+          " was bitten by a bird early in life."
+        ],
+        [
+          "Leslie was nervous around parrots but Neil was not, since Neil",
+          " was bitten by a bird early in life."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -39.573463439941406,
+            false
+          ]
+        ],
+        [
+          [
+            -39.21727752685547,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -39.573463439941406,
+          false
+        ],
+        [
+          -39.21727752685547,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc"
+      ],
+      "doc_hash": "bcc35cd2d78038e430aeeee52d393a0d319f97aa0915c0d8d4f4d1bd4bd797b7",
+      "prompt_hash": "8e62d5e71328fcd60c71db19d6c44541f764c359fc3a32ab7b7c326be6a7be00",
+      "target_hash": "33652173a9716a13210a556cd6f3df5f115f5db66f52ddfe777f3f8c362ef470",
+      "acc": 0.0
+    },
+    {
+      "doc_id": 19,
+      "doc": {
+        "sentence": "Christmas was a special holiday to Eric but not Adam since _ was a Jew.",
+        "option1": "Eric",
+        "option2": "Adam",
+        "answer": "2"
+      },
+      "target": "was a Jew.",
+      "arguments": [
+        [
+          "Christmas was a special holiday to Eric but not Adam since Eric",
+          " was a Jew."
+        ],
+        [
+          "Christmas was a special holiday to Eric but not Adam since Adam",
+          " was a Jew."
+        ]
+      ],
+      "resps": [
+        [
+          [
+            -11.855530738830566,
+            false
+          ]
+        ],
+        [
+          [
+            -12.37896728515625,
+            false
+          ]
+        ]
+      ],
+      "filtered_resps": [
+        [
+          -11.855530738830566,
+          false
+        ],
+        [
+          -12.37896728515625,
+          false
+        ]
+      ],
+      "filter": "none",
+      "metrics": [
+        "acc"
+      ],
+      "doc_hash": "605bbbf2be822986c62ba8d539f528dd2791ae33464ceee5fcc1cf8aef73e1a3",
+      "prompt_hash": "8b8dbd1a366c11ef03220b5adc15217560f61bdcfac1b6e29712135f2fd21230",
+      "target_hash": "4f05def1fca03425654bb5193609456663d7cadf3a6f214bcf2d343ef9d26cb5",
+      "acc": 0.0
+    }
+  ]
+}

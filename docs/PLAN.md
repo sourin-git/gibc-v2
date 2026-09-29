@@ -317,7 +317,7 @@ passed. Its metrics are copied to `results/smoke/train_smoke_metrics.jsonl`.
 - `configs/train/production.json` holds the proposal. It is still `placeholder` /
   `TRAINING_NOT_STARTED` until final preflight approval (`scripts/verify_production_data.py` passes).
 
-## Stage 6: Evaluation pipeline, validated before the main run ☐
+## Stage 6: Evaluation pipeline, validated before the main run ✅
 
 **Primary route:** export to HF `LlamaForCausalLM` + tokenizer, then evaluate with lm-eval's HF
 backend. **The export is accepted only after every parity check below passes.** A custom
@@ -362,6 +362,41 @@ WikiText-103 **test-split** methodology, documented precisely (dataset/config, s
 preprocessing, tokenizer, window/stride, normalization unit). The result is labeled with that
 methodology and not presented as a universal standard. One methodology, fixed before looking
 at the result.
+
+### Stage 6 implementation and results ✅ (on the 1e-3 LR-sanity checkpoint; NOT the submitted model)
+
+- **Export:** `gibc/hf_export.py` + `scripts/export_hf.py --checkpoint <any compatible .pt>`
+  write `$GIBC_WORK_DIR/exports/<run>_step_<N>/`. The HF model is built locally from
+  `LlamaConfig` (no download) and loaded only with our weights. The mapping is the identity
+  (same names) and is verified tensor by tensor.
+  - Non-default config: `rms_norm_eps 1e-5`, `tie_word_embeddings True`, `bos_token_id None`,
+    `eos_token_id 0`, `pad_token_id None` (avoids `nn.Embedding(padding_idx)`), and
+    `rope_parameters {"rope_type": "default", "rope_theta": 10000.0}`.
+  - Tokenizer: `TokenizersBackend` from our exact tokenizer.json. EOS = PAD = `<|endoftext|>`
+    (id 0); BOS and UNK are None; `split_special_tokens=True`; `model_max_length` 512. `len` is
+    24,000.
+- **Verification:** `scripts/verify_hf_export.py` runs in a fresh process, with local files only
+  and `HF_HUB_OFFLINE=1`. All gates PASS, in
+  `results/eval_preflight/hf_export_verification_lr_1e-3_step_0001024.json`:
+  - config; 42,968,576 unique trainable parameters; tied after reload (safetensors has no
+    `lm_head`); all 84 tensors equal;
+  - tokenizer on 305 texts, including 287 real FineWeb-Edu docs;
+  - logits: CPU max |diff| 0.0, CUDA ≤ 1.43e-5;
+  - log-likelihoods ours vs HF vs lm-eval's HFLM ≤ 4.6e-6, including a truncated 7,573-token
+    context;
+  - padded batches ≤ 4.1e-6.
+- **lm-eval smoke** (0-shot = OUR methodology, fp32, max_length 512, batch 8, limit 20, **NOT
+  OFFICIAL**): `results/eval_preflight/SMOKE_NOT_OFFICIAL_lm_eval_limit20_lr_1e-3_step_0001024/`.
+  All four tasks ran. The harness log-likelihoods match our own re-scoring within 2.1e-5.
+- **Request audit** (`scripts/audit_eval_requests.py`): 55,879 requests over the four full
+  tasks; max context+continuation is 261 tokens, so **no truncation is ever needed**. Scoring is
+  ESTIMATED at ~3.3 min.
+- **WikiText-103 methodology** is fixed in `gibc/wikitext.py`:
+  - revision `b08601e04326c79dfdd32d625aee71d232d685c3`; rows concatenated unchanged;
+  - one EOT prefix used as context only; 303,524 scored tokens;
+  - windows of 512 with stride 256; exp(total NLL / N).
+  - The smoke run (first 20,000 targets, NOT OFFICIAL) is deterministic, with source/HF window
+    parity 2.2e-5 nats. The full run is ESTIMATED at ~26 s.
 
 ## Stage 7: Main training run ☐
 
