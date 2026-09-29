@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments (keep these outside OneDrive; see CLAUDE.md)
+.venv/
+venv/
+env/
+
+# Large artifacts belong under $GIBC_WORK_DIR outside the repo (gibc.paths.work_dir() refuses
+# in-repo paths). These patterns are only a safety net against accidental commits.
+work/
+data/
+checkpoints/
+runs/
+exports/
+
+# Large binary artifacts, wherever they land
+*.bin
+*.npy
+*.npz
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.parquet
+*.arrow
+*.zst
+*.tmp
+
+# Caches (HF datasets/hub, lm-eval request cache)
+.cache/
+hf_cache/
+lm_cache/
+
+# Notebooks, editors, OS
+.ipynb_checkpoints/
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Secrets
+.env

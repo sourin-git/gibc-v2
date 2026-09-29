@@ -1,0 +1,26 @@
+# Python 3.11.
+#
+# STATUS: CANDIDATE pins. This set resolves together on Python 3.11 (`pip install --dry-run`,
+# 2026-09-29) but has NOT yet been installed and tested on the target Windows machine.
+#   - The pins become validated once setup succeeds (CUDA check + `python -m pytest`).
+#   - transformers is validated for HF export/evaluation only after the export parity tests
+#     pass (docs/PLAN.md, Stage 8). Until then its pin is a candidate.
+# After a successful setup, record the complete resolved environment (see CLAUDE.md):
+#   python -m pip freeze  ->  results/env/pip-freeze.txt
+#
+# Install the CUDA build of PyTorch FIRST, from the PyTorch index:
+#   pip install torch==2.14.0 --index-url https://download.pytorch.org/whl/cu126
+# `torch==2.14.0` below is then already satisfied by 2.14.0+cu126 and is left alone.
+# Installing this file without that step pulls the CPU-only wheel from PyPI.
+torch==2.14.0
+
+numpy==2.4.6
+tokenizers==0.23.2
+datasets==5.0.1
+tqdm==4.70.1
+
+# Pinned by us: the version we intend to validate for Llama-format export and lm-eval's HF backend.
+transformers==5.17.0
+lm-eval[hf]==0.4.13
+
+pytest==9.1.1

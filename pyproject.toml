@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gibc"
+version = "0.1.0"
+description = "GIBC V2 Track 01: sub-50M-parameter language model trained from random initialization"
+requires-python = ">=3.11"
+# Dependencies are pinned in requirements.txt (torch must come from the CUDA wheel index).
+
+[tool.setuptools.packages.find]
+include = ["gibc*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
