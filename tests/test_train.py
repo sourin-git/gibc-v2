@@ -377,18 +377,48 @@ def test_milestone_and_final_checkpoints_are_protected(tokens_dir, tmp_path):
                      "step_0000006.pt", "step_0000007.pt"]
 
 
+def test_rollback_resume_from_milestone_keeps_new_checkpoint(tokens_dir, tmp_path):
+    """P1 regression: resuming an older milestone while newer rolling files exist must not delete the
+    checkpoint just written; pruning applies only to the resumed timeline (steps <= current)."""
+    cfg = tiny_train_cfg(max_steps=8, checkpoint_every_steps=1, keep_checkpoints=2,
+                         milestone_fractions=[0.25], **SHUFFLED)
+    run(cfg, tokens_dir, tmp_path / "run")
+    ckpts = tmp_path / "run" / "checkpoints"
+    names = lambda: sorted(p.name for p in ckpts.glob("*.pt"))
+    # Timeline A left newer rolling checkpoints 6 and 7, plus protected milestone 2 and final 8.
+    assert names() == ["final_step_0000008.pt", "milestone_step_0000002.pt", "step_0000006.pt", "step_0000007.pt"]
+
+    run(cfg, tokens_dir, tmp_path / "run", resume=ckpts / "milestone_step_0000002.pt", stop_at_step=3)
+    assert "step_0000003.pt" in names()  # the checkpoint just written survives
+    assert {"step_0000006.pt", "step_0000007.pt"} <= set(names())  # other timeline untouched
+
+    run(cfg, tokens_dir, tmp_path / "run", resume=ckpts / "step_0000003.pt", stop_at_step=5)
+    # Resumed timeline keeps its newest 2 rolling files (<= step 5); protected files remain.
+    assert names() == ["final_step_0000008.pt", "milestone_step_0000002.pt", "step_0000004.pt",
+                       "step_0000005.pt", "step_0000006.pt", "step_0000007.pt"]
+    assert load_checkpoint(ckpts / "step_0000005.pt")["state"]["step"] == 5
+
+
 # Configs -------------------------------------------------------------------------------------
 
 def test_shipped_train_configs():
     configs = {p.stem: TrainConfig.from_json(p) for p in (REPO_ROOT / "configs" / "train").glob("*.json")}
     assert set(configs) >= {"smoke", "benchmark", "production"}
     assert not configs["smoke"].placeholder
-    assert configs["benchmark"].placeholder and configs["production"].placeholder
+    assert configs["benchmark"].placeholder and not configs["production"].placeholder
     for cfg in configs.values():
         assert cfg.seq_len <= MAIN_CFG.context_length
     prod = configs["production"]
-    assert prod.status["APPROVED_BY_BENCHMARK"] and prod.status["TRAINING_NOT_STARTED"]
-    assert prod.status["FINAL_PREFLIGHT_APPROVED"] is False
+    assert prod.status["APPROVED_BY_BENCHMARK"] and prod.status["FINAL_PREFLIGHT_APPROVED"] is True
+    assert prod.status["TRAINING_NOT_STARTED"] is False
+    # Locked production values (Stage 5 + final audit).
+    assert (prod.precision, prod.micro_batch_size, prod.seq_len, prod.grad_accum_steps) == ("bf16", 8, 512, 4)
+    assert (prod.lr, prod.warmup_steps, prod.min_lr_ratio, prod.seed) == (1e-3, 256, 0.1, 1234)
+    assert (prod.beta1, prod.beta2, prod.eps, prod.weight_decay, prod.grad_clip) == (0.9, 0.95, 1e-8, 0.1, 1.0)
+    assert (prod.eval_every, prod.checkpoint_every_steps, prod.checkpoint_every_minutes, prod.keep_checkpoints) == \
+        (1000, 2000, 30, 3)
+    assert sorted(max(1, round(f * prod.max_steps)) for f in prod.milestone_fractions) == [15_259, 30_518, 45_777]
+    assert prod.fused_adamw and prod.allow_tf32 and prod.tokens == "production"
     assert prod.seq_len == 512 and prod.tokens_per_step == 8 * 512 * 4 == 16_384
     assert prod.max_steps * prod.tokens_per_step == 1_000_013_824 == prod.status["target_tokens"]
     assert prod.sampler == "shuffled_windows_v1" and prod.warmup_steps == 256 and prod.min_lr_ratio == 0.1

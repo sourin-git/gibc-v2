@@ -1,7 +1,7 @@
 {
   "run_name": "production",
-  "placeholder": true,
-  "notes": "PROPOSED production config (Stage 5). Hardware locked by benchmark: bf16, micro-batch 8 x 512 x accum 4 = 16,384 targets/update, no activation checkpointing, fused AdamW, TF32. max_steps 61,036 = 1,000,013,824 target tokens. Peak LR 1e-3 selected by the predeclared rule (results/lr/lr_decision.json); warmup 256 then cosine to 10%. Shuffled one-pass windows over the immutable production token files. Held as placeholder (refused by scripts/train.py) until final preflight approval.",
+  "placeholder": false,
+  "notes": "PROPOSED production config (Stage 5). Hardware locked by benchmark: bf16, micro-batch 8 x 512 x accum 4 = 16,384 targets/update, no activation checkpointing, fused AdamW, TF32. max_steps 61,036 = 1,000,013,824 target tokens. Peak LR 1e-3 selected by the predeclared rule (results/lr/lr_decision.json); warmup 256 then cosine to 10%. Shuffled one-pass windows over the immutable production token files. Final preflight approved (Astra production audit + P1 fixes); unlocked for the single production run.",
   "model_config": "configs/model/gibc_43m.json",
   "tokens": "production",
   "seq_len": 512,
@@ -32,14 +32,14 @@
   "milestone_fractions": [0.25, 0.5, 0.75],
   "status": {
     "APPROVED_BY_BENCHMARK": true,
-    "TRAINING_NOT_STARTED": true,
+    "TRAINING_NOT_STARTED": false,
     "LR_WARMUP_FINAL": true,
     "selected_lr_source": "results/lr/lr_decision.json",
     "TOKEN_TARGET_APPROVED": true,
     "target_tokens": 1000013824,
     "validation_targets": 262144,
     "PRODUCTION_TOKENS_PREPARED": true,
-    "FINAL_PREFLIGHT_APPROVED": false,
+    "FINAL_PREFLIGHT_APPROVED": true,
     "benchmark_summary": "results/benchmark/stage5_corrected_timing.jsonl"
   }
 }

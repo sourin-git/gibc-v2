@@ -353,7 +353,12 @@ def train(
             "sampler_info": sampler_info(),
             "created_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         }, path)
-        for old in sorted(ckpt_dir.glob("step_*.pt"))[:-cfg.keep_checkpoints]:
+        # Rotate only rolling checkpoints at or before the current step. After resuming from an older
+        # milestone, newer rolling files from the abandoned timeline must not push out the file just
+        # written (they are left untouched). milestone_*/final_* files never match "step_*".
+        rolling = sorted((p for p in ckpt_dir.glob("step_*.pt") if int(p.stem.split("_")[1]) <= state.step),
+                         key=lambda p: int(p.stem.split("_")[1]))
+        for old in rolling[:-cfg.keep_checkpoints]:
             old.unlink()
         last_ckpt_time = time.perf_counter()
         metrics.write({"event": "checkpoint", "reason": reason, "step": state.step, "tokens": state.tokens,
@@ -488,6 +493,16 @@ def prepare_run_dir(run_dir: Path, overwrite: bool) -> None:
 
 
 def environment_info() -> dict[str, Any]:
+    from importlib.metadata import PackageNotFoundError, version
+
+    def pkg(name: str) -> str | None:
+        try:
+            return version(name)
+        except PackageNotFoundError:
+            return None
+
     return {"python": sys.version.split()[0], "torch": str(torch.__version__), "cuda_runtime": torch.version.cuda,
+            "cudnn": torch.backends.cudnn.version(),
             "gpu": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
-            "numpy": np.__version__}
+            "numpy": np.__version__, "tokenizers": pkg("tokenizers"), "transformers": pkg("transformers"),
+            "lm_eval": pkg("lm_eval"), "datasets": pkg("datasets")}
