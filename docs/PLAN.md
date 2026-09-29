@@ -48,7 +48,7 @@ I checked for correctness, memory and throughput problems. None require a change
 - head_dim = 64 is the standard fast path for SDPA.
 - d_ff = 1536 = 12·128 and V = 24000 = 375·64 are tensor-core aligned.
 - The logits tensor (B·T·V = B × 12.29M elements) is the largest single activation.
-  Micro-batch size is decided by the Stage 6 benchmark, not by estimate.
+  Micro-batch size is decided by the Stage 4 benchmark, not by estimate.
 
 ## Setup (prerequisite) ✅
 
@@ -58,7 +58,7 @@ set as user environment variables. Install CUDA torch from the cu126 index, then
 - **Check:** `torch.cuda.is_available()` and `torch.cuda.is_bf16_supported()` are True;
   `python -m pytest` passes; `param_budget.py` prints OK.
 - **Then:** commit `results/env/pip-freeze.txt`. The requirements pins move from *candidate* to
-  *validated for setup*. Transformers stays a candidate until Stage 8 parity passes.
+  *validated for setup*. Transformers stays a candidate until Stage 6 parity passes.
 
 ## Stage 1: Pilot data, Wikipedia-source exclusion, tokenizer ✅
 
@@ -82,7 +82,7 @@ set as user environment variables. Install CUDA torch from the cu126 index, then
   revision, access method, settings, timestamps, stop reason, counts by reason, text bytes,
   every row group consumed, output sha256s, library versions). The manifest is copied to
   `results/data/pilot_manifest.json`. That position record lets production acquisition
-  (Stage 7) continue from where the pilot stopped.
+  (Stage 5) continue from where the pilot stopped.
 - The script checks `GIBC_WORK_DIR` and `HF_HOME` (outside the repo and OneDrive) before any
   HF import.
 
@@ -125,7 +125,7 @@ Contract:
 - **Literal `<|endoftext|>` in raw text:** by default HF `tokenizers` maps that substring to the
   special id (verified). We set `encode_special_tokens = True`, which encodes it as ordinary
   bytes. That flag is **not persisted in tokenizer.json**, so tokenizers must come from
-  `gibc.tokenizer.load_tokenizer`/`train_tokenizer`. The HF export in Stage 8 must reproduce
+  `gibc.tokenizer.load_tokenizer`/`train_tokenizer`. The HF export in Stage 6 must reproduce
   this behavior (transformers' `split_special_tokens=True`), and the tokenizer-id parity check
   must cover it.
 - **Artifacts:** `tokenizer.json` + `tokenizer_meta.json` + `pilot_token_stats.json` →
@@ -139,7 +139,33 @@ Contract:
   empty/one-character strings; literal EOT text never yields the EOT id; one boundary per
   document; save → reload gives identical ids; training fails loudly if 24000 is not reached.
 
-## Stage 2: Tokenized dataset format + sampler ⏳ — `gibc/data.py`, `scripts/tokenize_data.py`
+## Stage 2: Model ✅ — `gibc/model.py`, `gibc/generate.py`
+
+- Llama-style decoder: token embedding, 9 pre-norm blocks (RMSNorm → full 8-head causal MHA with
+  RoPE via `F.scaled_dot_product_attention(is_causal=True)` → residual; RMSNorm → SwiGLU
+  `down(silu(gate(x)) * up(x))` → residual), final RMSNorm, output head **tied** to the
+  embedding (one Parameter). No biases, no dropout, no learned positions.
+- Module/parameter names mirror HF `LlamaForCausalLM`. RoPE: unscaled, θ = 10000, rotate-half
+  layout, cos/sin as non-persistent buffers (not parameters, not in the state dict).
+- RMSNorm: one scale vector (init 1), normalization computed in fp32 then cast back, then scaled.
+- **Target convention:** `forward(input_ids, targets)` takes targets **already shifted**
+  (`targets[:, t]` labels position t). No internal shift; the Stage 3 data loader must produce
+  `x = chunk[:-1]`, `y = chunk[1:]`. There is no ignore-index: -100 or any id outside
+  [0, 24000) raises. Sequences must satisfy 1 ≤ T ≤ 512.
+- Init: all 2-D weights N(0, 0.02²), except every layer's `self_attn.o_proj.weight` and
+  `mlp.down_proj.weight`, which use std 0.02/√18 ≈ 0.00471. RMSNorm scales = 1.
+- `generate()`: greedy (temperature 0) or temperature/top-k sampling, optional stop at EOT,
+  context cropped to 512, no KV cache.
+- **Verified:** `scripts/verify_params.py` counts 42,968,576 unique trainable parameters on
+  the instantiated model and checks the tie by object and storage identity.
+  `scripts/smoke_model.py` runs the CUDA forward/backward, tokenizer integration and a
+  random-weight generation, and writes `results/smoke/model_smoke.json`. `tests/test_model.py`
+  covers counts, tying, shapes, loss, gradients, causality, RoPE, length bounds, determinism,
+  no bias, no RoPE parameters, CUDA, and generation.
+
+## Stage 3: Training system ⏳
+
+### 3a. Tokenized dataset + sampler — `gibc/data.py`, `scripts/tokenize_data.py`
 
 - Tokenize excluded-and-kept documents in streaming batches, append the boundary token, and
   write `uint16` token files plus `meta.json` (our-tokenizer token counts, document counts,
@@ -147,22 +173,11 @@ Contract:
 - Sampler: the corpus is viewed as non-overlapping chunks of `context_length + 1` tokens. A
   seeded permutation of chunk indices defines the order, and step s reads a fixed slice of it.
   One pass, no repeats, exact resume from `step` alone.
-- Built and tested on pilot data first. Production data (Stage 7) uses the same code.
+- Built and tested on pilot data first. Production data (Stage 5) uses the same code.
 - **Tests:** synthetic corpus: `y` is `x` shifted by one; all ids < vocab_size; same seed
   gives the same batches; a resumed sampler equals a continuous one.
 
-## Stage 3: Model ☐ — `gibc/model.py`
-
-Llama-style decoder with HF-compatible module names. CANDIDATE init: normal(0, 0.02), with
-residual output projections scaled by 1/√(2L).
-- **Tests:**
-  - trainable parameter count == `param_breakdown(cfg)["total"]` == 42,968,576, and ≤ limit
-  - `lm_head.weight is embed_tokens.weight`
-  - causality: perturbing token t leaves logits at positions < t unchanged
-  - loss at init ≈ ln(24000) ≈ 10.09
-  - a tiny config overfits one batch on CPU
-
-## Stage 4: Training loop + checkpointing ☐ — `gibc/train.py`, `gibc/checkpoint.py`, `scripts/train.py`, `configs/train/*.json`
+### 3b. Training loop + checkpointing — `gibc/train.py`, `gibc/checkpoint.py`, `scripts/train.py`, `configs/train/*.json`
 
 - Mechanics (fixed): AdamW, weight decay applied to ≥ 2-D weights only, gradient clipping,
   warmup followed by decay, bf16 autocast, TF32, gradient accumulation, JSONL logging including
@@ -170,16 +185,16 @@ residual output projections scaled by 1/√(2L).
   `os.replace`) every ~30 min and at the end. `--resume` picks up the latest checkpoint.
 - **CANDIDATE hyperparameters (not approved):** peak LR 1e-3; ~131k tokens per optimizer
   update; ~500 warmup steps; cosine decay to 10% of peak; AdamW β = (0.9, 0.95), weight decay
-  0.1, clip 1.0. Final values are chosen in Stage 6.
+  0.1, clip 1.0. Final values are chosen in Stage 4.
 - **Tests (CPU, tiny config):** a short smoke run lowers loss; save → reload gives identical
   logits; interrupted + resumed training matches uninterrupted training at the same step (fp32).
 
-## Stage 5: Generation ☐ — `scripts/generate.py`
+### 3c. Generation from a checkpoint — `scripts/generate.py`
 
-Load a checkpoint and sample from a prompt (temperature, top-k). No KV cache.
-- **Check:** runs on a smoke checkpoint and prints text. This closes the pipeline.
+Load a checkpoint and sample through `gibc.generate.generate`. This closes the pipeline from raw
+data to generated text.
 
-## Stage 6: Tiny real-data training + RTX 3050 benchmark → hyperparameter selection ☐
+## Stage 4: Tiny real-data training + RTX 3050 benchmark → hyperparameter selection ☐
 
 - Tiny real-data training on pilot tokens: check that loss decreases sensibly and that the
   candidate LR/warmup are stable. Adjust if not; no sweeps.
@@ -191,7 +206,7 @@ Load a checkpoint and sample from a prompt (temperature, top-k). No KV cache.
   `D = measured_tok_per_s × planned_train_seconds × safety_factor`, all written into
   `configs/train/main.json`.
 
-## Stage 7: Production data acquisition ☐
+## Stage 5: Production data acquisition ☐
 
 - Continue from the pilot (same dataset, config and revision; the pilot documents are part of
   the corpus) until **our-tokenizer** training tokens reach D plus a modest reserve (CANDIDATE:
@@ -199,7 +214,7 @@ Load a checkpoint and sample from a prompt (temperature, top-k). No KV cache.
 - Same Wikipedia-source exclusion and manifest fields as Stage 1.
 - **Check:** the manifest's our-tokenizer token count is ≥ D × (1 + reserve).
 
-## Stage 8: Evaluation pipeline, validated before the main run ☐
+## Stage 6: Evaluation pipeline, validated before the main run ☐
 
 **Primary route:** export to HF `LlamaForCausalLM` + tokenizer, then evaluate with lm-eval's HF
 backend. **The export is accepted only after every parity check below passes.** A custom
@@ -245,11 +260,11 @@ preprocessing, tokenizer, window/stride, normalization unit). The result is labe
 methodology and not presented as a universal standard. One methodology, fixed before looking
 at the result.
 
-## Stage 9: Main training run ☐
+## Stage 7: Main training run ☐
 
 A single run of `configs/train/main.json`. Monitor the logs; on interruption, resume.
 
-## Stage 10: Final evaluation and README ☐
+## Stage 8: Final evaluation and README ☐
 
 Export and parity-check the final checkpoint, run the evals, commit `results/`, and write the
 README with hardware, training time, compute (formula in CLAUDE.md), parameter count (from
@@ -261,10 +276,10 @@ results, reproduction commands, and AI assistance. Every number traces to a file
 | hours | work |
 |---|---|
 | 0–2 | Setup; Stage 1a pilot acquisition |
-| 2–8 | Stages 1c–5 (tokenizer, data, model, train loop, generation) with tests |
-| 8–11 | Stage 6 tiny run + benchmark; Stage 7 production acquisition (in background); Stage 8 |
-| 11–~42 | Stage 9 main run (length fixed by the measured budget, ≤ ~30 h) |
-| ~42–50 | Stage 10 |
+| 2–8 | Stages 1c–3 (tokenizer, model, data, train loop, generation) with tests |
+| 8–11 | Stage 4 tiny run + benchmark; Stage 5 production acquisition (in background); Stage 6 |
+| 11–~42 | Stage 7 main run (length fixed by the measured budget, ≤ ~30 h) |
+| ~42–50 | Stage 8 |
 | 50–56 | buffer |
 
 ## Risks

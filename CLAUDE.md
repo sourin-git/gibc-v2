@@ -41,9 +41,15 @@ Config: [configs/model/gibc_43m.json](configs/model/gibc_43m.json), loaded by `g
 Do not change the architecture unless there is a specific, demonstrated correctness, memory,
 or throughput problem; record the evidence in docs/PLAN.md before changing anything.
 
-Planned, not yet implemented: module and parameter names mirror HF `LlamaForCausalLM`, and RoPE
-uses the same (non-interleaved, rotate-half) convention, so a Llama-format export is a key
-rename. That export is accepted only after the parity tests in PLAN.md Stage 8 pass.
+Implemented in `gibc/model.py` (`CausalLM`): module and parameter names mirror HF
+`LlamaForCausalLM`, and RoPE uses the same (non-interleaved, rotate-half) convention, so a
+Llama-format export should be a direct key match. The export itself is not implemented; it is
+accepted only after the parity tests in PLAN.md Stage 6 pass.
+
+**Target convention:** `CausalLM.forward(input_ids, targets)` expects targets **already
+shifted** (`targets[:, t]` is the label for position t). The model never shifts internally, so
+data code must produce `x = chunk[:-1], y = chunk[1:]` and must not shift again. There is no
+ignore-index/padding semantics: out-of-range targets, including -100, raise.
 
 ### Parameter count
 
@@ -202,7 +208,8 @@ This project is built with Claude Code (Anthropic) as the implementation assista
 must include an **AI assistance** section stating which parts were AI-written (code, docs,
 plans), what the human author did (decisions, review, running experiments), and that every
 reported number comes from actual runs, not from the AI. Commits authored with Claude carry a
-`Co-Authored-By` trailer.
+`Co-Authored-By` trailer. Keep the development-tool record in
+[docs/AI_ASSISTANCE.md](docs/AI_ASSISTANCE.md) up to date when a new tool is used.
 
 ## Out of scope
 
@@ -217,4 +224,6 @@ python -m pytest                                                     # all tests
 python scripts/param_budget.py configs/model/gibc_43m.json           # analytic parameter budget
 python scripts/acquire_data.py --config configs/data/pilot.json --name pilot   # bounded pilot
 python scripts/train_tokenizer.py --data-name pilot                  # tokenizer -> results/tokenizer/
+python scripts/verify_params.py configs/model/gibc_43m.json          # instantiated-model parameter count
+python scripts/smoke_model.py                                        # CUDA/tokenizer/generation smoke
 ```

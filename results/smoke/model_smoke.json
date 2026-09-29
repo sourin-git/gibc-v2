@@ -1,0 +1,94 @@
+{
+  "created_utc": "2026-09-29T09:18:02+00:00",
+  "note": "random-initialized weights; outputs are not meaningful",
+  "integration": {
+    "tokenizer_vocab": 24000,
+    "model_vocab": 24000,
+    "eot_id": 0,
+    "prompt": "The water cycle describes how water",
+    "prompt_ids": [
+      462,
+      792,
+      4599,
+      5879,
+      651,
+      792
+    ],
+    "logits_shape": [
+      1,
+      6,
+      24000
+    ]
+  },
+  "cuda": {
+    "gpu": "NVIDIA GeForce RTX 3050 6GB Laptop GPU",
+    "torch": "2.14.0+cu126",
+    "cuda_runtime": "12.6",
+    "batch_size": 2,
+    "seq_len": 128,
+    "precision": "bf16 autocast, fp32 parameters and gradients",
+    "loss": 10.209310531616211,
+    "ln_vocab": 10.085809109330082,
+    "grads_finite": true,
+    "weights_tied_on_cuda": true,
+    "peak_allocated_mib": 439.7021484375,
+    "peak_reserved_mib": 528.0
+  },
+  "generation": {
+    "device": "cuda:0",
+    "greedy_ids": [
+      13178,
+      13178,
+      13178,
+      13178,
+      13178,
+      13178,
+      13178,
+      13178,
+      13178,
+      13178,
+      13178,
+      13178,
+      13178,
+      13178,
+      13178,
+      13178,
+      13178,
+      13178,
+      13178,
+      13178
+    ],
+    "greedy_text": " Was Was Was Was Was Was Was Was Was Was Was Was Was Was Was Was Was Was Was Was",
+    "sampled_ids": [
+      1515,
+      11669,
+      11536,
+      9703,
+      10861,
+      4641,
+      11819,
+      6254,
+      6254,
+      7065,
+      3621,
+      23316,
+      16382,
+      14123,
+      3651,
+      17720,
+      17720,
+      10565,
+      15083,
+      11819
+    ],
+    "sampled_text": " dev aspir conjunction meter orb technical Steel chart chartEvery economywehAST Golden completely Ru Ru Ott teenagers Steel",
+    "settings": {
+      "max_new_tokens": 20,
+      "sampled": {
+        "temperature": 1.0,
+        "top_k": 50,
+        "seed": 0
+      }
+    }
+  }
+}

@@ -1,12 +1,9 @@
 # Python 3.11.
 #
-# STATUS: CANDIDATE pins. This set resolves together on Python 3.11 (`pip install --dry-run`,
-# 2026-09-29) but has NOT yet been installed and tested on the target Windows machine.
-#   - The pins become validated once setup succeeds (CUDA check + `python -m pytest`).
+# STATUS: installed and validated for setup on the target Windows machine (2026-09-29: CUDA check
+# and `python -m pytest` passed). The complete resolved environment is in results/env/pip-freeze.txt.
 #   - transformers is validated for HF export/evaluation only after the export parity tests
-#     pass (docs/PLAN.md, Stage 8). Until then its pin is a candidate.
-# After a successful setup, record the complete resolved environment (see CLAUDE.md):
-#   python -m pip freeze  ->  results/env/pip-freeze.txt
+#     pass (docs/PLAN.md, Stage 6). Until then its pin is a CANDIDATE.
 #
 # Install the CUDA build of PyTorch FIRST, from the PyTorch index:
 #   pip install torch==2.14.0 --index-url https://download.pytorch.org/whl/cu126
