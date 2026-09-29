@@ -226,24 +226,48 @@ Loads a checkpoint (after checking the tokenizer hash) and samples through
 The GPU smoke run (fresh → exit at step 30 → fresh-process resume → step 60 → generation)
 passed. Its metrics are copied to `results/smoke/train_smoke_metrics.jsonl`.
 
-## Stage 4: Tiny real-data training + RTX 3050 benchmark → hyperparameter selection ⏳
+## Stage 4: RTX 3050 benchmark → hardware configuration ✅ (LR/warmup still open)
 
-- Tiny real-data training on pilot tokens: check that loss decreases sensibly and that the
-  candidate LR/warmup are stable. Adjust if not; no sweeps.
-- Forward/backward memory benchmark of the real model on GPU at several micro-batch sizes:
-  CUDA allocated/reserved/peak and OOM boundary.
-- Sustained throughput (≥ 10 min per setting).
-- Results in `results/benchmark.json`.
-- **Output:** final micro-batch, accumulation, LR, warmup and schedule, plus the token budget
-  `D = measured_tok_per_s × planned_train_seconds × safety_factor`, all written into
-  `configs/train/production.json` (clearing its `placeholder` flag).
+- Pre-fix: an fp16 GradScaler overflow skip is no longer counted as an optimizer step. The
+  global step, LR, logging, validation and checkpoint triggers stay put; microsteps and attempted
+  tokens are counted; a `scaler_skip` event is logged. More than 20 consecutive skips raise.
+  Detection uses the public API (`get_scale()` falls in `update()`).
+- `scripts/benchmark.py` runs one configuration per process: real fused-AdamW updates on pilot
+  tokens at seq 512, 3 warmup updates, then ≥ 15 timed updates, each ending in a GPU sync.
+  Results: `results/benchmark/stage4_runs.jsonl`, `stage4_sustained.jsonl`, and
+  `stage4_summary.json` (`scripts/summarize_benchmark.py`, with time estimates).
+- **Measured** at 16,384 tokens/update, bf16:
+  - micro-batch 1 / 2 / 4 / 6 / 8: 11,972 / 14,477 / 16,505 / 17,435 / 17,730 tokens/s;
+  - peak reserved memory: 1.1 / 1.4 / 2.1 / 2.8 / 3.5 GiB;
+  - no OOM, and the gains flatten above micro-batch 6.
+  - fp16 is within ±3% of bf16 with identical memory, so **bf16** is used (no GradScaler).
+  - fp32 at micro-batch 4 runs at 11,247 tokens/s.
+  - Activation checkpointing was not needed: memory isn't constrained and throughput has flattened.
+- **Sustained** 120 s at bf16, micro-batch 8, accumulation 8: 17,823 tokens/s mean, every 20 s
+  window within 17,814–17,837. The GPU went 59 → 71 °C, SM clock 1,755 → 1,747 MHz, ~50 W.
+- Hardware config for production: bf16, micro-batch 8 × 512 × accumulation 8 = **32,768 tokens/update**.
+- **Recommended** (pending approval): 1.0B training tokens → `max_steps` 30,518. That is an
+  ESTIMATE of 15.6 h raw and 18.7 h planned at ×1.2 overhead.
+- Written into `configs/train/production.json`. It stays `"placeholder": true` (refused)
+  until LR/warmup are fixed by **one** short optimization sanity experiment, the token target
+  is approved, and the production tokens exist.
+- Before production: implement the shuffled one-pass window sampler (below) and milestone
+  checkpoints.
 
 ## Stage 5: Production data acquisition ☐
 
 - Continue from the pilot (same dataset, config and revision; the pilot documents are part of
-  the corpus) until **our-tokenizer** training tokens reach D plus a modest reserve (CANDIDATE:
-  10–20%), plus the held-out validation portion. Nothing beyond that is downloaded.
+  the corpus) until **our-tokenizer** training tokens reach D plus a modest reserve (10%),
+  plus the held-out validation portion. Nothing beyond that is downloaded. For the recommended
+  D = 1.0B, that means **≥ 1.1B unique train tokens** (≈ 5.0 GB of text at 4.52 bytes/token),
+  and a ~1% hash validation split (≈ 11M tokens) of which a fixed 64 × 8 × 512 = 262,144-token
+  subset is evaluated.
 - Same Wikipedia-source exclusion and manifest fields as Stage 1.
+- **Sampler (recommended change before production):** replace random-with-replacement windows
+  with a seeded permutation of non-overlapping windows (window i = tokens[512·i : 512·i + 513],
+  so every token is predicted exactly once per pass). The position comes from the global
+  microstep, so resume is exact. With replacement at D ≈ corpus size, about e^-1 ≈ 37% of
+  windows would never be seen and many others seen twice or more.
 - **Check:** the manifest's our-tokenizer token count is ≥ D × (1 + reserve).
 
 ## Stage 6: Evaluation pipeline, validated before the main run ☐

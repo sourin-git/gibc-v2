@@ -41,10 +41,12 @@ def main() -> int:
         resume = None
         cfg = TrainConfig.from_json(args.config)
         model_cfg = ModelConfig.from_json(REPO_ROOT / cfg.model_config)
-        run_dir = work_dir() / "runs" / cfg.run_name
+        run_dir = None
     if cfg.placeholder:
         print(f"refusing to run {cfg.run_name!r}: config is an unapproved placeholder ({cfg.notes})")
         return 2
+    if run_dir is None:
+        run_dir = work_dir() / "runs" / cfg.run_name
 
     if resume is None:
         prepare_run_dir(run_dir, args.overwrite)

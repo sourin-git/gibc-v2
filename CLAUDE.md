@@ -230,6 +230,8 @@ python scripts/prepare_tokens.py --data-name pilot                   # uint16 to
 python scripts/train.py --config configs/train/smoke.json --overwrite --stop-at-step 30
 python scripts/train.py --resume $GIBC_WORK_DIR/runs/smoke/checkpoints/step_0000030.pt
 python scripts/generate.py --checkpoint <ckpt> --prompt "..."        # sample from a checkpoint
+python scripts/benchmark.py --precision bf16 --micro-batch 8 --grad-accum 8   # one benchmark row
+python scripts/summarize_benchmark.py                                # table + time ESTIMATES
 ```
 
 Training configs with `"placeholder": true` (benchmark, production) are refused by

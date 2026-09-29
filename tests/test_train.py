@@ -247,6 +247,76 @@ def test_cuda_mixed_precision_training_and_resume(tokens_dir, tmp_path, precisio
     assert math.isfinite(resumed["last_step_loss"]) and resumed["last_val"]["val_tokens"] > 0
 
 
+# fp16 GradScaler skips -----------------------------------------------------------------------
+
+def overflow_model(poison_calls: set[int] | None = None, poison_from: int | None = None):
+    """CausalLM whose Nth training forward returns loss x 1e30: finite in fp32, but the scaled fp16
+    backward overflows, so GradScaler detects inf gradients and skips the update."""
+
+    class OverflowingLM(CausalLM):
+        calls = 0
+
+        def forward(self, input_ids, targets=None, validate_targets=True):
+            logits, loss = super().forward(input_ids, targets, validate_targets)
+            if self.training:
+                OverflowingLM.calls += 1
+                n = OverflowingLM.calls
+                if (poison_calls and n in poison_calls) or (poison_from is not None and n >= poison_from):
+                    loss = loss * 1e30
+            return logits, loss
+
+    return OverflowingLM
+
+
+@pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA not available")
+def test_fp16_normal_updates_increment_global_step(tokens_dir, tmp_path):
+    cfg = tiny_train_cfg(device="cuda", precision="fp16", fused_adamw=True, max_steps=4, grad_accum_steps=1)
+    summary = run(cfg, tokens_dir, tmp_path / "run")
+    assert summary["step"] == 4
+    assert summary["microsteps"] == 4 + summary["skipped_steps"]  # every non-skipped attempt is a step
+    assert [e["step"] for e in events(tmp_path / "run") if e["event"] == "train"] == [1, 2, 3, 4]
+
+
+@pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA not available")
+def test_fp16_scaler_skip_is_not_an_optimizer_step(tokens_dir, tmp_path, monkeypatch):
+    monkeypatch.setattr(train_mod, "CausalLM", overflow_model(poison_calls={3}))
+    cfg = tiny_train_cfg(device="cuda", precision="fp16", fused_adamw=True, max_steps=5, grad_accum_steps=1,
+                         checkpoint_every_steps=2, eval_every=100)
+    summary = run(cfg, tokens_dir, tmp_path / "run")
+    ev = events(tmp_path / "run")
+    skips = [e for e in ev if e["event"] == "scaler_skip"]
+
+    # The poisoned 3rd attempt (while 2 updates were done) was skipped and not counted as a step.
+    assert any(e["step"] == 2 and e["microsteps"] == 3 and e["scale_after"] < e["scale_before"] for e in skips)
+    # Training continued and still reached max_steps real updates; nothing terminated early.
+    assert summary["step"] == 5 and summary["finished"]
+    assert summary["skipped_steps"] == len(skips) >= 1
+    assert summary["microsteps"] == 5 + len(skips)
+    assert summary["tokens"] == summary["microsteps"] * cfg.micro_batch_size * cfg.seq_len  # attempted tokens
+    # Scheduler did not advance on the skip: logged real steps 1..5 each used lr_at(step - 1).
+    train_ev = [e for e in ev if e["event"] == "train"]
+    assert [e["step"] for e in train_ev] == [1, 2, 3, 4, 5]
+    assert all(e["lr"] == pytest.approx(lr_at(e["step"] - 1, cfg)) for e in train_ev)
+    # Skips trigger no validation/checkpoint of their own.
+    assert [e["step"] for e in ev if e["event"] == "val"] == [0, 5]
+    assert [e["step"] for e in ev if e["event"] == "checkpoint"] == [2, 4, 5]
+    # Checkpoint counters are logically consistent.
+    state = load_checkpoint(tmp_path / "run" / "checkpoints" / "step_0000004.pt")["state"]
+    skips_before_4 = sum(1 for e in skips if e["step"] < 4)
+    assert state["step"] == 4 and state["skipped_steps"] == skips_before_4
+    assert state["microsteps"] == 4 + skips_before_4
+    assert state["tokens"] == state["microsteps"] * cfg.micro_batch_size * cfg.seq_len
+
+
+@pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA not available")
+def test_fp16_persistent_overflow_fails_instead_of_looping(tokens_dir, tmp_path, monkeypatch):
+    monkeypatch.setattr(train_mod, "CausalLM", overflow_model(poison_from=2))
+    cfg = tiny_train_cfg(device="cuda", precision="fp16", fused_adamw=True, max_steps=5, grad_accum_steps=1)
+    with pytest.raises(NonFiniteError, match="consecutive GradScaler overflow skips at step 1"):
+        run(cfg, tokens_dir, tmp_path / "run")
+    assert len([e for e in events(tmp_path / "run") if e["event"] == "scaler_skip"]) == train_mod.MAX_CONSECUTIVE_SCALER_SKIPS
+
+
 # Configs -------------------------------------------------------------------------------------
 
 def test_shipped_train_configs():
@@ -256,3 +326,26 @@ def test_shipped_train_configs():
     assert configs["benchmark"].placeholder and configs["production"].placeholder
     for cfg in configs.values():
         assert cfg.seq_len <= MAIN_CFG.context_length
+    prod = configs["production"]
+    assert prod.status["APPROVED_BY_BENCHMARK"] and prod.status["TRAINING_NOT_STARTED"]
+    assert prod.status["LR_WARMUP_FINAL"] is False
+    assert prod.seq_len == 512 and prod.tokens_per_step == 8 * 512 * 8 == 32_768
+
+
+def test_old_checkpoint_config_without_status_still_matches():
+    cfg = tiny_train_cfg()
+    legacy = {k: v for k, v in cfg.to_dict().items() if k != "status"}
+    assert TrainConfig.from_dict(legacy) == cfg
+
+
+@pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA not available")
+def test_benchmark_harness_runs_real_updates():
+    from gibc.benchmark import run_benchmark
+
+    tokens = np.random.default_rng(0).integers(0, TINY.vocab_size, 5000).astype(np.uint16)
+    result = run_benchmark(tokens, TINY, tiny_train_cfg(), "bf16", micro_batch=2, grad_accum=2,
+                           warmup_updates=1, measured_updates=3)
+    assert result["status"] == "ok" and result["updates_timed"] == 3
+    assert result["seq_len"] == TINY.context_length and result["tokens_per_update"] == 2 * 2 * TINY.context_length
+    assert result["tokens_per_s_mean"] > 0 and result["all_losses_finite"]
+    assert result["allocated_after_cleanup_mib"] - result["allocated_before_mib"] < 1.0  # nothing leaked

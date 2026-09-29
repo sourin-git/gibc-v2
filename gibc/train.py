@@ -16,7 +16,7 @@ import subprocess
 import sys
 import time
 from contextlib import nullcontext
-from dataclasses import asdict, dataclass, fields
+from dataclasses import asdict, dataclass, field, fields
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
@@ -30,6 +30,8 @@ from gibc.data import Batcher, fixed_validation_batches, load_token_meta, open_t
 from gibc.model import CausalLM, parameter_report
 
 PRECISIONS = {"fp32": None, "bf16": torch.bfloat16, "fp16": torch.float16}
+# fp16: GradScaler halves its scale on every overflow skip; this many in a row means real divergence.
+MAX_CONSECUTIVE_SCALER_SKIPS = 20
 
 
 @dataclass(frozen=True)
@@ -62,6 +64,7 @@ class TrainConfig:
     allow_tf32: bool
     fused_adamw: bool
     device: str
+    status: dict[str, Any] = field(default_factory=dict)  # free-form approval markers; not used by training
 
     def __post_init__(self) -> None:
         if self.precision not in PRECISIONS:
@@ -250,7 +253,8 @@ def train(
 
     if resume is not None:
         ckpt = load_checkpoint(resume)
-        if ckpt["train_config"] != cfg.to_dict() or ckpt["model_config"] != model_cfg.to_dict():
+        if (TrainConfig.from_dict(ckpt["train_config"]) != cfg
+                or ModelConfig.from_dict(ckpt["model_config"]) != model_cfg):
             raise ValueError("resume config differs from the checkpoint's config")
         if ckpt["data"] != data_identity:
             raise ValueError(f"token data differs from the checkpoint's: {ckpt['data']} vs {data_identity}")
@@ -325,6 +329,7 @@ def train(
     last_ckpt: Path | None = resume
     first_loss: float | None = None
     step_loss = float("nan")
+    consecutive_skips = 0
     use_pin = device.type == "cuda"
 
     while state.step < cfg.max_steps:
@@ -359,16 +364,30 @@ def train(
         scale_before = scaler.get_scale() if scaler.is_enabled() else None
         scaler.step(optimizer)
         scaler.update()
-        if scaler.is_enabled() and scaler.get_scale() < scale_before:
-            state.skipped_steps += 1  # overflow: GradScaler skipped this optimizer step
         optimizer.zero_grad(set_to_none=True)
-        state.step += 1
-
         seconds = time.perf_counter() - t_step
         state.train_seconds += seconds
-        first_loss = step_loss if first_loss is None else first_loss
         interval["tokens"] += cfg.tokens_per_step
         interval["seconds"] += seconds
+
+        # GradScaler lowers its scale in update() exactly when step() found inf/NaN gradients and
+        # skipped optimizer.step(). A skipped update is not an optimizer step: the global step, and
+        # with it the LR schedule, logging, validation and checkpoint triggers, stay where they are.
+        # Microsteps and (attempted) tokens were already counted above.
+        if scaler.is_enabled() and scaler.get_scale() < scale_before:
+            state.skipped_steps += 1
+            consecutive_skips += 1
+            metrics.write({"event": "scaler_skip", "step": state.step, "microsteps": state.microsteps,
+                           "tokens": state.tokens, "scale_before": scale_before, "scale_after": scaler.get_scale(),
+                           "grad_norm": norm, "skipped_steps": state.skipped_steps})
+            if consecutive_skips >= MAX_CONSECUTIVE_SCALER_SKIPS:
+                raise NonFiniteError(f"{consecutive_skips} consecutive GradScaler overflow skips at step "
+                                     f"{state.step}; no checkpoint written")
+            continue
+        consecutive_skips = 0
+        state.step += 1
+
+        first_loss = step_loss if first_loss is None else first_loss
         interval["loss_sum"] += step_loss
         interval["steps"] += 1
 
