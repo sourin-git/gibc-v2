@@ -1,0 +1,3 @@
+# Hashed artifacts must stay byte-identical across checkouts; core.autocrlf would rewrite their
+# line endings and break the sha256 recorded in tokenizer_meta.json.
+results/tokenizer/tokenizer.json -text

@@ -50,7 +50,7 @@ I checked for correctness, memory and throughput problems. None require a change
 - The logits tensor (B·T·V = B × 12.29M elements) is the largest single activation.
   Micro-batch size is decided by the Stage 6 benchmark, not by estimate.
 
-## Setup (prerequisite) ⏳
+## Setup (prerequisite) ✅
 
 Python 3.11 venv under `$GIBC_WORK_DIR` (outside OneDrive), with `GIBC_WORK_DIR` and `HF_HOME`
 set as user environment variables. Install CUDA torch from the cu126 index, then
@@ -60,26 +60,31 @@ set as user environment variables. Install CUDA torch from the cu126 index, then
 - **Then:** commit `results/env/pip-freeze.txt`. The requirements pins move from *candidate* to
   *validated for setup*. Transformers stays a candidate until Stage 8 parity passes.
 
-## Stage 1: Pilot data, Wikipedia-source exclusion, tokenizer ☐
+## Stage 1: Pilot data, Wikipedia-source exclusion, tokenizer ✅
 
-### 1a. Bounded pilot acquisition — `scripts/acquire_data.py`
+### 1a. Bounded pilot acquisition — `gibc/acquire.py`, `scripts/acquire_data.py`, `configs/data/pilot.json`
 
 - Primary dataset: **FineWeb-Edu** (`HuggingFaceFW/fineweb-edu`, config `sample-10BT`, ODC-By),
-  read at a **pinned revision SHA**.
-- **Do not download or process all of `sample-10BT` upfront.** The pilot reads a bounded prefix,
-  either by streaming or from a small bounded set of files, whichever proves reliable.
-  CANDIDATE pilot size: ~1 GB of text after exclusion. That is enough to train the tokenizer
-  and run the tiny real-data training in Stage 6.
+  pinned at revision `87f09149ef4734204d70ed1d046ddc9ca3f2b8f9`. `sample-10BT` is 14 parquet
+  files (28.5 GB) with 1,000-row row groups.
+- **Never downloads or processes all of `sample-10BT`.** Only the `id`, `url` and `text` columns
+  of individual row groups are fetched, via HTTP range reads (`HfFileSystem` + pyarrow).
+  Row groups are visited round-robin across the 14 files, so the pilot is not one file's prefix.
+- Stopping bound: accepted text ≥ `max_text_bytes` (pilot: **100 MB** of UTF-8 text) or
+  `max_documents`, checked after every document, so it is deterministic.
 - The "10BT" in the name counts GPT-2 tokens. It is not used for any of our budgets. All token
   counts use **our** tokenizer.
-- Wikipedia-source exclusion (1b) is applied here, as documents are read, so nothing
-  downstream ever sees excluded documents.
-- Writes the pilot text plus `manifest.json` under `$GIBC_WORK_DIR/data/pilot/`: dataset id,
-  config, split, revision SHA, access method, files and order (or stream position), documents
-  read/kept/excluded (by reason, including missing/unparseable URLs), text bytes, library
-  versions, timestamps.
-- A fixed, recorded slice of the pilot is held out as validation text. It is never used for
-  tokenizer training.
+- Wikipedia-source exclusion (1b) is applied as documents are read, so nothing downstream sees
+  excluded documents. Empty/whitespace-only texts are also rejected and counted.
+- Validation split: 1% of documents, decided by `sha256(salt, id)`, independent of read order.
+  It is never used for tokenizer training.
+- Outputs: `$GIBC_WORK_DIR/data/pilot/{train,val}.jsonl` and `manifest.json` (dataset, config,
+  revision, access method, settings, timestamps, stop reason, counts by reason, text bytes,
+  every row group consumed, output sha256s, library versions). The manifest is copied to
+  `results/data/pilot_manifest.json`. That position record lets production acquisition
+  (Stage 7) continue from where the pilot stopped.
+- The script checks `GIBC_WORK_DIR` and `HF_HOME` (outside the repo and OneDrive) before any
+  HF import.
 
 ### 1b. Wikipedia-source exclusion (rule implemented in `gibc/source_filter.py`)
 
@@ -115,18 +120,26 @@ Contract:
     24,000 and be recorded like any other special token.
   - ids are chosen explicitly at training time, not copied from Llama. They are saved in
     `tokenizer_meta.json` alongside the tokenizer sha256.
-- **Document boundaries:** the end-of-text id is appended exactly once after each document, so
-  there is exactly one between consecutive documents. A document that literally contains the
-  string `<|endoftext|>` must not produce the special id. Handle this and cover it with a test.
-- **Artifacts:** `tokenizer.json` + `tokenizer_meta.json` → `results/tokenizer/` (small; committed).
-- **Tests:**
-  - total vocab == 24000, and the special-token ids match the metadata
-  - ids identical after save → reload
-  - `decode(encode(s)) == s` for leading/trailing/multiple spaces, tabs, `\n`, `\r\n`,
-    blank lines, accented Latin, CJK, emoji, combining marks and RTL text
-  - boundary count == document count on a synthetic corpus
+- **Document boundaries:** `encode_documents` appends the end-of-text id exactly once after each
+  document, so there is exactly one between consecutive documents.
+- **Literal `<|endoftext|>` in raw text:** by default HF `tokenizers` maps that substring to the
+  special id (verified). We set `encode_special_tokens = True`, which encodes it as ordinary
+  bytes. That flag is **not persisted in tokenizer.json**, so tokenizers must come from
+  `gibc.tokenizer.load_tokenizer`/`train_tokenizer`. The HF export in Stage 8 must reproduce
+  this behavior (transformers' `split_special_tokens=True`), and the tokenizer-id parity check
+  must cover it.
+- **Artifacts:** `tokenizer.json` + `tokenizer_meta.json` + `pilot_token_stats.json` →
+  `results/tokenizer/` (small; committed). `.gitattributes` marks tokenizer.json `-text` so
+  `core.autocrlf` cannot change its bytes, and with them the recorded sha256.
+- **Tests (`tests/test_tokenizer.py`, run against the committed artifact):** exact vocab 24000
+  and equal to the model config; sha256 matches metadata; the only special token is EOT, with
+  the recorded id; all 256 byte symbols present; nothing added automatically; round trip for
+  English, leading/trailing/repeated spaces, tabs, `\n`, `\r\n`, blank lines, accented Latin,
+  CJK, emoji/ZWJ, combining marks, RTL, math, punctuation, code, HTML, control characters, and
+  empty/one-character strings; literal EOT text never yields the EOT id; one boundary per
+  document; save → reload gives identical ids; training fails loudly if 24000 is not reached.
 
-## Stage 2: Tokenized dataset format + sampler ☐ — `gibc/data.py`, `scripts/tokenize_data.py`
+## Stage 2: Tokenized dataset format + sampler ⏳ — `gibc/data.py`, `scripts/tokenize_data.py`
 
 - Tokenize excluded-and-kept documents in streaming batches, append the boundary token, and
   write `uint16` token files plus `meta.json` (our-tokenizer token counts, document counts,

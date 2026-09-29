@@ -8,18 +8,20 @@ dist/
 .mypy_cache/
 .ruff_cache/
 
-# Virtual environments (keep these outside OneDrive; see CLAUDE.md)
-.venv/
-venv/
-env/
+# Virtual environments (keep these outside OneDrive; see CLAUDE.md). Root-anchored so that
+# e.g. results/env/ stays tracked.
+/.venv/
+/venv/
+/env/
 
 # Large artifacts belong under $GIBC_WORK_DIR outside the repo (gibc.paths.work_dir() refuses
-# in-repo paths). These patterns are only a safety net against accidental commits.
-work/
-data/
-checkpoints/
-runs/
-exports/
+# in-repo paths). These patterns are only a safety net against accidental commits. Root-anchored,
+# so configs/data/ and results/data/ stay tracked.
+/work/
+/data/
+/checkpoints/
+/runs/
+/exports/
 
 # Large binary artifacts, wherever they land
 *.bin

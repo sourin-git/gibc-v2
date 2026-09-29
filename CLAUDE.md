@@ -78,6 +78,11 @@ There is no automatic BOS, no UNK, and no PAD unless a later stage proves one is
 Special-token ids are chosen explicitly, saved in the tokenizer metadata, and must be identical
 after save/reload and after export. Do not copy Llama's BOS/EOS ids.
 
+Implemented: `results/tokenizer/` (committed). `<|endoftext|>` = **id 0**, the only special token.
+**Always load it via `gibc.tokenizer.load_tokenizer`.** A plain `Tokenizer.from_file` would map
+literal `<|endoftext|>` text to id 0, because the `encode_special_tokens` flag is not stored
+in tokenizer.json.
+
 ## Hardware constraints
 
 Windows 11, RTX 3050 Laptop GPU (6 GB, Ampere sm_86, 55 W power cap per `nvidia-smi`),
@@ -208,6 +213,8 @@ General benchmark-decontamination systems. Hyperparameter sweeps beyond what the
 ## Commands
 
 ```
-python -m pytest                                          # all tests (CPU)
-python scripts/param_budget.py configs/model/gibc_43m.json  # analytic parameter budget
+python -m pytest                                                     # all tests (CPU)
+python scripts/param_budget.py configs/model/gibc_43m.json           # analytic parameter budget
+python scripts/acquire_data.py --config configs/data/pilot.json --name pilot   # bounded pilot
+python scripts/train_tokenizer.py --data-name pilot                  # tokenizer -> results/tokenizer/
 ```

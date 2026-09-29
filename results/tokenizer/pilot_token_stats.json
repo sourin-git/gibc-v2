@@ -1,0 +1,22 @@
+{
+  "train": {
+    "documents": 20765,
+    "characters": 98700822,
+    "utf8_bytes": 99207133,
+    "tokens": 21940200,
+    "tokens_with_eot": 21960965,
+    "avg_tokens_per_document": 1056.595232362148,
+    "bytes_per_token": 4.521705955278438,
+    "characters_per_token": 4.498629091804085
+  },
+  "val": {
+    "documents": 187,
+    "characters": 789653,
+    "utf8_bytes": 794037,
+    "tokens": 176785,
+    "tokens_with_eot": 176972,
+    "avg_tokens_per_document": 945.3743315508021,
+    "bytes_per_token": 4.491540571881099,
+    "characters_per_token": 4.46674208784682
+  }
+}

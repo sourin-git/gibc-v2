@@ -1,0 +1,10 @@
+{
+  "dataset": "HuggingFaceFW/fineweb-edu",
+  "config_name": "sample-10BT",
+  "data_dir": "sample/10BT",
+  "revision": "87f09149ef4734204d70ed1d046ddc9ca3f2b8f9",
+  "max_text_bytes": 100000000,
+  "max_documents": null,
+  "val_fraction": 0.01,
+  "val_salt": "gibc-v2-val"
+}

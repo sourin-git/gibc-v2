@@ -1,0 +1,42 @@
+{
+  "tokenizer_file": "tokenizer.json",
+  "sha256": "40f595fbedfff2de6b06c714a4537ef68b592141288c1a327d8b74962c4f7689",
+  "vocab_size": 24000,
+  "model": "BPE, byte-level (full 256-symbol initial alphabet), trained from scratch",
+  "pre_tokenizer": "ByteLevel(add_prefix_space=False, use_regex=True)",
+  "normalizer": null,
+  "decoder": "ByteLevel",
+  "post_processor": null,
+  "special_tokens": {
+    "<|endoftext|>": 0
+  },
+  "eot_token": "<|endoftext|>",
+  "eot_id": 0,
+  "bos_token": null,
+  "pad_token": null,
+  "unk_token": null,
+  "policies": {
+    "document_boundary": "EOT id appended exactly once after every document; no BOS",
+    "literal_special_text": "raw text containing the EOT spelling is encoded as ordinary bytes (tokenizers encode_special_tokens=True, set by gibc.tokenizer.load_tokenizer; not persisted in tokenizer.json)",
+    "pad": "no PAD token; if batched evaluation needs a pad id, reuse the EOT id with padded positions masked; add a dedicated PAD (inside the 24,000) only if that proves insufficient"
+  },
+  "trainer": {
+    "algorithm": "tokenizers.trainers.BpeTrainer",
+    "min_frequency": 2
+  },
+  "training_corpus": {
+    "data_name": "pilot",
+    "split": "train",
+    "documents": 20765,
+    "text_bytes": 99207133,
+    "source_manifest_sha256": "f84d7157d5e962d951592acf328deb28ed47dc369ceeeb4cd7009fe422a20538",
+    "train_jsonl_sha256": "f1d40152fbf3432073437a19518388c568638d6f40a26716b5449b9c0310bac2"
+  },
+  "reload_check": {
+    "documents": 2187,
+    "id_mismatches": 0,
+    "roundtrip_failures": 0
+  },
+  "tokenizers_version": "0.23.2",
+  "created_utc": "2026-09-29T09:05:34+00:00"
+}

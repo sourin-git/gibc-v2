@@ -1,0 +1,220 @@
+{
+  "schema": "gibc.acquisition.v1",
+  "dataset": "HuggingFaceFW/fineweb-edu",
+  "config_name": "sample-10BT",
+  "data_dir": "sample/10BT",
+  "revision": "87f09149ef4734204d70ed1d046ddc9ca3f2b8f9",
+  "source_split": "train",
+  "access_method": "huggingface_hub.HfFileSystem range reads of parquet row groups, columns ['id', 'url', 'text']; row groups visited round-robin across files by row-group index",
+  "settings": {
+    "dataset": "HuggingFaceFW/fineweb-edu",
+    "config_name": "sample-10BT",
+    "data_dir": "sample/10BT",
+    "revision": "87f09149ef4734204d70ed1d046ddc9ca3f2b8f9",
+    "max_text_bytes": 100000000,
+    "max_documents": null,
+    "val_fraction": 0.01,
+    "val_salt": "gibc-v2-val"
+  },
+  "started_utc": "2026-09-29T09:03:52+00:00",
+  "finished_utc": "2026-09-29T09:04:46+00:00",
+  "elapsed_seconds": 54.3,
+  "stop_reason": "max_text_bytes",
+  "counts": {
+    "documents_read": 21148,
+    "accepted_documents": 20952,
+    "accepted_train_documents": 20765,
+    "accepted_val_documents": 187,
+    "rejected_wikipedia_source": 196,
+    "rejected_empty_text": 0,
+    "rejected_total": 196,
+    "retained_without_usable_url": 0
+  },
+  "text_bytes": {
+    "note": "UTF-8 bytes of the `text` field; network transfer volume is not measured",
+    "read": 102414976,
+    "accepted": 100001170,
+    "accepted_train": 99207133,
+    "accepted_val": 794037,
+    "rejected_wikipedia_source": 2413806
+  },
+  "characters": {
+    "train": 98700822,
+    "val": 789653
+  },
+  "wikipedia_source_exclusion": {
+    "rule": "reject if the normalized URL hostname is wikipedia.org or ends with .wikipedia.org; documents without a usable URL are retained and counted",
+    "scope": "Reduces direct Wikipedia-source overlap only. Does not guarantee absence of mirrored or quoted Wikipedia, WikiText or benchmark content; no contamination-free claim is made."
+  },
+  "validation_split": {
+    "rule": "sha256(val_salt + NUL + id)[:8] as big-endian uint64 < val_fraction * 2^64",
+    "val_fraction": 0.01,
+    "val_salt": "gibc-v2-val"
+  },
+  "source_files": [
+    "sample/10BT/000_00000.parquet",
+    "sample/10BT/001_00000.parquet",
+    "sample/10BT/002_00000.parquet",
+    "sample/10BT/003_00000.parquet",
+    "sample/10BT/004_00000.parquet",
+    "sample/10BT/005_00000.parquet",
+    "sample/10BT/006_00000.parquet",
+    "sample/10BT/007_00000.parquet",
+    "sample/10BT/008_00000.parquet",
+    "sample/10BT/009_00000.parquet",
+    "sample/10BT/010_00000.parquet",
+    "sample/10BT/011_00000.parquet",
+    "sample/10BT/012_00000.parquet",
+    "sample/10BT/013_00000.parquet"
+  ],
+  "consumed_row_groups": [
+    {
+      "file": "sample/10BT/000_00000.parquet",
+      "row_group": 0,
+      "num_rows": 1000,
+      "rows_consumed": 1000
+    },
+    {
+      "file": "sample/10BT/001_00000.parquet",
+      "row_group": 0,
+      "num_rows": 1000,
+      "rows_consumed": 1000
+    },
+    {
+      "file": "sample/10BT/002_00000.parquet",
+      "row_group": 0,
+      "num_rows": 1000,
+      "rows_consumed": 1000
+    },
+    {
+      "file": "sample/10BT/003_00000.parquet",
+      "row_group": 0,
+      "num_rows": 1000,
+      "rows_consumed": 1000
+    },
+    {
+      "file": "sample/10BT/004_00000.parquet",
+      "row_group": 0,
+      "num_rows": 1000,
+      "rows_consumed": 1000
+    },
+    {
+      "file": "sample/10BT/005_00000.parquet",
+      "row_group": 0,
+      "num_rows": 1000,
+      "rows_consumed": 1000
+    },
+    {
+      "file": "sample/10BT/006_00000.parquet",
+      "row_group": 0,
+      "num_rows": 1000,
+      "rows_consumed": 1000
+    },
+    {
+      "file": "sample/10BT/007_00000.parquet",
+      "row_group": 0,
+      "num_rows": 1000,
+      "rows_consumed": 1000
+    },
+    {
+      "file": "sample/10BT/008_00000.parquet",
+      "row_group": 0,
+      "num_rows": 1000,
+      "rows_consumed": 1000
+    },
+    {
+      "file": "sample/10BT/009_00000.parquet",
+      "row_group": 0,
+      "num_rows": 1000,
+      "rows_consumed": 1000
+    },
+    {
+      "file": "sample/10BT/010_00000.parquet",
+      "row_group": 0,
+      "num_rows": 1000,
+      "rows_consumed": 1000
+    },
+    {
+      "file": "sample/10BT/011_00000.parquet",
+      "row_group": 0,
+      "num_rows": 1000,
+      "rows_consumed": 1000
+    },
+    {
+      "file": "sample/10BT/012_00000.parquet",
+      "row_group": 0,
+      "num_rows": 1000,
+      "rows_consumed": 1000
+    },
+    {
+      "file": "sample/10BT/013_00000.parquet",
+      "row_group": 0,
+      "num_rows": 1000,
+      "rows_consumed": 1000
+    },
+    {
+      "file": "sample/10BT/000_00000.parquet",
+      "row_group": 1,
+      "num_rows": 1000,
+      "rows_consumed": 1000
+    },
+    {
+      "file": "sample/10BT/001_00000.parquet",
+      "row_group": 1,
+      "num_rows": 1000,
+      "rows_consumed": 1000
+    },
+    {
+      "file": "sample/10BT/002_00000.parquet",
+      "row_group": 1,
+      "num_rows": 1000,
+      "rows_consumed": 1000
+    },
+    {
+      "file": "sample/10BT/003_00000.parquet",
+      "row_group": 1,
+      "num_rows": 1000,
+      "rows_consumed": 1000
+    },
+    {
+      "file": "sample/10BT/004_00000.parquet",
+      "row_group": 1,
+      "num_rows": 1000,
+      "rows_consumed": 1000
+    },
+    {
+      "file": "sample/10BT/005_00000.parquet",
+      "row_group": 1,
+      "num_rows": 1000,
+      "rows_consumed": 1000
+    },
+    {
+      "file": "sample/10BT/006_00000.parquet",
+      "row_group": 1,
+      "num_rows": 1000,
+      "rows_consumed": 1000
+    },
+    {
+      "file": "sample/10BT/007_00000.parquet",
+      "row_group": 1,
+      "num_rows": 1000,
+      "rows_consumed": 148
+    }
+  ],
+  "outputs": {
+    "train.jsonl": {
+      "bytes": 102884308,
+      "sha256": "f1d40152fbf3432073437a19518388c568638d6f40a26716b5449b9c0310bac2"
+    },
+    "val.jsonl": {
+      "bytes": 827165,
+      "sha256": "a15e35d04973e02eea26af18e6275f994db82e37fa655620fb721c2beeed6a7d"
+    }
+  },
+  "environment": {
+    "python": "3.11.0",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "pyarrow": "25.0.1",
+    "huggingface_hub": "1.33.0"
+  }
+}
