@@ -1,5 +1,7 @@
 # GIBC-43M: a language model trained from scratch on a 6 GB laptop GPU
 
+**Model weights:** https://huggingface.co/sourin-hf/gibc-43m
+
 A 42,968,576-parameter decoder-only Transformer. Its tokenizer, data pipeline, training loop and
 weights were all built for this project, from random initialization, on one NVIDIA RTX 3050
 Laptop GPU (6 GB) in 15.76 hours.
