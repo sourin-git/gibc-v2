@@ -59,3 +59,7 @@ desktop.ini
 *.log
 hf_home/
 /eval_samples/
+
+# Local AI-agent workspace
+/CLAUDE.md
+/.claude/
