@@ -1,0 +1,63 @@
+{
+  "label": "WikiText-103 test token perplexity under the documented project methodology",
+  "warning": null,
+  "methodology": "WikiText-103 test token perplexity under the documented project methodology.\n\nThis is the project's own methodology; no organizer evaluator has been provided. It was fixed in\nStage 6, before any final-model result existed:\n- Data: `Salesforce/wikitext`, config `wikitext-103-raw-v1`, split `test`, at a pinned revision.\n- Text: the rows concatenated in dataset order with NO separator added. Every non-empty row\n  already ends in \"\n\"; empty rows contribute nothing. No other change is made to the text.\n- Tokens: our tokenizer (literal special-token text stays ordinary text); no BOS; no EOT between\n  articles. A single EOT (id 0) is prepended as context only, so the first real token can be\n  predicted; it is never a target. The scored targets are exactly the N tokenizer tokens of the\n  text, each scored once.\n- Windows: rolling causal windows of at most 512 input tokens with stride 256. The first window\n  scores all its targets. Each later window advances the scored frontier by at most 256 targets\n  and scores only those new targets, using up to 256 preceding tokens as unscored context. No\n  padding.\n- Metric: token perplexity = exp(total NLL / N). The NLL is summed in float64 over all N scored\n  targets before exponentiation. The window context is not in the denominator.",
+  "dataset": {
+    "id": "Salesforce/wikitext",
+    "config": "wikitext-103-raw-v1",
+    "split": "test",
+    "revision": "b08601e04326c79dfdd32d625aee71d232d685c3",
+    "rows": 4358,
+    "empty_rows": 1467,
+    "characters": 1285622
+  },
+  "tokenizer_sha256": "40f595fbedfff2de6b06c714a4537ef68b592141288c1a327d8b74962c4f7689",
+  "export": "C:\\gibc-work\\exports\\production_step_0061036",
+  "source_checkpoint": "C:\\gibc-work\\runs\\production\\checkpoints\\final_step_0061036.pt",
+  "source_checkpoint_sha256": "4f28fc9d3ebfa97a415afe27115aac485496681d4fc324f91889f5b938c3e349",
+  "window": {
+    "max_len": 512,
+    "stride": 256,
+    "prefix": "one EOT (id 0), context only"
+  },
+  "full_test_tokens": 303524,
+  "scored_tokens": 303524,
+  "windows": 1185,
+  "total_nll": 1163698.2568611212,
+  "token_perplexity": 46.24521334355056,
+  "deterministic_repeat": true,
+  "repeat_total_nll": 1163698.2568611212,
+  "seconds": 35.10959579999326,
+  "tokenize_seconds": 0.7574420000019018,
+  "source_vs_hf_window_parity": [
+    {
+      "window": 0,
+      "start": 0,
+      "end": 512,
+      "scored": 512,
+      "hf": 2049.007707106881,
+      "ours": 2049.007764424663,
+      "abs_diff": 5.731778219342232e-05
+    },
+    {
+      "window": 592,
+      "start": 151552,
+      "end": 152064,
+      "scored": 256,
+      "hf": 1080.4551781389164,
+      "ours": 1080.4551710161613,
+      "abs_diff": 7.12275505065918e-06
+    },
+    {
+      "window": 1184,
+      "start": 303012,
+      "end": 303524,
+      "scored": 164,
+      "hf": 668.7403507535346,
+      "ours": 668.7403604127467,
+      "abs_diff": 9.659212082624435e-06
+    }
+  ],
+  "ESTIMATED_full_seconds": 35.10959579999326,
+  "full_windows": 1185
+}

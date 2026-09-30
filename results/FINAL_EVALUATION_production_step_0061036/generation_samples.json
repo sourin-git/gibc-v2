@@ -1,0 +1,51 @@
+{
+  "checkpoint": "C:\\gibc-work\\runs\\production\\checkpoints\\final_step_0061036.pt",
+  "checkpoint_sha256": "4f28fc9d3ebfa97a415afe27115aac485496681d4fc324f91889f5b938c3e349",
+  "step": 61036,
+  "max_new_tokens": 60,
+  "settings": {
+    "greedy": {
+      "temperature": 0.0,
+      "top_k": null
+    },
+    "sampled": {
+      "temperature": 0.8,
+      "top_k": 50,
+      "seed": 1234
+    }
+  },
+  "stop": "EOT id 0",
+  "note": "fixed prompts, one output per setting, no retries or selection",
+  "samples": [
+    {
+      "name": "factual",
+      "prompt": "The capital of France is",
+      "greedy": " the capital of the French Empire.\nThe capital of the United States is the capital of the United States of America.\nThe capital of the United States is the capital of the United States of America.\nThe capital of the United States is the capital of the United States of America.\nThe",
+      "sampled": " the\nnear Léon. Most of the other cities of the world are\na part of Italy - the\nThe capital of the Netherlands is a part of the Republic of\n- the capital of the Netherlands.\n- The capital of the Netherlands is a part of the Republic of the"
+    },
+    {
+      "name": "encyclopedic",
+      "prompt": "Photosynthesis is the process by which",
+      "greedy": " plants convert sunlight to energy.\nThe plant is a plant that is able to convert sunlight to energy.\nThe plant is a plant that is able to convert sunlight to energy.\nThe plant is a plant that is able to convert sunlight to energy.\nThe plant is a plant that is able",
+      "sampled": " plants communicate with their surrounding environment by sending nutrients from plant roots to the soil. Plants are used to create food, as well as a variety of food sources. Many plant-researches are used in the production of food, as a means of producing feed for livestock, for instance, for"
+    },
+    {
+      "name": "scientific_explanation",
+      "prompt": "Water boils at a lower temperature at high altitude because",
+      "greedy": " of the high altitude.\nThe water is very cold and is not very cold.\nThe water is very cold and is very cold.\nThe water is very cold and is very cold.\nThe water is very cold and is very cold.\nThe water is very cold and is very cold",
+      "sampled": " it is too cold. The pressure drop in the system is a result of the pressure increase. The water in the system is moved through the system and the pressure drop is a result of the pressure increase in the air.\nThe temperature of the system is affected by the humidity of the air. The"
+    },
+    {
+      "name": "simple_reasoning",
+      "prompt": "If a train travels 60 miles in one hour, then in three hours it travels",
+      "greedy": " 60 miles.\nThe train travels 60 miles in one hour.\nThe train travels 60 miles in one hour.\nThe train travels 60 miles in one hour.\nThe train travels 60 miles in one hour.\nThe train travels 60 miles in one hour.\nThe train travels 60 miles in",
+      "sampled": " from the station, or between the station and the station, the train is at the station. The train travels 50 miles in one hour or less, and then in thirty-four hours, the train is at the station. If the train is at the station, it takes 45 minutes to reach the"
+    },
+    {
+      "name": "open_ended",
+      "prompt": "Once upon a time, in a small village by the sea,",
+      "greedy": " the people of the village were the first to be brought to the land of the sea.\nThe first people to be brought to the land of the sea were the first to be brought to the land of the sea.\nThe first people to be brought to the land of the sea were the first",
+      "sampled": " the Sphinx, the first one to venture out to the ocean.\nIn the middle of the night, a few men in the sea went astray, and by the time the Sphinx returned to the world, the whole of the island had gone off in the sea."
+    }
+  ]
+}

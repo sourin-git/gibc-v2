@@ -1,0 +1,38 @@
+{
+  "format": "gibc.hf_export.v1",
+  "source_checkpoint": "C:\\gibc-work\\runs\\production\\checkpoints\\final_step_0061036.pt",
+  "source_checkpoint_sha256": "4f28fc9d3ebfa97a415afe27115aac485496681d4fc324f91889f5b938c3e349",
+  "run_name": "production",
+  "step": 61036,
+  "tokens_trained": 1000013824,
+  "model_config": {
+    "vocab_size": 24000,
+    "d_model": 512,
+    "n_layers": 9,
+    "n_heads": 8,
+    "d_ff": 1536,
+    "context_length": 512,
+    "rope_theta": 10000.0,
+    "norm_eps": 1e-05,
+    "tie_embeddings": true
+  },
+  "tokenizer_sha256": "40f595fbedfff2de6b06c714a4537ef68b592141288c1a327d8b74962c4f7689",
+  "transformers_version": "5.17.0",
+  "torch_version": "2.14.0+cu126",
+  "unique_trainable_parameters": 42968576,
+  "weights_tied": true,
+  "weight_mapping": {
+    "names_compared": 84,
+    "missing_in_hf": [],
+    "unexpected_trainable_in_hf": [],
+    "mismatched": [],
+    "all_equal": true
+  },
+  "tokenizer": {
+    "len": 24000,
+    "eos_token_id": 0,
+    "pad_token_id": 0,
+    "bos_token_id": null,
+    "split_special_tokens": true
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "status": "FINAL",
+  "task": "arc_easy",
+  "seconds": 54.95952849999594,
+  "examples": 2376,
+  "requests": 9501,
+  "n_samples": {
+    "original": 2376,
+    "effective": 2376
+  },
+  "results": {
+    "name": "arc_easy",
+    "alias": "arc_easy",
+    "sample_len": 2376,
+    "acc,none": 0.42803030303030304,
+    "acc_stderr,none": 0.010152943316426268,
+    "acc_norm,none": 0.3926767676767677,
+    "acc_norm_stderr,none": 0.010020646555538693
+  },
+  "version": 1.0,
+  "config": {
+    "task": "arc_easy",
+    "dataset_path": "allenai/ai2_arc",
+    "dataset_name": "ARC-Easy",
+    "training_split": "train",
+    "validation_split": "validation",
+    "test_split": "test",
+    "doc_to_text": "Question: {{question}}\nAnswer:",
+    "doc_to_target": "{{choices.label.index(answerKey)}}",
+    "unsafe_code": false,
+    "doc_to_choice": "{{choices.text}}",
+    "description": "",
+    "target_delimiter": " ",
+    "fewshot_delimiter": "\n\n",
+    "fewshot_config": {
+      "sampler": "default",
+      "split": null,
+      "process_docs": null,
+      "fewshot_indices": null,
+      "samples": null,
+      "doc_to_text": "Question: {{question}}\nAnswer:",
+      "doc_to_choice": "{{choices.text}}",
+      "doc_to_target": "{{choices.label.index(answerKey)}}",
+      "gen_prefix": null,
+      "fewshot_delimiter": "\n\n",
+      "target_delimiter": " "
+    },
+    "num_fewshot": 0,
+    "metric_list": [
+      {
+        "metric": "acc",
+        "aggregation": "mean",
+        "higher_is_better": true
+      },
+      {
+        "metric": "acc_norm",
+        "aggregation": "mean",
+        "higher_is_better": true
+      }
+    ],
+    "output_type": "multiple_choice",
+    "repeats": 1,
+    "should_decontaminate": true,
+    "doc_to_decontamination_query": "Question: {{question}}\nAnswer:",
+    "metadata": {
+      "version": 1.0,
+      "config_source": "C:\\gibc-work\\venv\\Lib\\site-packages\\lm_eval\\tasks\\arc\\arc_easy.yaml"
+    }
+  },
+  "dataset_revision": "210d026faf9955653af8916fad021475a3f00453",
+  "samples_file": "C:\\gibc-work\\eval_samples\\production_step_0061036\\arc_easy_samples.json",
+  "samples_sha256": "c0021d1bf8b64d66c33d557d6defbe40c380e5d0aff7508de2c0a50b899e709c",
+  "crosscheck_requests": 200,
+  "crosscheck_max_abs_loglik_diff_vs_source": 2.6479363441467285e-05,
+  "lm_eval_config": {
+    "model": "C:\\gibc-work\\exports\\production_step_0061036",
+    "model_args": null,
+    "model_num_parameters": 42968576,
+    "model_dtype": "torch.float32",
+    "model_revision": "main",
+    "model_sha": "",
+    "batch_size": null,
+    "batch_sizes": [],
+    "device": null,
+    "use_cache": null,
+    "limit": null,
+    "bootstrap_iters": 100000,
+    "gen_kwargs": null,
+    "random_seed": 0,
+    "numpy_seed": 1234,
+    "torch_seed": 1234,
+    "fewshot_seed": 1234
+  }
+}

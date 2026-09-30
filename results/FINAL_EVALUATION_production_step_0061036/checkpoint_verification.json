@@ -1,0 +1,57 @@
+{
+  "checkpoint": "C:\\gibc-work\\runs\\production\\checkpoints\\final_step_0061036.pt",
+  "sha256": "4f28fc9d3ebfa97a415afe27115aac485496681d4fc324f91889f5b938c3e349",
+  "bytes": 515750203,
+  "format": "gibc.checkpoint.v1",
+  "state": {
+    "step": 61036,
+    "microsteps": 244144,
+    "tokens": 1000013824,
+    "train_seconds": 56723.01592839986,
+    "wall_seconds": 57145.668417199995,
+    "skipped_steps": 0
+  },
+  "created_utc": "2026-09-30T04:52:14+00:00",
+  "source": {
+    "commit": "ff26beab34a5f5921297d1f8e61a2b6c18abb27f",
+    "dirty": false
+  },
+  "data": {
+    "tokens_dir": "production",
+    "tokenizer_sha256": "40f595fbedfff2de6b06c714a4537ef68b592141288c1a327d8b74962c4f7689",
+    "train_sha256": "efb63e4f4902f5e7e84d7b13e1f05e567c1ecb69a1221dd101a397ae6fd8ea7f",
+    "val_sha256": "f4340757b24634855e78f1daedc22d6a5145b490cccd773bb871376e201ac0e8"
+  },
+  "sampler_info": {
+    "sampler": "shuffled_windows_v1",
+    "window_count": 2148438,
+    "cursor": 1953152,
+    "dropped_targets": 375,
+    "order_sha256": "f95bf3ba6b864932cc460f4336067556a1823f6d527ac075cee4ec929ca51228",
+    "consumed_sha256": "03305990f80dec09853aec5feb82a9762371a2c99ae3a47f454977d0aaa42779"
+  },
+  "model_config": {
+    "vocab_size": 24000,
+    "d_model": 512,
+    "n_layers": 9,
+    "n_heads": 8,
+    "d_ff": 1536,
+    "context_length": 512,
+    "rope_theta": 10000.0,
+    "norm_eps": 1e-05,
+    "tie_embeddings": true
+  },
+  "run_name": "production",
+  "parameter_report": {
+    "embedding (tied with output head)": 12288000,
+    "attention projections": 9437184,
+    "mlp projections": 21233664,
+    "block rmsnorms": 9216,
+    "final rmsnorm": 512,
+    "output head (shares the embedding tensor)": 0,
+    "total unique trainable": 42968576
+  },
+  "unique_trainable_parameters": 42968576,
+  "weights_tied": true,
+  "passed": true
+}

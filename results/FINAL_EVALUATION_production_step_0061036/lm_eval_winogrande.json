@@ -1,0 +1,86 @@
+{
+  "status": "FINAL",
+  "task": "winogrande",
+  "seconds": 27.961455800003023,
+  "examples": 1267,
+  "requests": 2534,
+  "n_samples": {
+    "original": 1267,
+    "effective": 1267
+  },
+  "results": {
+    "name": "winogrande",
+    "alias": "winogrande",
+    "sample_len": 1267,
+    "acc,none": 0.5067087608524072,
+    "acc_stderr,none": 0.014051220692330346
+  },
+  "version": 1.0,
+  "config": {
+    "task": "winogrande",
+    "dataset_path": "allenai/winogrande",
+    "dataset_name": "winogrande_xl",
+    "training_split": "train",
+    "validation_split": "validation",
+    "doc_to_text": "def doc_to_text(doc):\n    answer_to_num = {\"1\": 0, \"2\": 1}\n    return answer_to_num[doc[\"answer\"]]\n",
+    "doc_to_target": "def doc_to_target(doc):\n    idx = doc[\"sentence\"].index(\"_\") + 1\n    return doc[\"sentence\"][idx:].strip()\n",
+    "unsafe_code": false,
+    "doc_to_choice": "def doc_to_choice(doc):\n    idx = doc[\"sentence\"].index(\"_\")\n    options = [doc[\"option1\"], doc[\"option2\"]]\n    return [doc[\"sentence\"][:idx] + opt for opt in options]\n",
+    "description": "",
+    "target_delimiter": " ",
+    "fewshot_delimiter": "\n\n",
+    "fewshot_config": {
+      "sampler": "default",
+      "split": null,
+      "process_docs": null,
+      "fewshot_indices": null,
+      "samples": null,
+      "doc_to_text": "<function doc_to_text at 0x00000259C010DDA0>",
+      "doc_to_choice": "<function doc_to_choice at 0x00000259CB3F9EE0>",
+      "doc_to_target": "<function doc_to_target at 0x00000259C010FD80>",
+      "gen_prefix": null,
+      "fewshot_delimiter": "\n\n",
+      "target_delimiter": " "
+    },
+    "num_fewshot": 0,
+    "metric_list": [
+      {
+        "metric": "acc",
+        "aggregation": "mean",
+        "higher_is_better": true
+      }
+    ],
+    "output_type": "multiple_choice",
+    "repeats": 1,
+    "should_decontaminate": true,
+    "doc_to_decontamination_query": "sentence",
+    "metadata": {
+      "version": 1.0,
+      "config_source": "C:\\gibc-work\\venv\\Lib\\site-packages\\lm_eval\\tasks\\winogrande\\default.yaml"
+    }
+  },
+  "dataset_revision": "01e74176c63542e6b0bcb004dcdea22d94fb67b5",
+  "samples_file": "C:\\gibc-work\\eval_samples\\production_step_0061036\\winogrande_samples.json",
+  "samples_sha256": "c33ef1b5c4eff02df176be2dd7c8d80061d4cd37d26132440a391efda7417bc2",
+  "crosscheck_requests": 200,
+  "crosscheck_max_abs_loglik_diff_vs_source": 2.193450927734375e-05,
+  "lm_eval_config": {
+    "model": "C:\\gibc-work\\exports\\production_step_0061036",
+    "model_args": null,
+    "model_num_parameters": 42968576,
+    "model_dtype": "torch.float32",
+    "model_revision": "main",
+    "model_sha": "",
+    "batch_size": null,
+    "batch_sizes": [],
+    "device": null,
+    "use_cache": null,
+    "limit": null,
+    "bootstrap_iters": 100000,
+    "gen_kwargs": null,
+    "random_seed": 0,
+    "numpy_seed": 1234,
+    "torch_seed": 1234,
+    "fewshot_seed": 1234
+  }
+}

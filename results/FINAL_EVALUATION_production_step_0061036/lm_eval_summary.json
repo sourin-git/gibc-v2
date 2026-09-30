@@ -1,0 +1,82 @@
+{
+  "status": "FINAL",
+  "export": "C:\\gibc-work\\exports\\production_step_0061036",
+  "source_checkpoint": "C:\\gibc-work\\runs\\production\\checkpoints\\final_step_0061036.pt",
+  "source_checkpoint_sha256": "4f28fc9d3ebfa97a415afe27115aac485496681d4fc324f91889f5b938c3e349",
+  "settings": {
+    "backend": "lm-eval HFLM (hf)",
+    "device": "cuda",
+    "dtype": "float32",
+    "max_length": 512,
+    "batch_size": 8,
+    "num_fewshot": 0,
+    "limit": null,
+    "few_shot_note": "0-shot is the project's documented methodology (no organizer protocol given)"
+  },
+  "command": "python scripts\\eval_lm_eval_final.py --export C:\\gibc-work\\exports\\production_step_0061036 --out results\\FINAL_EVALUATION_production_step_0061036",
+  "model_load_seconds": 4.0,
+  "tasks": {
+    "hellaswag": {
+      "examples": 10042,
+      "requests": 40168,
+      "seconds": 428.4,
+      "version": 1.0,
+      "split": "validation",
+      "dataset": "Rowan/hellaswag/None",
+      "dataset_revision": "218ec52e09a7e7462a5400043bb9a69a41d06b76",
+      "metrics": {
+        "acc,none": 0.27106154152559253,
+        "acc_stderr,none": 0.004435993492583921,
+        "acc_norm,none": 0.2806213901613224,
+        "acc_norm_stderr,none": 0.004483845735187838
+      },
+      "crosscheck_max_abs_loglik_diff_vs_source": 4.9386173486709595e-05
+    },
+    "arc_easy": {
+      "examples": 2376,
+      "requests": 9501,
+      "seconds": 55.0,
+      "version": 1.0,
+      "split": "test",
+      "dataset": "allenai/ai2_arc/ARC-Easy",
+      "dataset_revision": "210d026faf9955653af8916fad021475a3f00453",
+      "metrics": {
+        "acc,none": 0.42803030303030304,
+        "acc_stderr,none": 0.010152943316426268,
+        "acc_norm,none": 0.3926767676767677,
+        "acc_norm_stderr,none": 0.010020646555538693
+      },
+      "crosscheck_max_abs_loglik_diff_vs_source": 2.6479363441467285e-05
+    },
+    "piqa": {
+      "examples": 1838,
+      "requests": 3676,
+      "seconds": 36.3,
+      "version": 1.0,
+      "split": "validation",
+      "dataset": "baber/piqa/None",
+      "dataset_revision": "142f6d7367fd9877f0fb3b5734ea6a545f54cdd1",
+      "metrics": {
+        "acc,none": 0.5973884657236126,
+        "acc_stderr,none": 0.011442395233488698,
+        "acc_norm,none": 0.5859630032644179,
+        "acc_norm_stderr,none": 0.011492118481417577
+      },
+      "crosscheck_max_abs_loglik_diff_vs_source": 8.847098797559738e-05
+    },
+    "winogrande": {
+      "examples": 1267,
+      "requests": 2534,
+      "seconds": 28.0,
+      "version": 1.0,
+      "split": "validation",
+      "dataset": "allenai/winogrande/winogrande_xl",
+      "dataset_revision": "01e74176c63542e6b0bcb004dcdea22d94fb67b5",
+      "metrics": {
+        "acc,none": 0.5067087608524072,
+        "acc_stderr,none": 0.014051220692330346
+      },
+      "crosscheck_max_abs_loglik_diff_vs_source": 2.193450927734375e-05
+    }
+  }
+}

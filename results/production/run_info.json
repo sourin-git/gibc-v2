@@ -1,0 +1,114 @@
+{
+  "command": "python.exe scripts\\train.py --config configs\\train\\production.json",
+  "start_utc": "2026-09-29T12:59:45+00:00",
+  "start_local": "2026-09-29T18:29:45+05:30",
+  "train_config": {
+    "run_name": "production",
+    "placeholder": false,
+    "notes": "PROPOSED production config (Stage 5). Hardware locked by benchmark: bf16, micro-batch 8 x 512 x accum 4 = 16,384 targets/update, no activation checkpointing, fused AdamW, TF32. max_steps 61,036 = 1,000,013,824 target tokens. Peak LR 1e-3 selected by the predeclared rule (results/lr/lr_decision.json); warmup 256 then cosine to 10%. Shuffled one-pass windows over the immutable production token files. Final preflight approved (Astra production audit + P1 fixes); unlocked for the single production run.",
+    "model_config": "configs/model/gibc_43m.json",
+    "tokens": "production",
+    "seq_len": 512,
+    "micro_batch_size": 8,
+    "grad_accum_steps": 4,
+    "max_steps": 61036,
+    "precision": "bf16",
+    "lr": 0.001,
+    "min_lr_ratio": 0.1,
+    "warmup_steps": 256,
+    "weight_decay": 0.1,
+    "beta1": 0.9,
+    "beta2": 0.95,
+    "eps": 1e-08,
+    "grad_clip": 1.0,
+    "seed": 1234,
+    "log_every": 50,
+    "eval_every": 1000,
+    "eval_batches": 64,
+    "checkpoint_every_steps": 2000,
+    "checkpoint_every_minutes": 30,
+    "keep_checkpoints": 3,
+    "allow_tf32": true,
+    "fused_adamw": true,
+    "device": "cuda",
+    "status": {
+      "APPROVED_BY_BENCHMARK": true,
+      "TRAINING_NOT_STARTED": false,
+      "LR_WARMUP_FINAL": true,
+      "selected_lr_source": "results/lr/lr_decision.json",
+      "TOKEN_TARGET_APPROVED": true,
+      "target_tokens": 1000013824,
+      "validation_targets": 262144,
+      "PRODUCTION_TOKENS_PREPARED": true,
+      "FINAL_PREFLIGHT_APPROVED": true,
+      "benchmark_summary": "results/benchmark/stage5_corrected_timing.jsonl"
+    },
+    "sampler": "shuffled_windows_v1",
+    "run_until_step": null,
+    "milestone_fractions": [
+      0.25,
+      0.5,
+      0.75
+    ]
+  },
+  "model_config": {
+    "vocab_size": 24000,
+    "d_model": 512,
+    "n_layers": 9,
+    "n_heads": 8,
+    "d_ff": 1536,
+    "context_length": 512,
+    "rope_theta": 10000.0,
+    "norm_eps": 1e-05,
+    "tie_embeddings": true
+  },
+  "unique_trainable_parameters": 42968576,
+  "tokens_per_optimizer_step": 16384,
+  "planned_targets": 1000013824,
+  "source": {
+    "commit": "ff26beab34a5f5921297d1f8e61a2b6c18abb27f",
+    "dirty": false
+  },
+  "environment": {
+    "python": "3.11.0",
+    "torch": "2.14.0+cu126",
+    "cuda_runtime": "12.6",
+    "cudnn": 91002,
+    "gpu": "NVIDIA GeForce RTX 3050 6GB Laptop GPU",
+    "numpy": "2.4.6",
+    "tokenizers": "0.23.2",
+    "transformers": "5.17.0",
+    "lm_eval": "0.4.13",
+    "datasets": "5.0.1"
+  },
+  "data": {
+    "tokens_dir": "C:\\gibc-work\\tokens\\production",
+    "tokenizer_sha256": "40f595fbedfff2de6b06c714a4537ef68b592141288c1a327d8b74962c4f7689",
+    "dataset": {
+      "id": "HuggingFaceFW/fineweb-edu",
+      "config_name": "sample-10BT",
+      "revision": "87f09149ef4734204d70ed1d046ddc9ca3f2b8f9"
+    },
+    "train": {
+      "tokens": 1100000632,
+      "documents": 1044378,
+      "sha256": "efb63e4f4902f5e7e84d7b13e1f05e567c1ecb69a1221dd101a397ae6fd8ea7f"
+    },
+    "val": {
+      "tokens": 10753165,
+      "documents": 10356,
+      "sha256": "f4340757b24634855e78f1daedc22d6a5145b490cccd773bb871376e201ac0e8"
+    },
+    "sampler": {
+      "version": "shuffled_windows_v1",
+      "method": "numpy.random.Generator(PCG64(seed)).permutation(W)",
+      "seed": 1234,
+      "seq_len": 512,
+      "batch_size": 8,
+      "window_count": 2148438,
+      "order_sha256": "f95bf3ba6b864932cc460f4336067556a1823f6d527ac075cee4ec929ca51228",
+      "dropped_targets": 375
+    }
+  },
+  "pip_freeze_sha256": "3117068d2ab2fb9290dc0b6216ec779052fb5d146bbae4c998288f7e96c67ff9"
+}

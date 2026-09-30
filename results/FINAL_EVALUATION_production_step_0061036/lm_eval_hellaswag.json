@@ -1,0 +1,92 @@
+{
+  "status": "FINAL",
+  "task": "hellaswag",
+  "seconds": 428.43919049999386,
+  "examples": 10042,
+  "requests": 40168,
+  "n_samples": {
+    "original": 10042,
+    "effective": 10042
+  },
+  "results": {
+    "name": "hellaswag",
+    "alias": "hellaswag",
+    "sample_len": 10042,
+    "acc,none": 0.27106154152559253,
+    "acc_stderr,none": 0.004435993492583921,
+    "acc_norm,none": 0.2806213901613224,
+    "acc_norm_stderr,none": 0.004483845735187838
+  },
+  "version": 1.0,
+  "config": {
+    "task": "hellaswag",
+    "dataset_path": "Rowan/hellaswag",
+    "training_split": "train",
+    "validation_split": "validation",
+    "process_docs": "def process_docs(dataset: datasets.Dataset) -> datasets.Dataset:\n    def _process_doc(doc):\n        ctx = doc[\"ctx_a\"] + \" \" + doc[\"ctx_b\"].capitalize()\n        out_doc = {\n            \"query\": preprocess(doc[\"activity_label\"] + \": \" + ctx),\n            \"choices\": [preprocess(ending) for ending in doc[\"endings\"]],\n            \"gold\": int(doc[\"label\"]),\n        }\n        return out_doc\n\n    return dataset.map(_process_doc)\n",
+    "doc_to_text": "{{query}}",
+    "doc_to_target": "{{label}}",
+    "unsafe_code": false,
+    "doc_to_choice": "choices",
+    "description": "",
+    "target_delimiter": " ",
+    "fewshot_delimiter": "\n\n",
+    "fewshot_config": {
+      "sampler": "default",
+      "split": null,
+      "process_docs": "<function process_docs at 0x00000259C173DD00>",
+      "fewshot_indices": null,
+      "samples": null,
+      "doc_to_text": "{{query}}",
+      "doc_to_choice": "choices",
+      "doc_to_target": "{{label}}",
+      "gen_prefix": null,
+      "fewshot_delimiter": "\n\n",
+      "target_delimiter": " "
+    },
+    "num_fewshot": 0,
+    "metric_list": [
+      {
+        "metric": "acc",
+        "aggregation": "mean",
+        "higher_is_better": true
+      },
+      {
+        "metric": "acc_norm",
+        "aggregation": "mean",
+        "higher_is_better": true
+      }
+    ],
+    "output_type": "multiple_choice",
+    "repeats": 1,
+    "should_decontaminate": false,
+    "metadata": {
+      "version": 1.0,
+      "config_source": "C:\\gibc-work\\venv\\Lib\\site-packages\\lm_eval\\tasks\\hellaswag\\hellaswag.yaml"
+    }
+  },
+  "dataset_revision": "218ec52e09a7e7462a5400043bb9a69a41d06b76",
+  "samples_file": "C:\\gibc-work\\eval_samples\\production_step_0061036\\hellaswag_samples.json",
+  "samples_sha256": "6bd64744696bdcf18bf52aac93a1360a03f3141f6d3809101c2e575cb2809318",
+  "crosscheck_requests": 200,
+  "crosscheck_max_abs_loglik_diff_vs_source": 4.9386173486709595e-05,
+  "lm_eval_config": {
+    "model": "C:\\gibc-work\\exports\\production_step_0061036",
+    "model_args": null,
+    "model_num_parameters": 42968576,
+    "model_dtype": "torch.float32",
+    "model_revision": "main",
+    "model_sha": "",
+    "batch_size": null,
+    "batch_sizes": [],
+    "device": null,
+    "use_cache": null,
+    "limit": null,
+    "bootstrap_iters": 100000,
+    "gen_kwargs": null,
+    "random_seed": 0,
+    "numpy_seed": 1234,
+    "torch_seed": 1234,
+    "fewshot_seed": 1234
+  }
+}

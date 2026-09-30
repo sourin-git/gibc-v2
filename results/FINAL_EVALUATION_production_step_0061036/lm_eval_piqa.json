@@ -1,0 +1,92 @@
+{
+  "status": "FINAL",
+  "task": "piqa",
+  "seconds": 36.30007640000258,
+  "examples": 1838,
+  "requests": 3676,
+  "n_samples": {
+    "original": 1838,
+    "effective": 1838
+  },
+  "results": {
+    "name": "piqa",
+    "alias": "piqa",
+    "sample_len": 1838,
+    "acc,none": 0.5973884657236126,
+    "acc_stderr,none": 0.011442395233488698,
+    "acc_norm,none": 0.5859630032644179,
+    "acc_norm_stderr,none": 0.011492118481417577
+  },
+  "version": 1.0,
+  "config": {
+    "task": "piqa",
+    "dataset_path": "baber/piqa",
+    "training_split": "train",
+    "validation_split": "validation",
+    "doc_to_text": "Question: {{goal}}\nAnswer:",
+    "doc_to_target": "label",
+    "unsafe_code": false,
+    "doc_to_choice": "{{[sol1, sol2]}}",
+    "description": "",
+    "target_delimiter": " ",
+    "fewshot_delimiter": "\n\n",
+    "fewshot_config": {
+      "sampler": "default",
+      "split": null,
+      "process_docs": null,
+      "fewshot_indices": null,
+      "samples": null,
+      "doc_to_text": "Question: {{goal}}\nAnswer:",
+      "doc_to_choice": "{{[sol1, sol2]}}",
+      "doc_to_target": "label",
+      "gen_prefix": null,
+      "fewshot_delimiter": "\n\n",
+      "target_delimiter": " "
+    },
+    "num_fewshot": 0,
+    "metric_list": [
+      {
+        "metric": "acc",
+        "aggregation": "mean",
+        "higher_is_better": true
+      },
+      {
+        "metric": "acc_norm",
+        "aggregation": "mean",
+        "higher_is_better": true
+      }
+    ],
+    "output_type": "multiple_choice",
+    "repeats": 1,
+    "should_decontaminate": true,
+    "doc_to_decontamination_query": "goal",
+    "metadata": {
+      "version": 1.0,
+      "config_source": "C:\\gibc-work\\venv\\Lib\\site-packages\\lm_eval\\tasks\\piqa\\piqa.yaml"
+    }
+  },
+  "dataset_revision": "142f6d7367fd9877f0fb3b5734ea6a545f54cdd1",
+  "samples_file": "C:\\gibc-work\\eval_samples\\production_step_0061036\\piqa_samples.json",
+  "samples_sha256": "dbadd86c3eef9690561757390f4e80ad057d58bded0f6df8cd2e942c3ee44a18",
+  "crosscheck_requests": 200,
+  "crosscheck_max_abs_loglik_diff_vs_source": 8.847098797559738e-05,
+  "lm_eval_config": {
+    "model": "C:\\gibc-work\\exports\\production_step_0061036",
+    "model_args": null,
+    "model_num_parameters": 42968576,
+    "model_dtype": "torch.float32",
+    "model_revision": "main",
+    "model_sha": "",
+    "batch_size": null,
+    "batch_sizes": [],
+    "device": null,
+    "use_cache": null,
+    "limit": null,
+    "bootstrap_iters": 100000,
+    "gen_kwargs": null,
+    "random_seed": 0,
+    "numpy_seed": 1234,
+    "torch_seed": 1234,
+    "fewshot_seed": 1234
+  }
+}
