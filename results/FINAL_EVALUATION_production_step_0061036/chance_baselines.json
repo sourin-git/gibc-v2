@@ -1,0 +1,33 @@
+{
+  "method": "mean over documents of 1/(number of answer options = lm-eval requests per document)",
+  "hellaswag": {
+    "documents": 10042,
+    "chance_accuracy": 0.25,
+    "options_histogram": {
+      "4": 10042
+    }
+  },
+  "arc_easy": {
+    "documents": 2376,
+    "chance_accuracy": 0.25016133557800224,
+    "options_histogram": {
+      "3": 7,
+      "4": 2365,
+      "5": 4
+    }
+  },
+  "piqa": {
+    "documents": 1838,
+    "chance_accuracy": 0.5,
+    "options_histogram": {
+      "2": 1838
+    }
+  },
+  "winogrande": {
+    "documents": 1267,
+    "chance_accuracy": 0.5,
+    "options_histogram": {
+      "2": 1267
+    }
+  }
+}

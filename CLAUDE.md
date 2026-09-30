@@ -251,7 +251,14 @@ python scripts/verify_hf_export.py --export <dir>                    # fresh-pro
 python scripts/eval_lm_eval_smoke.py --export <dir> --limit 20       # SMOKE, NOT OFFICIAL
 python scripts/audit_eval_requests.py --export <dir>                 # truncation audit + runtime ESTIMATES
 python scripts/eval_wikitext103.py --export <dir> [--max-targets N]  # N set = SMOKE, NOT OFFICIAL
+python scripts/eval_lm_eval_final.py --export <dir> --out results/FINAL_EVALUATION_<name>   # full, FINAL
+python scripts/summarize_final_eval.py --dir results/FINAL_EVALUATION_<name> --export <dir>
+python scripts/make_figures.py                                       # results/figures/*.png from artifacts
+python scripts/demo.py [--prompt "..." | --fixed]                    # local generation demo (final checkpoint)
 ```
+
+Final numbers live in `results/FINAL_EVALUATION_production_step_0061036/final_results.json`;
+README.md, MODEL_CARD.md and docs/RESULTS.md must match it exactly.
 
 Token files are hash-verified (streaming SHA-256) once at every training-process start and
 resume. Production uses `"sampler": "shuffled_windows_v1"`: one pass without replacement over

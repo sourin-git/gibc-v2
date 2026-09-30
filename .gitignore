@@ -51,3 +51,11 @@ desktop.ini
 
 # Secrets
 .env
+
+# Hygiene additions (final audit): env variants, local agent settings, logs, HF cache, eval sample dumps
+.env.*
+!.env.example
+/.claude/settings.local.json
+*.log
+hf_home/
+/eval_samples/

@@ -21,3 +21,6 @@ transformers==5.17.0
 lm-eval[hf]==0.4.13
 
 pytest==9.1.1
+
+# Figures only (scripts/make_figures.py); added after training, not in results/env/pip-freeze.txt.
+matplotlib==3.11.2
