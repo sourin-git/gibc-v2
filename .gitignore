@@ -63,3 +63,8 @@ hf_home/
 # Local AI-agent workspace
 /CLAUDE.md
 /.claude/
+
+# Local submission workflow notes
+/docs/DEMO_VIDEO_SCRIPT.md
+/docs/DEVPOST_SUBMISSION.md
+/docs/SCREENSHOT_PLAN.md
